@@ -1,0 +1,20 @@
+{
+  "alwaysActivate": true,
+  "name": "pixelvr",
+  "resourceDir": "resources",
+  "driverDir": ".",
+  "hmd": {
+    "driverName": "pixelvr",
+    "iconPath": "icons/headset_icon.png"
+  },
+  "controllers": {
+    "pixelvr_left": {
+      "inputProfilePath": "input/left/pixelvr_controller_left.json",
+      "iconPath": "icons/oculus_touch_left.svg"
+    },
+    "pixelvr_right": {
+      "inputProfilePath": "input/right/pixelvr_controller_right.json",
+      "iconPath": "icons/oculus_touch_right.svg"
+    }
+  }
+}

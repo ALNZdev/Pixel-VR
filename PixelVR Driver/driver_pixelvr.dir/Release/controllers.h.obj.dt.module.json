@@ -1,0 +1,14 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "driver_pixelvr.dir\\Release\\controllers.obj",
+            "outputs": [
+                "driver_pixelvr.dir\\Release\\controllers.h.obj.dt.module.json",
+                "driver_pixelvr.dir\\Release\\controllers.h.obj.dt.d.json"
+            ],
+            "requires": []
+        }
+    ]
+}

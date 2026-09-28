@@ -1,0 +1,52 @@
+{
+  "jsonid": "input_profile",
+  "controller_type": "pixelvr_left",
+  "device_class": "controller",
+  "resource_root": "pixelvr",
+  "input_bindingui_mode": "controller_handed",
+  "input_bindingui_left": {
+    "image": "{pixelvr}/icons/oculus_touch_left.svg"
+  },
+  "input_bindings": {
+    "/input/x/click": {
+      "type": "button",
+      "parameters": { "click": true }
+    },
+    "/input/y/click": {
+      "type": "button",
+      "parameters": { "click": true }
+    },
+    "/input/trigger/click": {
+      "type": "button",
+      "parameters": { "click": true }
+    },
+    "/input/trigger/value": {
+      "type": "trigger",
+      "parameters": { "value": true }
+    },
+    "/input/grip/click": {
+      "type": "button",
+      "parameters": { "click": true }
+    },
+    "/input/grip/value": {
+      "type": "trigger",
+      "parameters": { "value": true }
+    },
+    "/input/system/click": {
+      "type": "button",
+      "parameters": { "click": true }
+    },
+    "/input/joystick/x": {
+      "type": "joystick",
+      "parameters": { "x": true }
+    },
+    "/input/joystick/y": {
+      "type": "joystick",
+      "parameters": { "y": true }
+    },
+    "/input/joystick/click": {
+      "type": "button",
+      "parameters": { "click": true }
+    }
+  }
+}

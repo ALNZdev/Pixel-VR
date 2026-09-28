@@ -1,0 +1,10 @@
+^C:\USERS\GABUM\DESKTOP\PIXEL VR\PIXELVR DRIVER\CMAKELISTS.TXT
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" "-SC:/Users/gabum/Desktop/Pixel VR/PixelVR Driver" "-BC:/Users/gabum/Desktop/Pixel VR/PixelVR Driver" --check-stamp-file "C:/Users/gabum/Desktop/Pixel VR/PixelVR Driver/CMakeFiles/generate.stamp"
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

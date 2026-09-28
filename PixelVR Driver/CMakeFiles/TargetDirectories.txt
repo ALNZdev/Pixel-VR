@@ -1,0 +1,3 @@
+C:/Users/gabum/Desktop/Pixel VR/PixelVR Driver/CMakeFiles/driver_pixelvr.dir
+C:/Users/gabum/Desktop/Pixel VR/PixelVR Driver/CMakeFiles/ALL_BUILD.dir
+C:/Users/gabum/Desktop/Pixel VR/PixelVR Driver/CMakeFiles/ZERO_CHECK.dir

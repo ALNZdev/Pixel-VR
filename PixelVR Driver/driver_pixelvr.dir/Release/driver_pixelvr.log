@@ -1,0 +1,7 @@
+﻿  main.cpp
+  hmd.cpp
+  controllers.cpp
+  driver_factory.cpp
+  Generating Code...
+     Creating library C:/Users/gabum/Desktop/Pixel VR/PixelVR Driver/Release/driver_pixelvr.lib and object C:/Users/gabum/Desktop/Pixel VR/PixelVR Driver/Release/driver_pixelvr.exp
+  driver_pixelvr.vcxproj -> C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\pixelvr\bin\win64\driver_pixelvr.dll

@@ -1,0 +1,89 @@
+{
+  "controller_type": "pixelvr_left",
+  "bindings": {
+    "/actions/legacy": [
+      {
+        "path": "/input/x/click",
+        "inputs": {
+          "click": {
+            "output": "/actions/legacy/in/TriggerClick"
+          }
+        }
+      },
+      {
+        "path": "/input/y/click",
+        "inputs": {
+          "click": {
+            "output": "/actions/legacy/in/GripClick"
+          }
+        }
+      },
+      {
+        "path": "/input/trigger/click",
+        "inputs": {
+          "click": {
+            "output": "/actions/legacy/in/TrackpadClick"
+          }
+        }
+      },
+      {
+        "path": "/input/trigger/value",
+        "inputs": {
+          "value": {
+            "output": "/actions/legacy/in/TriggerValue"
+          }
+        }
+      },
+      {
+        "path": "/input/grip/click",
+        "inputs": {
+          "click": {
+            "output": "/actions/legacy/in/TrackpadTouch"
+          }
+        }
+      },
+      {
+        "path": "/input/grip/value",
+        "inputs": {
+          "value": {
+            "output": "/actions/legacy/in/GripValue"
+          }
+        }
+      },
+      {
+        "path": "/input/system/click",
+        "inputs": {
+          "click": {
+            "output": "/actions/legacy/in/SystemClick"
+          }
+        }
+      },
+      {
+        "path": "/input/joystick/x",
+        "inputs": {
+          "value": {
+            "output": "/actions/legacy/in/JoystickMove",
+            "range": "joystick_x"
+          }
+        }
+      },
+      {
+        "path": "/input/joystick/y",
+        "inputs": {
+          "value": {
+            "output": "/actions/legacy/in/JoystickMove",
+            "range": "joystick_y"
+          }
+        }
+      },
+      {
+        "path": "/input/joystick/click",
+        "inputs": {
+          "click": {
+            "output": "/actions/legacy/in/JoystickClick"
+          }
+        }
+      }
+    ]
+  }
+}
