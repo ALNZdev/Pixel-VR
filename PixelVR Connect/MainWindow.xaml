@@ -179,9 +179,9 @@
                                      HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Grid>
                     </Border>
-                    <TextBlock Text="ESP-OpenVR"
+                    <TextBlock
                                FontFamily="Segoe UI" FontSize="14" FontWeight="Bold"
-                               Foreground="#E8EAF6" VerticalAlignment="Center"/>
+                               Foreground="#E8EAF6" VerticalAlignment="Center"><Run Language="es-ar" Text="Pixel"/><Run Text="VR"/></TextBlock>
                     <TextBlock Text=" Connect"
                                FontFamily="Segoe UI" FontSize="14" FontWeight="Light"
                                Foreground="#7C6AF7" VerticalAlignment="Center"/>

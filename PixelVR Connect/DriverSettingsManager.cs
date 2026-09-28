@@ -16,8 +16,8 @@ namespace PixelVR
         public int RenderHeight { get; set; } = 1080;
         public bool DebugMode { get; set; } = false;
         public bool DirectMode { get; set; } = false;
-        public int EdidVid { get; set; } = 28728;
-        public int EdidPid { get; set; } = 95;
+        public int EdidVid { get; set; } = 0;
+        public int EdidPid { get; set; } = 0;
 
         // HMD Properties
         public string SerialNumber { get; set; } = "PixelVR_HMD_001";
@@ -107,8 +107,8 @@ namespace PixelVR
                         settings.RenderHeight = GetJsonInt(driverSection, "renderHeight", 1080);
                         settings.DebugMode = GetJsonBool(driverSection, "debugMode", false);
                         settings.DirectMode = GetJsonBool(driverSection, "directMode", false);
-                        settings.EdidVid = GetJsonInt(driverSection, "edidVid", 28728);
-                        settings.EdidPid = GetJsonInt(driverSection, "edidPid", 95);
+                        settings.EdidVid = GetJsonInt(driverSection, "edidVid", 0);
+                        settings.EdidPid = GetJsonInt(driverSection, "edidPid", 0);
 
                         settings.SerialNumber = GetJsonString(driverSection, "serialNumber", "PixelVR_HMD_001");
                         settings.ModelNumber = GetJsonString(driverSection, "modelNumber", "PixelVR v1.0");
@@ -184,8 +184,8 @@ namespace PixelVR
                     { "renderHeight", settings.RenderHeight },
                     { "debugMode", settings.DebugMode },
                     { "directMode", settings.DirectMode },
-                    { "edidVid", settings.EdidVid },
-                    { "edidPid", settings.EdidPid },
+                    { "edidVid", settings.DirectMode ? settings.EdidVid : 0 },
+                    { "edidPid", settings.DirectMode ? settings.EdidPid : 0 },
                     { "serialNumber", settings.SerialNumber },
                     { "modelNumber", settings.ModelNumber },
                     { "manufacturerName", settings.ManufacturerName },
