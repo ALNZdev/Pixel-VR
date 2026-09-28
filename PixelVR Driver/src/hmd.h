@@ -104,6 +104,7 @@ private:
     bool m_bDebugMode = false;
     bool m_bDirectMode = false;
 
+    // EDID para modo direct (solo se usa si m_bDirectMode == true)
     int32_t m_nEdidVid = 0;
     int32_t m_nEdidPid = 0;
 

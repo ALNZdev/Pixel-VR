@@ -12,6 +12,8 @@ using Application = System.Windows.Application;
 using Button = System.Windows.Controls.Button;
 using Color = System.Windows.Media.Color;
 using MessageBox = System.Windows.MessageBox;
+using System.Runtime.InteropServices;
+using System.Text;
 
 namespace PixelVR
 {
@@ -381,63 +383,77 @@ namespace PixelVR
             {
                 if (hmdScreenComboBox.SelectedIndex < 0)
                 {
-                    MessageBox.Show("Selecciona una pantalla válida para SteamVR.", "SteamVR", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    MessageBox.Show(
+                        "Selecciona una pantalla válida para SteamVR.",
+                        "SteamVR",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Warning);
+
                     return false;
                 }
 
                 var screens = System.Windows.Forms.Screen.AllScreens;
-                var selectedScreen = screens[hmdScreenComboBox.SelectedIndex];
-                var hwIds = MonitorHardwareID.GetIdsFromDeviceName(selectedScreen.DeviceName);
+
+                if (hmdScreenComboBox.SelectedIndex >= screens.Length)
+                {
+                    MessageBox.Show(
+                        "La pantalla seleccionada ya no está disponible.",
+                        "SteamVR",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Warning);
+
+                    return false;
+                }
+
+                var selectedScreen =
+                    screens[hmdScreenComboBox.SelectedIndex];
 
                 int modeIndex = hmsScreenModeComboBox.SelectedIndex;
-                bool isDirect = (modeIndex == 1);
-                bool isDebug = (modeIndex == 2);
 
-                if (isDirect && (hwIds.VendorID == 0 || hwIds.ProductID == 0))
+                bool requestedDirectMode = modeIndex == 1;
+                bool debugMode = modeIndex == 2;
+
+                if (!ConfigureDisplaySettingsForSteamVR(
+                        selectedScreen,
+                        requestedDirectMode,
+                        debugMode,
+                        out bool useDirectMode))
                 {
-                    isDirect = false;
-                    hmsScreenModeComboBox.SelectedIndex = 0;
-                    Debug.WriteLine("FALLBACK: No se pudo obtener VID/PID. Cambiando a Modo Ventana.");
+                    return false;
                 }
 
-                DriverSettings settings = settingsManager?.LoadSettings() ?? new DriverSettings();
+                System.Diagnostics.Process.Start(
+                    new System.Diagnostics.ProcessStartInfo
+                    {
+                        FileName = "steam://rungameid/250820",
+                        UseShellExecute = true
+                    });
 
-                settings.WindowX = selectedScreen.Bounds.X;
-                settings.WindowY = selectedScreen.Bounds.Y;
-                settings.WindowWidth = selectedScreen.Bounds.Width;
-                settings.WindowHeight = selectedScreen.Bounds.Height;
-                settings.RenderWidth = selectedScreen.Bounds.Width;
-                settings.RenderHeight = selectedScreen.Bounds.Height;
-                settings.DebugMode = isDebug;
-                settings.DirectMode = isDirect;
-                settings.EdidVid = hwIds.VendorID;
-                settings.EdidPid = hwIds.ProductID;
-
-                settingsManager ??= new DriverSettingsManager(DriverSettingsPath);
-                settingsManager.SaveSettings(settings);
-
-                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
-                {
-                    FileName = "steam://rungameid/250820",
-                    UseShellExecute = true
-                });
-
-                if (pipeManager == null)
-                {
-                    pipeManager = new PipeManager();
-                }
+                pipeManager ??= new PipeManager();
 
                 usbcdcDrivingActive = true;
 
-                MessageBox.Show("SteamVR iniciado. Flujo de datos USB-CDC → Pipe → SteamVR activo.",
-                    "USB-CDC + SteamVR", MessageBoxButton.OK, MessageBoxImage.Information);
+                string modeText = useDirectMode
+                    ? "Direct Mode"
+                    : "Modo ventana";
+
+                MessageBox.Show(
+                    $"SteamVR iniciado en {modeText}.\n" +
+                    "Flujo USB-CDC → Pipe → SteamVR activo.",
+                    "USB-CDC + SteamVR",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Information);
 
                 return true;
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error al iniciar SteamVR: {ex.Message}",
-                    "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(
+                    $"Error al iniciar SteamVR: {ex.Message}",
+                    "Error",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+
                 return false;
             }
         }
@@ -663,53 +679,78 @@ namespace PixelVR
         {
             try
             {
-                var screens = System.Windows.Forms.Screen.AllScreens;
-                var selectedScreen = screens[hmdScreenComboBox.SelectedIndex];
-                var hwIds = MonitorHardwareID.GetIdsFromDeviceName(selectedScreen.DeviceName);
-
-                int modeIndex = hmsScreenModeComboBox.SelectedIndex;
-                bool isDirect = (modeIndex == 1);
-                bool isDebug = (modeIndex == 2);
-
-                if (isDirect && (hwIds.VendorID == 0 || hwIds.ProductID == 0))
+                if (hmdScreenComboBox.SelectedIndex < 0)
                 {
-                    isDirect = false;
-                    hmsScreenModeComboBox.SelectedIndex = 0;
-                    Debug.WriteLine("FALLBACK: No se pudo obtener VID/PID. Cambiando a Modo Ventana.");
+                    MessageBox.Show(
+                        "Selecciona una pantalla válida.",
+                        "Driver Test",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Warning);
+
+                    return;
                 }
 
-                DriverSettings settings = settingsManager?.LoadSettings() ?? new DriverSettings();
-                settings.WindowX = selectedScreen.Bounds.X;
-                settings.WindowY = selectedScreen.Bounds.Y;
-                settings.WindowWidth = selectedScreen.Bounds.Width;
-                settings.WindowHeight = selectedScreen.Bounds.Height;
-                settings.RenderWidth = selectedScreen.Bounds.Width;
-                settings.RenderHeight = selectedScreen.Bounds.Height;
-                settings.DebugMode = isDebug;
-                settings.DirectMode = isDirect;
-                settings.EdidVid = hwIds.VendorID;
-                settings.EdidPid = hwIds.ProductID;
+                var screens = System.Windows.Forms.Screen.AllScreens;
 
-                settingsManager ??= new DriverSettingsManager(DriverSettingsPath);
-                settingsManager.SaveSettings(settings);
-
-                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+                if (hmdScreenComboBox.SelectedIndex >= screens.Length)
                 {
-                    FileName = "steam://rungameid/250820",
-                    UseShellExecute = true
-                });
+                    MessageBox.Show(
+                        "La pantalla seleccionada ya no está disponible.",
+                        "Driver Test",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Warning);
 
+                    return;
+                }
+
+                var selectedScreen =
+                    screens[hmdScreenComboBox.SelectedIndex];
+
+                int modeIndex = hmsScreenModeComboBox.SelectedIndex;
+
+                bool requestedDirectMode = modeIndex == 1;
+                bool debugMode = modeIndex == 2;
+
+                if (!ConfigureDisplaySettingsForSteamVR(
+                        selectedScreen,
+                        requestedDirectMode,
+                        debugMode,
+                        out bool useDirectMode))
+                {
+                    return;
+                }
+
+                System.Diagnostics.Process.Start(
+                    new System.Diagnostics.ProcessStartInfo
+                    {
+                        FileName = "steam://rungameid/250820",
+                        UseShellExecute = true
+                    });
+
+                pipeManager?.Dispose();
                 pipeManager = new PipeManager();
+
                 driverTestActive = true;
                 InitializeSliders();
 
-                MessageBox.Show("Driver Test iniciado. Conectando a SteamVR...",
-                    "Driver Test", MessageBoxButton.OK, MessageBoxImage.Information);
+                string modeText = useDirectMode
+                    ? "Direct Mode"
+                    : "Modo ventana";
+
+                MessageBox.Show(
+                    $"Driver Test iniciado en {modeText}.\n" +
+                    "Conectando a SteamVR...",
+                    "Driver Test",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Information);
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error al iniciar Driver Test: {ex.Message}",
-                    "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(
+                    $"Error al iniciar Driver Test: {ex.Message}",
+                    "Error",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
             }
         }
 
@@ -1040,49 +1081,307 @@ namespace PixelVR
         private void sliderTrackingScale_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e) { if (lblTrackingScale == null) return; lblTrackingScale.Text = sliderTrackingScale.Value.ToString("F1"); UpdateSettingsLabels(); }
         private void sliderLeftHaptic_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e) { if (lblLeftHaptic == null) return; lblLeftHaptic.Text = sliderLeftHaptic.Value.ToString("F1"); UpdateSettingsLabels(); }
         private void sliderRightHaptic_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e) { if (lblRightHaptic == null) return; lblRightHaptic.Text = sliderRightHaptic.Value.ToString("F1"); UpdateSettingsLabels(); }
+    
+        private bool ConfigureDisplaySettingsForSteamVR(
+    System.Windows.Forms.Screen selectedScreen,
+    bool requestedDirectMode,
+    bool debugMode,
+    out bool useDirectMode)
+{
+    useDirectMode = false;
+
+    if (selectedScreen == null)
+    {
+        MessageBox.Show(
+            "No se seleccionó una pantalla válida.",
+            "PixelVR",
+            MessageBoxButton.OK,
+            MessageBoxImage.Warning);
+
+        return false;
     }
 
-    public class MonitorHardwareID
+    var monitorIds =
+        MonitorHardwareID.GetIdsFromDeviceName(
+            selectedScreen.DeviceName);
+
+    if (requestedDirectMode)
     {
-        public ushort VendorID { get; set; }
-        public ushort ProductID { get; set; }
-
-        public static MonitorHardwareID GetIdsFromDeviceName(string deviceName)
+        if (!monitorIds.IsValid)
         {
-            try
-            {
-                using var searcher = new ManagementObjectSearcher(
-                    @"root\wmi", "SELECT * FROM WmiMonitorID");
+            /*
+             * Nunca reutilizar un VID/PID antiguo de otro monitor.
+             * En este caso se fuerza el modo ventana.
+             */
+            MessageBox.Show(
+                "No se pudo obtener un VID/PID válido para la pantalla seleccionada.\n\n" +
+                "El modo directo requiere un monitor físico correctamente identificado. " +
+                "Se utilizará modo ventana.",
+                "Direct Mode no disponible",
+                MessageBoxButton.OK,
+                MessageBoxImage.Warning);
 
-                foreach (ManagementObject mobj in searcher.Get())
-                {
-                    string instanceName = mobj["InstanceName"].ToString()!;
-                    string[] parts = instanceName.Split('\\');
-                    if (parts.Length > 1)
-                    {
-                        string vendorStr = parts[1].Substring(0, 3);
-                        string prodStr = parts[1].Substring(3);
+            useDirectMode = false;
+        }
+        else
+        {
+            useDirectMode = true;
 
-                        return new MonitorHardwareID
-                        {
-                            VendorID = EncodeEncodedEISA(vendorStr),
-                            ProductID = ushort.Parse(prodStr, System.Globalization.NumberStyles.HexNumber)
-                        };
-                    }
-                }
-            }
-            catch { }
+            Debug.WriteLine(
+                $"Direct Mode: monitor={selectedScreen.DeviceName}, " +
+                $"VID=0x{monitorIds.VendorID:X4}, " +
+                $"PID=0x{monitorIds.ProductID:X4}");
+        }
+    }
 
-            return new MonitorHardwareID { VendorID = 0, ProductID = 0 };
+    DriverSettings settings =
+        settingsManager?.LoadSettings()
+        ?? new DriverSettings();
+
+    settings.WindowX = selectedScreen.Bounds.X;
+    settings.WindowY = selectedScreen.Bounds.Y;
+    settings.WindowWidth = selectedScreen.Bounds.Width;
+    settings.WindowHeight = selectedScreen.Bounds.Height;
+
+    /*
+     * El tamaño recomendado puede ser menor que la pantalla física,
+     * pero conservar el tamaño de la pantalla seleccionada es válido
+     * para la configuración actual del driver.
+     */
+    settings.RenderWidth = selectedScreen.Bounds.Width;
+    settings.RenderHeight = selectedScreen.Bounds.Height;
+
+    settings.DebugMode = debugMode;
+
+    settings.DirectMode = useDirectMode;
+
+    /*
+     * En modo ventana se limpian expresamente los valores EDID.
+     * Así no se reutiliza un EDID de una ejecución anterior.
+     */
+    settings.EdidVid = useDirectMode
+        ? monitorIds.VendorID
+        : 0;
+
+    settings.EdidPid = useDirectMode
+        ? monitorIds.ProductID
+        : 0;
+
+    settingsManager ??=
+        new DriverSettingsManager(DriverSettingsPath);
+
+    settingsManager.SaveSettings(settings);
+
+    Debug.WriteLine(
+        $"PixelVR display config: " +
+        $"mode={(useDirectMode ? "direct" : "desktop")}, " +
+        $"screen={selectedScreen.DeviceName}, " +
+        $"bounds=({selectedScreen.Bounds.X}," +
+        $"{selectedScreen.Bounds.Y} " +
+        $"{selectedScreen.Bounds.Width}x" +
+        $"{selectedScreen.Bounds.Height}), " +
+        $"VID=0x{settings.EdidVid:X4}, " +
+        $"PID=0x{settings.EdidPid:X4}");
+
+    return true;
+}
+    }
+
+    public sealed class MonitorHardwareID
+    {
+        public ushort VendorID { get; init; }
+        public ushort ProductID { get; init; }
+
+        public bool IsValid =>
+            VendorID != 0 &&
+            ProductID != 0;
+
+        private const int DisplayDeviceAttachedToDesktop = 0x00000001;
+
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+        private struct DISPLAY_DEVICE
+        {
+            public int cb;
+
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
+            public string DeviceName;
+
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
+            public string DeviceString;
+
+            public int StateFlags;
+
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
+            public string DeviceID;
+
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
+            public string DeviceKey;
         }
 
-        private static ushort EncodeEncodedEISA(string vendor)
+        [DllImport(
+            "user32.dll",
+            CharSet = CharSet.Unicode,
+            SetLastError = true)]
+        private static extern bool EnumDisplayDevices(
+            string? lpDevice,
+            uint iDevNum,
+            ref DISPLAY_DEVICE lpDisplayDevice,
+            uint dwFlags);
+
+        public static MonitorHardwareID GetIdsFromDeviceName(
+            string deviceName)
         {
-            if (vendor.Length != 3) return 0;
-            int v = ((vendor[0] - '@') << 10)
-                  | ((vendor[1] - '@') << 5)
-                  | (vendor[2] - '@');
-            return (ushort)((v >> 8) | (v << 8));
+            if (string.IsNullOrWhiteSpace(deviceName))
+                return Empty();
+
+            string normalizedName =
+                deviceName.Trim().ToUpperInvariant();
+
+            for (uint index = 0; ; index++)
+            {
+                var displayDevice = new DISPLAY_DEVICE
+                {
+                    cb = Marshal.SizeOf<DISPLAY_DEVICE>()
+                };
+
+                if (!EnumDisplayDevices(
+                        null,
+                        index,
+                        ref displayDevice,
+                        0))
+                {
+                    break;
+                }
+
+                if ((displayDevice.StateFlags &
+                     DisplayDeviceAttachedToDesktop) == 0)
+                {
+                    continue;
+                }
+
+                if (!string.Equals(
+                        displayDevice.DeviceName?.Trim(),
+                        normalizedName,
+                        StringComparison.OrdinalIgnoreCase))
+                {
+                    continue;
+                }
+
+                // Enumerar el monitor físico asociado a DISPLAY1,
+                // DISPLAY2, etc.
+                for (uint monitorIndex = 0; ; monitorIndex++)
+                {
+                    var monitorDevice = new DISPLAY_DEVICE
+                    {
+                        cb = Marshal.SizeOf<DISPLAY_DEVICE>()
+                    };
+
+                    if (!EnumDisplayDevices(
+                            displayDevice.DeviceName,
+                            monitorIndex,
+                            ref monitorDevice,
+                            0))
+                    {
+                        break;
+                    }
+
+                    if ((monitorDevice.StateFlags &
+                         DisplayDeviceAttachedToDesktop) == 0)
+                    {
+                        continue;
+                    }
+
+                    var ids = ParseDeviceId(monitorDevice.DeviceID);
+
+                    if (ids.IsValid)
+                        return ids;
+                }
+
+                break;
+            }
+
+            return Empty();
+        }
+
+        private static MonitorHardwareID ParseDeviceId(
+            string? deviceId)
+        {
+            if (string.IsNullOrWhiteSpace(deviceId))
+                return Empty();
+
+            /*
+             * Ejemplo de DeviceID:
+             *
+             * DISPLAY\DEL4098\5&10A589A&0&UID4352
+             *
+             * El bloque DEL4098 contiene:
+             * - DEL: fabricante EISA
+             * - 4098: product ID hexadecimal
+             */
+            string[] parts = deviceId.Split('\\');
+
+            if (parts.Length < 2)
+                return Empty();
+
+            string hardwarePart = parts[1];
+
+            if (hardwarePart.Length < 4)
+                return Empty();
+
+            string vendorPart = hardwarePart.Substring(0, 3);
+            string productPart = hardwarePart.Substring(3);
+
+            if (!ushort.TryParse(
+                    productPart,
+                    System.Globalization.NumberStyles.HexNumber,
+                    null,
+                    out ushort productId))
+            {
+                return Empty();
+            }
+
+            ushort vendorId = EncodeEisaVendor(vendorPart);
+
+            return new MonitorHardwareID
+            {
+                VendorID = vendorId,
+                ProductID = productId
+            };
+        }
+
+        private static ushort EncodeEisaVendor(string vendor)
+        {
+            if (string.IsNullOrWhiteSpace(vendor) ||
+                vendor.Length != 3)
+            {
+                return 0;
+            }
+
+            vendor = vendor.ToUpperInvariant();
+
+            if (vendor[0] < 'A' || vendor[0] > 'Z' ||
+                vendor[1] < 'A' || vendor[1] > 'Z' ||
+                vendor[2] < 'A' || vendor[2] > 'Z')
+            {
+                return 0;
+            }
+
+            int value =
+                ((vendor[0] - '@') << 10) |
+                ((vendor[1] - '@') << 5) |
+                (vendor[2] - '@');
+
+            // EDID usa el valor en orden little-endian para esta propiedad.
+            return (ushort)((value >> 8) | (value << 8));
+        }
+
+        private static MonitorHardwareID Empty()
+        {
+            return new MonitorHardwareID
+            {
+                VendorID = 0,
+                ProductID = 0
+            };
         }
     }
 }

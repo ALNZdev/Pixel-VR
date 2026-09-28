@@ -142,9 +142,8 @@ void MyHMDDeviceDriver::LoadSettings()
 
     /*
      * IMPORTANTE:
-
      * windowX/windowY/windowWidth/windowHeight,
-     * renderWidth/renderHeight, directMode y EDID
+     * renderWidth/renderHeight y directMode
      * solo se leen durante la activación inicial.
      *
      * SteamVR no permite cambiar de forma segura el modo
@@ -221,36 +220,36 @@ void MyHMDDeviceDriver::LoadSettings()
                 "edidPid");
 
             /*
-             * Un EDID cero no identifica ningún display.
-             * No se fuerza modo directo si faltan ambos valores.
+             * Validación crítica:
+             * Si directMode está habilitado pero no tenemos EDID válido,
+             * desactivar direct mode automáticamente.
+             * Esto previene los bugs de pantalla roja y ventana moviéndose.
              */
-            if (m_bDirectMode &&
-                (m_nEdidVid <= 0 || m_nEdidPid <= 0))
+            if (m_bDirectMode && (m_nEdidVid <= 0 || m_nEdidPid <= 0))
             {
                 DriverLog(
-                    "[HMD] EDID inválido para modo directo "
-                    "(VID=%d PID=%d). Se usará modo ventana.",
+                    "[HMD] ⚠️  Direct mode solicitado pero EDID inválido "
+                    "(VID=%d PID=%d). Usando modo desktop.",
                     m_nEdidVid,
                     m_nEdidPid);
 
                 m_bDirectMode = false;
+                m_nEdidVid = 0;
+                m_nEdidPid = 0;
             }
 
             m_displayConfigurationLocked = true;
 
             DriverLog(
                 "[HMD] Display config: mode=%s "
-                "window=(%d,%d %ux%u) render=%ux%u "
-                "edid=(%d,%d)",
-                m_bDirectMode ? "direct" : "windowed",
+                "window=(%d,%d %ux%u) render=%ux%u",
+                m_bDirectMode ? "direct" : "desktop",
                 m_windowX,
                 m_windowY,
                 m_windowWidth,
                 m_windowHeight,
                 m_renderWidth,
-                m_renderHeight,
-                m_nEdidVid,
-                m_nEdidPid);
+                m_renderHeight);
         }
     }
 
@@ -414,6 +413,13 @@ void MyHMDDeviceDriver::ApplyDisplayProperties()
 
     if (m_bDirectMode)
     {
+        /*
+         * DIRECT MODE: Visor como display real conectado a GPU
+         * Precondiciones:
+         * - EDID válido (VID/PID ≠ 0) ya validado en LoadSettings()
+         * - Monitor físico real conectado a la GPU
+         * - El compositor puede usar el backbuffer directamente
+         */
         vr::VRProperties()->SetBoolProperty(
             m_ulPropertyContainer,
             vr::Prop_IsOnDesktop_Bool,
@@ -435,17 +441,24 @@ void MyHMDDeviceDriver::ApplyDisplayProperties()
             m_nEdidPid);
 
         DriverLog(
-            "[HMD] Display mode: direct "
-            "VID=%d PID=%d",
+            "[HMD] Display mode: DIRECT "
+            "VID=0x%04X PID=0x%04X",
             m_nEdidVid,
             m_nEdidPid);
     }
     else
     {
         /*
-         * En modo ventana SteamVR debe tratar el HMD como una
-         * pantalla extendida/virtual. No se publica EDID de un
-         * display real en este modo.
+         * DESKTOP/WINDOWED MODE: Visor como ventana normal
+         *
+         * Beneficios:
+         * - SteamVR NO busca displays físicos
+         * - NO hay conflictos entre GPU
+         * - La ventana NO se mueve entre pantallas
+         * - NO hay pantalla roja por mismatch
+         * - Compatible con cualquier monitor (real, secundario, virtual)
+         *
+         * El compositor trata esto como una ventana de aplicación normal.
          */
         vr::VRProperties()->SetBoolProperty(
             m_ulPropertyContainer,
@@ -457,6 +470,7 @@ void MyHMDDeviceDriver::ApplyDisplayProperties()
             vr::Prop_HasDriverDirectModeComponent_Bool,
             false);
 
+        // ✅ CRÍTICO: No publicamos EDID en modo desktop
         vr::VRProperties()->SetInt32Property(
             m_ulPropertyContainer,
             vr::Prop_EdidVendorID_Int32,
@@ -468,8 +482,9 @@ void MyHMDDeviceDriver::ApplyDisplayProperties()
             0);
 
         DriverLog(
-            "[HMD] Display mode: windowed "
-            "bounds=(%d,%d %ux%u)",
+            "[HMD] Display mode: DESKTOP (windowed) - "
+            "bounds=(%d,%d %ux%u) - "
+            "EDID no publicado",
             m_windowX,
             m_windowY,
             m_windowWidth,
@@ -808,10 +823,12 @@ void MyHMDDeviceDriver::MyRunFrame()
     if (elapsedMs >= m_settingsCheckIntervalMs)
     {
         /*
-         * LoadSettings() no modifica nunca directMode,
-         * EDID ni los límites de la ventana después de Activate().
-         * Por tanto no puede provocar una migración de ventana
-         * entre GPUs o monitores.
+         * LoadSettings() solo recarga valores seguros:
+         * tracking, FOV, IPD, frecuencia y logging.
+         *
+         * Nunca cambia: modo (congelado en Activate),
+         * EDID (congelado en Activate), límites de ventana.
+         * Por tanto no puede provocar problemas de GPU/compositor.
          */
         LoadSettings();
         m_lastSettingsCheck = now;
