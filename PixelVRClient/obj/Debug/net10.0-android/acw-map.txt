@@ -1,0 +1,3 @@
+PixelVRClient.MainActivity, PixelVRClient;crc6459adb729697fb243.MainActivity
+PixelVRClient.MainActivity;crc6459adb729697fb243.MainActivity
+pixelvrclient.MainActivity;crc6459adb729697fb243.MainActivity

@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "A0cUI4d/7t4=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\gabum\\Desktop\\Pixel VR\\PixelVRClient\\PixelVRClient.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\gabum\\.nuget\\packages\\microsoft.net.illink.tasks\\10.0.12\\microsoft.net.illink.tasks.10.0.12.nupkg.sha512"
+  ],
+  "logs": []
+}

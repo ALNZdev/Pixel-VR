@@ -1,0 +1,8 @@
+<api type="debug" assembly-name="PixelVRClient" mvid="0a2fe48c5dbd4662b14133722171efc6">
+  <java-to-managed>
+    <entry java-name="crc6459adb729697fb243/MainActivity" managed-name="PixelVRClient.MainActivity, PixelVRClient" managed-type-token-id="33554434" />
+  </java-to-managed>
+  <managed-to-java>
+    <entry java-name="crc6459adb729697fb243/MainActivity" managed-name="PixelVRClient.MainActivity, PixelVRClient" managed-type-token-id="33554434" />
+  </managed-to-java>
+</api>

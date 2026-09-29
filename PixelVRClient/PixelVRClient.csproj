@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0-android</TargetFramework>
+    <OutputType>Exe</OutputType>
+
+    <!-- Android API minimum -->
+    <SupportedOSPlatformVersion>23</SupportedOSPlatformVersion>
+    <AndroidMinSdkVersion>23</AndroidMinSdkVersion>
+
+    <!-- App identity -->
+    <ApplicationId>com.companyname.pixelvrclient</ApplicationId>
+    <ApplicationTitle>PixelVR Client</ApplicationTitle>
+    <ApplicationVersion>1</ApplicationVersion>
+    <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
+
+    <!-- SDK handling -->
+    <AndroidUseLatestPlatformSdk>true</AndroidUseLatestPlatformSdk>
+
+    <!-- C# conveniences -->
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+
+    <!-- Trimming: DISABLED by default to avoid runtime issues during testing.
+         Enable only after you validate the app behaviour. -->
+    <!-- <TrimMode>full</TrimMode> -->
+  </PropertyGroup>
+</Project>
