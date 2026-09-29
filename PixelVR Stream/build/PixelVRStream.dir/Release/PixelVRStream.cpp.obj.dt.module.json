@@ -1,0 +1,14 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "PixelVRStream.dir\\Release\\PixelVRStream.obj",
+            "outputs": [
+                "PixelVRStream.dir\\Release\\PixelVRStream.cpp.obj.dt.module.json",
+                "PixelVRStream.dir\\Release\\PixelVRStream.cpp.obj.dt.d.json"
+            ],
+            "requires": []
+        }
+    ]
+}

@@ -28,6 +28,9 @@ namespace PixelVR
 
         private DriverSettingsManager? settingsManager;
         private DriverSettings? currentSettings;
+        
+        private PhoneStreamController? phoneStreamController;
+        private bool phoneStreamModeActive = false;
 
         // Evita que los eventos ValueChanged/Checked disparados por WPF durante
         // InitializeComponent() (al setear los valores iniciales del XAML) intenten
@@ -51,6 +54,10 @@ namespace PixelVR
             settingsManager = new DriverSettingsManager(DriverSettingsPath);
             currentSettings = settingsManager.LoadSettings();
             InitializeSettingsUI();
+
+            // Inicialización del controlador del stream al teléfono
+            phoneStreamController = new PhoneStreamController(Dispatcher);
+            phoneStreamController.StatusChanged += PhoneStreamController_StatusChanged;
 
             SelectNavSection("main");
             this.Loaded += MainWindow_Loaded;
@@ -1007,6 +1014,14 @@ namespace PixelVR
             pipeManager?.Dispose();
             pipeManager = null;
             usbcdcManager?.Disconnect();
+
+            try
+            {
+                StopPhoneStream();
+                phoneStreamController?.Dispose();
+                phoneStreamController = null;
+            }
+            catch { }
         }
 
         private void CloseSteamVR()
@@ -1082,109 +1097,240 @@ namespace PixelVR
         private void sliderLeftHaptic_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e) { if (lblLeftHaptic == null) return; lblLeftHaptic.Text = sliderLeftHaptic.Value.ToString("F1"); UpdateSettingsLabels(); }
         private void sliderRightHaptic_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e) { if (lblRightHaptic == null) return; lblRightHaptic.Text = sliderRightHaptic.Value.ToString("F1"); UpdateSettingsLabels(); }
     
-        private bool ConfigureDisplaySettingsForSteamVR(
-    System.Windows.Forms.Screen selectedScreen,
-    bool requestedDirectMode,
-    bool debugMode,
-    out bool useDirectMode)
-{
-    useDirectMode = false;
-
-    if (selectedScreen == null)
-    {
-        MessageBox.Show(
-            "No se seleccionó una pantalla válida.",
-            "PixelVR",
-            MessageBoxButton.OK,
-            MessageBoxImage.Warning);
-
-        return false;
-    }
-
-    var monitorIds =
-        MonitorHardwareID.GetIdsFromDeviceName(
-            selectedScreen.DeviceName);
-
-    if (requestedDirectMode)
-    {
-        if (!monitorIds.IsValid)
-        {
-            /*
-             * Nunca reutilizar un VID/PID antiguo de otro monitor.
-             * En este caso se fuerza el modo ventana.
-             */
-            MessageBox.Show(
-                "No se pudo obtener un VID/PID válido para la pantalla seleccionada.\n\n" +
-                "El modo directo requiere un monitor físico correctamente identificado. " +
-                "Se utilizará modo ventana.",
-                "Direct Mode no disponible",
-                MessageBoxButton.OK,
-                MessageBoxImage.Warning);
-
+        private bool ConfigureDisplaySettingsForSteamVR(System.Windows.Forms.Screen selectedScreen, bool requestedDirectMode, bool debugMode, out bool useDirectMode) {
             useDirectMode = false;
-        }
-        else
-        {
-            useDirectMode = true;
+            if (selectedScreen == null) {
+                MessageBox.Show("No se seleccionó una pantalla válida.", "PixelVR", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return false;
+            }
+
+            var monitorIds = MonitorHardwareID.GetIdsFromDeviceName(selectedScreen.DeviceName);
+
+            if (requestedDirectMode) {
+                if (!monitorIds.IsValid)
+                {
+                    /*
+                     * Nunca reutilizar un VID/PID antiguo de otro monitor.
+                    * En este caso se fuerza el modo ventana.
+                    */
+                    MessageBox.Show(
+                        "No se pudo obtener un VID/PID válido para la pantalla seleccionada.\n\n" +
+                        "El modo directo requiere un monitor físico correctamente identificado. " +
+                        "Se utilizará modo ventana.",
+                        "Direct Mode no disponible",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Warning);
+                    useDirectMode = false;
+                }
+                else
+                {
+                    useDirectMode = true;
+
+                    Debug.WriteLine(
+                        $"Direct Mode: monitor={selectedScreen.DeviceName}, " +
+                        $"VID=0x{monitorIds.VendorID:X4}, " +
+                        $"PID=0x{monitorIds.ProductID:X4}");
+                }
+            }
+
+            DriverSettings settings =
+                settingsManager?.LoadSettings()
+                ?? new DriverSettings();
+
+            settings.WindowX = selectedScreen.Bounds.X;
+            settings.WindowY = selectedScreen.Bounds.Y;
+            settings.WindowWidth = selectedScreen.Bounds.Width;
+            settings.WindowHeight = selectedScreen.Bounds.Height;
+
+            /*
+            * El tamaño recomendado puede ser menor que la pantalla física,
+            * pero conservar el tamaño de la pantalla seleccionada es válido
+            * para la configuración actual del driver.
+            */
+            settings.RenderWidth = selectedScreen.Bounds.Width;
+            settings.RenderHeight = selectedScreen.Bounds.Height;
+
+            settings.DebugMode = debugMode;
+
+            settings.DirectMode = useDirectMode;
+
+            /*
+            * En modo ventana se limpian expresamente los valores EDID.
+            * Así no se reutiliza un EDID de una ejecución anterior.
+            */
+            settings.EdidVid = useDirectMode
+                ? monitorIds.VendorID
+                : 0;
+    
+            settings.EdidPid = useDirectMode
+                ? monitorIds.ProductID
+                : 0;
+
+            settingsManager ??=
+                new DriverSettingsManager(DriverSettingsPath);
+
+            settingsManager.SaveSettings(settings);
 
             Debug.WriteLine(
-                $"Direct Mode: monitor={selectedScreen.DeviceName}, " +
-                $"VID=0x{monitorIds.VendorID:X4}, " +
-                $"PID=0x{monitorIds.ProductID:X4}");
+                $"PixelVR display config: " +
+                $"mode={(useDirectMode ? "direct" : "desktop")}, " +
+                $"screen={selectedScreen.DeviceName}, " +
+                $"bounds=({selectedScreen.Bounds.X}," +
+                $"{selectedScreen.Bounds.Y} " +
+                $"{selectedScreen.Bounds.Width}x" +
+                $"{selectedScreen.Bounds.Height}), " +
+                $"VID=0x{settings.EdidVid:X4}, " +
+                $"PID=0x{settings.EdidPid:X4}");
+
+            return true;
         }
-    }
 
-    DriverSettings settings =
-        settingsManager?.LoadSettings()
-        ?? new DriverSettings();
+        private void PhoneStreamController_StatusChanged(object? sender, string message)
+        {
+            // Actualiza la UI solo si el modo teléfono está activo
+            if (!phoneStreamModeActive)
+                return;
 
-    settings.WindowX = selectedScreen.Bounds.X;
-    settings.WindowY = selectedScreen.Bounds.Y;
-    settings.WindowWidth = selectedScreen.Bounds.Width;
-    settings.WindowHeight = selectedScreen.Bounds.Height;
+            txtPhoneStreamStatus.Text = $"Estado: {message}";
+            txtStatusBar.Text = $"Teléfono VR: {message}";
+        }
 
-    /*
-     * El tamaño recomendado puede ser menor que la pantalla física,
-     * pero conservar el tamaño de la pantalla seleccionada es válido
-     * para la configuración actual del driver.
-     */
-    settings.RenderWidth = selectedScreen.Bounds.Width;
-    settings.RenderHeight = selectedScreen.Bounds.Height;
+        private void StartPhoneStream(
+            string phoneIp,
+            int videoPort = 5000,
+            int controlPort = 6000,
+            int width = 1920,
+            int height = 1080,
+            int fps = 60,
+            int bitrateKbps = 10000,
+            int gopSeconds = 2)
+        {
+            if (phoneStreamController == null)
+            {
+                MessageBox.Show(
+                    "El controlador del teléfono no está inicializado.",
+                    "PixelVR",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+                return;
+            }
 
-    settings.DebugMode = debugMode;
+            if (string.IsNullOrWhiteSpace(phoneIp))
+            {
+                MessageBox.Show(
+                    "Introduce la dirección IP del teléfono.",
+                    "Stream al teléfono",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning);
+                return;
+            }
 
-    settings.DirectMode = useDirectMode;
+            try
+            {
+                bool started = phoneStreamController.Start(
+                    phoneIp,
+                    videoPort,
+                    controlPort,
+                    width,
+                    height,
+                    fps,
+                    bitrateKbps,
+                    gopSeconds);
 
-    /*
-     * En modo ventana se limpian expresamente los valores EDID.
-     * Así no se reutiliza un EDID de una ejecución anterior.
-     */
-    settings.EdidVid = useDirectMode
-        ? monitorIds.VendorID
-        : 0;
+                if (!started)
+                {
+                    MessageBox.Show(
+                        "No se pudo iniciar el stream AMF/OpenVR. Revisa logs y que PixelVRStream.dll esté presente.",
+                        "Stream al teléfono",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Error);
+                    return;
+                }
 
-    settings.EdidPid = useDirectMode
-        ? monitorIds.ProductID
-        : 0;
+                phoneStreamModeActive = true;
+                txtPhoneStreamStatus.Text = $"Estado: Activo ({width}x{height}@{fps})";
+                btnStartPhoneStream.IsEnabled = false;
+                btnStopPhoneStream.IsEnabled = true;
+                txtPhoneIp.IsEnabled = false;
+            }
+            catch (DllNotFoundException)
+            {
+                MessageBox.Show(
+                    "No se encontró PixelVRStream.dll. Copia la DLL junto al ejecutable de PixelVR Connect (x64).",
+                    "PixelVRStream.dll",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+            }
+            catch (BadImageFormatException)
+            {
+                MessageBox.Show(
+                    "PixelVRStream.dll no coincide con la arquitectura de la aplicación. Compila todo en x64.",
+                    "Arquitectura incorrecta",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error iniciando el stream", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
 
-    settingsManager ??=
-        new DriverSettingsManager(DriverSettingsPath);
+        private void StopPhoneStream()
+        {
+            if (phoneStreamController == null)
+                return;
 
-    settingsManager.SaveSettings(settings);
+            phoneStreamController.Stop();
+            phoneStreamModeActive = false;
+            txtPhoneStreamStatus.Text = "Estado: Inactivo";
+            btnStartPhoneStream.IsEnabled = true;
+            btnStopPhoneStream.IsEnabled = false;
+            txtPhoneIp.IsEnabled = true;
+        }
 
-    Debug.WriteLine(
-        $"PixelVR display config: " +
-        $"mode={(useDirectMode ? "direct" : "desktop")}, " +
-        $"screen={selectedScreen.DeviceName}, " +
-        $"bounds=({selectedScreen.Bounds.X}," +
-        $"{selectedScreen.Bounds.Y} " +
-        $"{selectedScreen.Bounds.Width}x" +
-        $"{selectedScreen.Bounds.Height}), " +
-        $"VID=0x{settings.EdidVid:X4}, " +
-        $"PID=0x{settings.EdidPid:X4}");
+        private void btnStartPhoneStream_Click(object sender, RoutedEventArgs e)
+        {
+            string ip = txtPhoneIp.Text.Trim();
+            int bitrate = (int)sldBitrate.Value;
 
-    return true;
-}
+            // resolución
+            int width = 1920, height = 1080;
+            switch (cmbResolution.SelectedIndex)
+            {
+                case 1: width = 1280; height = 720; break;
+                case 2: width = 960; height = 540; break;
+            }
+
+            int fps = 60;
+            if (cmbFps.SelectedIndex == 1) fps = 45;
+            else if (cmbFps.SelectedIndex == 2) fps = 30;
+
+            StartPhoneStream(phoneIp: ip,
+                             videoPort: 5000,
+                             controlPort: 6000,
+                             width: width,
+                             height: height,
+                             fps: fps,
+                             bitrateKbps: bitrate,
+                             gopSeconds: 2);
+            lblBitrate.Text = bitrate.ToString();
+        }
+
+        private void btnStopPhoneStream_Click(object sender, RoutedEventArgs e)
+        {
+            StopPhoneStream();
+        }
+
+        private void btnRequestKeyframe_Click(object sender, RoutedEventArgs e)
+        {
+            phoneStreamController?.RequestKeyframe();
+        }
+
+        private void btnOpenTetheringHelp_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("Activa 'USB tethering' en Ajustes > Red e Internet > Zona con cobertura inalámbrica y tethering.\n\n" +
+                            "Conecta el teléfono por USB y anota la IP (ej. 192.168.42.2).", "Ayuda USB tethering", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
     }
 
     public sealed class MonitorHardwareID

@@ -1,0 +1,8 @@
+﻿  Building Custom Rule C:/Users/gabum/Desktop/Pixel VR/PixelVR Stream/CMakeLists.txt
+  PixelVRStream.cpp
+  OpenVRCapture.cpp
+  MFEncoder.cpp
+  NetworkRTP.cpp
+  Generating Code...
+     Creating library C:/Users/gabum/Desktop/Pixel VR/PixelVR Stream/build/lib/Debug/PixelVRStream.lib and object C:/Users/gabum/Desktop/Pixel VR/PixelVR Stream/build/lib/Debug/PixelVRStream.exp
+  PixelVRStream.vcxproj -> C:\Users\gabum\Desktop\Pixel VR\PixelVR Stream\build\bin\Debug\PixelVRStream.dll

@@ -1064,6 +1064,88 @@
                     <!-- Settings Panel -->
                     <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Background="Transparent" Margin="12">
                         <StackPanel>
+                            <!-- Panel: Stream al Teléfono (pegar dentro del TabItem de configuración) -->
+                            <Border Margin="12" Padding="12" Background="#0E1120" BorderBrush="#1E2235" BorderThickness="1" CornerRadius="8">
+                                <StackPanel>
+                                    <TextBlock Text="Stream al teléfono (USB tethering)" 
+                                        FontFamily="Segoe UI" FontSize="13" FontWeight="SemiBold" 
+                                        Foreground="#E8EAF6" Margin="0,0,0,8"/>
+
+                                    <Grid Margin="0,0,0,6">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="220"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <TextBox x:Name="txtPhoneIp"
+                                            Grid.Column="0"
+                                            Height="32"
+                                            VerticalContentAlignment="Center"
+                                            Text="192.168.42.2"
+                                            ToolTip="IP del teléfono (ej. 192.168.42.2)"
+                                            Margin="0,0,8,0"/>
+
+                                        <Button x:Name="btnStartPhoneStream"
+                                            Grid.Column="1"
+                                            Width="110"
+                                            Height="32"
+                                            Margin="0,0,8,0"
+                                            Content="Iniciar Teléfono"
+                                            Style="{StaticResource BtnPrimary}"
+                                            Click="btnStartPhoneStream_Click"/>
+
+                                        <Button x:Name="btnStopPhoneStream"
+                                            Grid.Column="2"
+                                            Width="110"
+                                            Height="32"
+                                            Content="Detener Teléfono"
+                                            IsEnabled="False"
+                                            Style="{StaticResource BtnDanger}"
+                                            Click="btnStopPhoneStream_Click"/>
+
+                                        <StackPanel Orientation="Horizontal" Grid.Column="3" VerticalAlignment="Center" Margin="12,0,0,0">
+                                            <TextBlock Text="Puerto UDP:" Foreground="#9EA3B8" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                            <TextBlock Text="5000" Foreground="#C8CEDD" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                                            <TextBlock Text="  •  Control TCP:" Foreground="#9EA3B8" Margin="12,0,6,0" VerticalAlignment="Center"/>
+                                            <TextBlock Text="6000" Foreground="#C8CEDD" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                                        </StackPanel>
+                                    </Grid>
+
+                                    <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
+                                        <TextBlock Text="Bitrate (kbps):" Foreground="#9EA3B8" VerticalAlignment="Center" Margin="0,3,8,0"/>
+                                        <Slider x:Name="sldBitrate" Minimum="2000" Maximum="20000" Value="10000" Width="220" SmallChange="500" LargeChange="1000"/>
+                                        <TextBlock x:Name="lblBitrate" Text="10000" Foreground="#C8CEDD" FontFamily="Consolas" Margin="8,0,0,0" VerticalAlignment="Center"/>
+                                    </StackPanel>
+
+                                    <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                                        <TextBlock Text="Resolución:" Foreground="#9EA3B8" VerticalAlignment="Center" Margin="0,3,8,0"/>
+                                        <ComboBox x:Name="cmbResolution" Width="140" SelectedIndex="0">
+                                            <ComboBoxItem>1920 x 1080</ComboBoxItem>
+                                            <ComboBoxItem>1280 x 720</ComboBoxItem>
+                                            <ComboBoxItem>960 x 540</ComboBoxItem>
+                                        </ComboBox>
+
+                                        <TextBlock Text="  •  FPS:" Foreground="#9EA3B8" Margin="12,0,8,0" VerticalAlignment="Center"/>
+                                        <ComboBox x:Name="cmbFps" Width="80" SelectedIndex="0">
+                                            <ComboBoxItem>60</ComboBoxItem>
+                                            <ComboBoxItem>45</ComboBoxItem>
+                                            <ComboBoxItem>30</ComboBoxItem>
+                                        </ComboBox>
+                                    </StackPanel>
+
+                                    <TextBlock x:Name="txtPhoneStreamStatus" Text="Estado: Inactivo"
+                                        Foreground="#9EA3B8" FontSize="12" Margin="0,10,0,0"/>
+
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,12,0,0">
+                                        <Button x:Name="btnRequestKeyframe" Content="Pedir Keyframe" Width="120" Height="30" Margin="0,0,8,0"
+                                            Click="btnRequestKeyframe_Click" Style="{StaticResource BtnNeutral}"/>
+                                        <Button x:Name="btnOpenTetheringHelp" Content="Ayuda USB tethering" Width="140" Height="30"
+                                            Click="btnOpenTetheringHelp_Click" Style="{StaticResource BtnNeutral}"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Border>
 
                             <!-- Display Section -->
                             <Border Background="#0E1120" BorderBrush="#1E2235" BorderThickness="1" CornerRadius="10" Padding="16" Margin="0,0,0,12">

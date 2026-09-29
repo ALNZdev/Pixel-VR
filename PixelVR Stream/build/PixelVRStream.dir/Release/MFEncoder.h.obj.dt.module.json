@@ -1,0 +1,14 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "PixelVRStream.dir\\Release\\MFEncoder.obj",
+            "outputs": [
+                "PixelVRStream.dir\\Release\\MFEncoder.h.obj.dt.module.json",
+                "PixelVRStream.dir\\Release\\MFEncoder.h.obj.dt.d.json"
+            ],
+            "requires": []
+        }
+    ]
+}

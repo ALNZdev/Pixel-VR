@@ -1,0 +1,10 @@
+^C:\USERS\GABUM\DESKTOP\PIXEL VR\PIXELVR STREAM\BUILD\CMAKEFILES\7EE62E01D919A2397E564DFA6E505159\GENERATE.STAMP.RULE
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" "-SC:/Users/gabum/Desktop/Pixel VR/PixelVR Stream" "-BC:/Users/gabum/Desktop/Pixel VR/PixelVR Stream/build" --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file "C:/Users/gabum/Desktop/Pixel VR/PixelVR Stream/build/PixelVRStream.slnx"
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

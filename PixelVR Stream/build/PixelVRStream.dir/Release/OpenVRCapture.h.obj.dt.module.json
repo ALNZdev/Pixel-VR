@@ -1,0 +1,14 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "PixelVRStream.dir\\Release\\OpenVRCapture.obj",
+            "outputs": [
+                "PixelVRStream.dir\\Release\\OpenVRCapture.h.obj.dt.module.json",
+                "PixelVRStream.dir\\Release\\OpenVRCapture.h.obj.dt.d.json"
+            ],
+            "requires": []
+        }
+    ]
+}
