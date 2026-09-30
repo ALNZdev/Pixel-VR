@@ -24,7 +24,7 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{63141D91-790A-34C4-9881-110E2CE697B3}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <WindowsTargetPlatformVersion>10.0.26100.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.28000.0</WindowsTargetPlatformVersion>
     <Platform>x64</Platform>
     <ProjectName>driver_pixelvr</ProjectName>
     <VCProjectUpgraderObjectName>NoUpgrade</VCProjectUpgraderObjectName>
@@ -87,7 +87,7 @@
   <PropertyGroup />
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\lib\openvr\headers;C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\lib\PSMoveClient_CAPI\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\src;C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\lib\openvr\headers;C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\lib\PSMoveClient_CAPI\include;C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\lib\AMF;C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\lib\AMF\core;C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\lib\AMF\components;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <BufferSecurityCheck></BufferSecurityCheck>
@@ -107,16 +107,16 @@
       <TreatWChar_tAsBuiltInType></TreatWChar_tAsBuiltInType>
       <UseFullPaths>false</UseFullPaths>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;_WIN32;CMAKE_INTDIR="Debug";driver_pixelvr_EXPORTS</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NOMINMAX;_WIN32;CMAKE_INTDIR="Debug";driver_pixelvr_EXPORTS</PreprocessorDefinitions>
       <ObjectFileName>$(IntDir)</ObjectFileName>
       <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
     </ClCompile>
     <ResourceCompile>
-      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_DEBUG;_WINDOWS;_WIN32;CMAKE_INTDIR=\"Debug\";driver_pixelvr_EXPORTS</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\lib\openvr\headers;C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\lib\PSMoveClient_CAPI\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_DEBUG;_WINDOWS;NOMINMAX;_WIN32;CMAKE_INTDIR=\"Debug\";driver_pixelvr_EXPORTS</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\src;C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\lib\openvr\headers;C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\lib\PSMoveClient_CAPI\include;C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\lib\AMF;C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\lib\AMF\core;C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\lib\AMF\components;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\lib\openvr\headers;C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\lib\PSMoveClient_CAPI\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\src;C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\lib\openvr\headers;C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\lib\PSMoveClient_CAPI\include;C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\lib\AMF;C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\lib\AMF\core;C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\lib\AMF\components;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -136,7 +136,7 @@ exit /b %1
 if %errorlevel% neq 0 goto :VCEnd</Command>
     </PreBuildEvent>
     <Link>
-      <AdditionalDependencies>lib\openvr\lib\win64\openvr_api.lib;lib\PSMoveClient_CAPI\lib\PSMoveClient_CAPI.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalDependencies>lib\openvr\lib\win64\openvr_api.lib;lib\PSMoveClient_CAPI\lib\PSMoveClient_CAPI.lib;d3d11.lib;dxgi.lib;dxguid.lib;d3dcompiler.lib;ws2_32.lib;mfplat.lib;mf.lib;mfuuid.lib;strmiids.lib;ole32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
       <DataExecutionPrevention></DataExecutionPrevention>
@@ -155,7 +155,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\lib\openvr\headers;C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\lib\PSMoveClient_CAPI\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\src;C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\lib\openvr\headers;C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\lib\PSMoveClient_CAPI\include;C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\lib\AMF;C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\lib\AMF\core;C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\lib\AMF\components;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <BufferSecurityCheck></BufferSecurityCheck>
@@ -174,18 +174,18 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
       <TreatWChar_tAsBuiltInType></TreatWChar_tAsBuiltInType>
       <UseFullPaths>false</UseFullPaths>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;_WIN32;CMAKE_INTDIR="Release";driver_pixelvr_EXPORTS</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;NOMINMAX;_WIN32;CMAKE_INTDIR="Release";driver_pixelvr_EXPORTS</PreprocessorDefinitions>
       <ObjectFileName>$(IntDir)</ObjectFileName>
       <DebugInformationFormat>
       </DebugInformationFormat>
       <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
     </ClCompile>
     <ResourceCompile>
-      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;_WIN32;CMAKE_INTDIR=\"Release\";driver_pixelvr_EXPORTS</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\lib\openvr\headers;C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\lib\PSMoveClient_CAPI\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;NOMINMAX;_WIN32;CMAKE_INTDIR=\"Release\";driver_pixelvr_EXPORTS</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\src;C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\lib\openvr\headers;C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\lib\PSMoveClient_CAPI\include;C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\lib\AMF;C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\lib\AMF\core;C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\lib\AMF\components;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\lib\openvr\headers;C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\lib\PSMoveClient_CAPI\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\src;C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\lib\openvr\headers;C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\lib\PSMoveClient_CAPI\include;C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\lib\AMF;C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\lib\AMF\core;C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\lib\AMF\components;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -205,7 +205,7 @@ exit /b %1
 if %errorlevel% neq 0 goto :VCEnd</Command>
     </PreBuildEvent>
     <Link>
-      <AdditionalDependencies>lib\openvr\lib\win64\openvr_api.lib;lib\PSMoveClient_CAPI\lib\PSMoveClient_CAPI.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalDependencies>lib\openvr\lib\win64\openvr_api.lib;lib\PSMoveClient_CAPI\lib\PSMoveClient_CAPI.lib;d3d11.lib;dxgi.lib;dxguid.lib;d3dcompiler.lib;ws2_32.lib;mfplat.lib;mf.lib;mfuuid.lib;strmiids.lib;ole32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
       <DataExecutionPrevention></DataExecutionPrevention>
@@ -224,7 +224,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\lib\openvr\headers;C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\lib\PSMoveClient_CAPI\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\src;C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\lib\openvr\headers;C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\lib\PSMoveClient_CAPI\include;C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\lib\AMF;C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\lib\AMF\core;C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\lib\AMF\components;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <BufferSecurityCheck></BufferSecurityCheck>
@@ -243,18 +243,18 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
       <TreatWChar_tAsBuiltInType></TreatWChar_tAsBuiltInType>
       <UseFullPaths>false</UseFullPaths>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;_WIN32;CMAKE_INTDIR="MinSizeRel";driver_pixelvr_EXPORTS</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;NOMINMAX;_WIN32;CMAKE_INTDIR="MinSizeRel";driver_pixelvr_EXPORTS</PreprocessorDefinitions>
       <ObjectFileName>$(IntDir)</ObjectFileName>
       <DebugInformationFormat>
       </DebugInformationFormat>
       <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
     </ClCompile>
     <ResourceCompile>
-      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;_WIN32;CMAKE_INTDIR=\"MinSizeRel\";driver_pixelvr_EXPORTS</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\lib\openvr\headers;C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\lib\PSMoveClient_CAPI\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;NOMINMAX;_WIN32;CMAKE_INTDIR=\"MinSizeRel\";driver_pixelvr_EXPORTS</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\src;C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\lib\openvr\headers;C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\lib\PSMoveClient_CAPI\include;C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\lib\AMF;C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\lib\AMF\core;C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\lib\AMF\components;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\lib\openvr\headers;C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\lib\PSMoveClient_CAPI\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\src;C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\lib\openvr\headers;C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\lib\PSMoveClient_CAPI\include;C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\lib\AMF;C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\lib\AMF\core;C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\lib\AMF\components;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -274,7 +274,7 @@ exit /b %1
 if %errorlevel% neq 0 goto :VCEnd</Command>
     </PreBuildEvent>
     <Link>
-      <AdditionalDependencies>lib\openvr\lib\win64\openvr_api.lib;lib\PSMoveClient_CAPI\lib\PSMoveClient_CAPI.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalDependencies>lib\openvr\lib\win64\openvr_api.lib;lib\PSMoveClient_CAPI\lib\PSMoveClient_CAPI.lib;d3d11.lib;dxgi.lib;dxguid.lib;d3dcompiler.lib;ws2_32.lib;mfplat.lib;mf.lib;mfuuid.lib;strmiids.lib;ole32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
       <DataExecutionPrevention></DataExecutionPrevention>
@@ -293,7 +293,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\lib\openvr\headers;C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\lib\PSMoveClient_CAPI\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\src;C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\lib\openvr\headers;C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\lib\PSMoveClient_CAPI\include;C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\lib\AMF;C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\lib\AMF\core;C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\lib\AMF\components;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <BufferSecurityCheck></BufferSecurityCheck>
@@ -313,16 +313,16 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
       <TreatWChar_tAsBuiltInType></TreatWChar_tAsBuiltInType>
       <UseFullPaths>false</UseFullPaths>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;_WIN32;CMAKE_INTDIR="RelWithDebInfo";driver_pixelvr_EXPORTS</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;NOMINMAX;_WIN32;CMAKE_INTDIR="RelWithDebInfo";driver_pixelvr_EXPORTS</PreprocessorDefinitions>
       <ObjectFileName>$(IntDir)</ObjectFileName>
       <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
     </ClCompile>
     <ResourceCompile>
-      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;_WIN32;CMAKE_INTDIR=\"RelWithDebInfo\";driver_pixelvr_EXPORTS</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\lib\openvr\headers;C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\lib\PSMoveClient_CAPI\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;NOMINMAX;_WIN32;CMAKE_INTDIR=\"RelWithDebInfo\";driver_pixelvr_EXPORTS</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\src;C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\lib\openvr\headers;C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\lib\PSMoveClient_CAPI\include;C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\lib\AMF;C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\lib\AMF\core;C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\lib\AMF\components;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\lib\openvr\headers;C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\lib\PSMoveClient_CAPI\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\src;C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\lib\openvr\headers;C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\lib\PSMoveClient_CAPI\include;C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\lib\AMF;C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\lib\AMF\core;C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\lib\AMF\components;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -342,7 +342,7 @@ exit /b %1
 if %errorlevel% neq 0 goto :VCEnd</Command>
     </PreBuildEvent>
     <Link>
-      <AdditionalDependencies>lib\openvr\lib\win64\openvr_api.lib;lib\PSMoveClient_CAPI\lib\PSMoveClient_CAPI.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalDependencies>lib\openvr\lib\win64\openvr_api.lib;lib\PSMoveClient_CAPI\lib\PSMoveClient_CAPI.lib;d3d11.lib;dxgi.lib;dxguid.lib;d3dcompiler.lib;ws2_32.lib;mfplat.lib;mf.lib;mfuuid.lib;strmiids.lib;ole32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
       <DataExecutionPrevention></DataExecutionPrevention>
@@ -431,6 +431,31 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClInclude Include="C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\src\vrmath.h" />
     <ClCompile Include="C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\src\psm_tracking_manager.cpp" />
     <ClInclude Include="C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\src\psm_tracking_manager.h" />
+    <ClInclude Include="C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\src\video_encoder.h" />
+    <ClCompile Include="C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\src\encoders\video_encoder_factory.cpp" />
+    <ClInclude Include="C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\src\encoders\video_encoder_nvidia.h" />
+    <ClCompile Include="C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\src\encoders\video_encoder_nvidia.cpp" />
+    <ClInclude Include="C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\src\encoders\video_encoder_amd.h" />
+    <ClCompile Include="C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\src\encoders\video_encoder_amd.cpp" />
+    <ClInclude Include="C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\src\encoders\video_encoder_intel.h" />
+    <ClCompile Include="C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\src\encoders\video_encoder_intel.cpp" />
+    <ClInclude Include="C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\src\d3d11_helper.h" />
+    <ClCompile Include="C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\src\d3d11_helper.cpp" />
+    <ClInclude Include="C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\src\direct_mode.h" />
+    <ClCompile Include="C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\src\direct_mode.cpp" />
+    <ClInclude Include="C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\src\sbs_composer.h" />
+    <ClCompile Include="C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\src\sbs_composer.cpp" />
+    <ClInclude Include="C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\src\streaming_server.h" />
+    <ClCompile Include="C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\src\streaming_server.cpp" />
+    <ClInclude Include="C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\src\config_manager.h" />
+    <ClCompile Include="C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\src\config_manager.cpp" />
+    <ClInclude Include="C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\src\display_mode.h" />
+    <ClCompile Include="C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\src\display_mode.cpp" />
+    <ClInclude Include="C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\src\stream_protocol.h" />
+    <ClInclude Include="C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\src\encoders\video_encoder_mf.h" />
+    <ClCompile Include="C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\src\encoders\video_encoder_mf.cpp" />
+    <ClInclude Include="C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\src\video_stream_pipeline.h" />
+    <ClCompile Include="C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\src\video_stream_pipeline.cpp" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

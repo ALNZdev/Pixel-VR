@@ -198,7 +198,7 @@ OPENVR_LIBRARIES:FILEPATH=C:/Users/gabum/Desktop/Pixel VR/PixelVR Driver/lib/ope
 PSMOVE_LIBRARIES:FILEPATH=C:/Users/gabum/Desktop/Pixel VR/PixelVR Driver/lib/PSMoveClient_CAPI/lib/PSMoveClient_CAPI.lib
 
 //Dependencies for the target
-driver_pixelvr_LIB_DEPENDS:STATIC=general;C:/Users/gabum/Desktop/Pixel VR/PixelVR Driver/lib/openvr/lib/win64/openvr_api.lib;general;C:/Users/gabum/Desktop/Pixel VR/PixelVR Driver/lib/PSMoveClient_CAPI/lib/PSMoveClient_CAPI.lib;
+driver_pixelvr_LIB_DEPENDS:STATIC=general;C:/Users/gabum/Desktop/Pixel VR/PixelVR Driver/lib/openvr/lib/win64/openvr_api.lib;general;C:/Users/gabum/Desktop/Pixel VR/PixelVR Driver/lib/PSMoveClient_CAPI/lib/PSMoveClient_CAPI.lib;general;d3d11.lib;general;dxgi.lib;general;dxguid.lib;general;d3dcompiler.lib;general;ws2_32.lib;general;mfplat.lib;general;mf.lib;general;mfuuid.lib;general;strmiids.lib;general;ole32.lib;
 
 //Value Computed by CMake
 pixelvr_BINARY_DIR:STATIC=C:/Users/gabum/Desktop/Pixel VR/PixelVR Driver

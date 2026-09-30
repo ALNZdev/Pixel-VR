@@ -1,6 +1,8 @@
 ﻿#include "hmd.h"
 
+#include "config_manager.h"
 #include "driverlog.h"
+#include "direct_mode.h"
 #include "main.h"
 
 #include <cmath>
@@ -128,6 +130,8 @@ void MyHMDDeviceDriver::ResetDisplayState()
     m_displayPropertiesApplied = false;
 }
 
+MyHMDDeviceDriver::~MyHMDDeviceDriver() = default;
+
 void MyHMDDeviceDriver::LoadSettings()
 {
     const int32_t configuredInterval =
@@ -211,6 +215,15 @@ void MyHMDDeviceDriver::LoadSettings()
                 "driver_pixelvr",
                 "directMode");
 
+            m_bAndroidMode =
+                ConfigManager::LoadDisplayMode() == DisplayModeSetting::Android;
+
+            if (m_bAndroidMode)
+            {
+                // Android uses IVRDriverDirectModeComponent, never the EDID path.
+                m_bDirectMode = false;
+            }
+
             m_nEdidVid = vr::VRSettings()->GetInt32(
                 "driver_pixelvr",
                 "edidVid");
@@ -228,7 +241,7 @@ void MyHMDDeviceDriver::LoadSettings()
             if (m_bDirectMode && (m_nEdidVid <= 0 || m_nEdidPid <= 0))
             {
                 DriverLog(
-                    "[HMD] ⚠️  Direct mode solicitado pero EDID inválido "
+                    "[HMD] AVISO: Direct mode solicitado pero EDID inválido "
                     "(VID=%d PID=%d). Usando modo desktop.",
                     m_nEdidVid,
                     m_nEdidPid);
@@ -243,7 +256,8 @@ void MyHMDDeviceDriver::LoadSettings()
             DriverLog(
                 "[HMD] Display config: mode=%s "
                 "window=(%d,%d %ux%u) render=%ux%u",
-                m_bDirectMode ? "direct" : "desktop",
+                m_bAndroidMode ? "android"
+                : (m_bDirectMode ? "direct" : "desktop"),
                 m_windowX,
                 m_windowY,
                 m_windowWidth,
@@ -411,7 +425,41 @@ void MyHMDDeviceDriver::ApplyDisplayProperties()
         vr::Prop_DisplayDebugMode_Bool,
         m_bDebugMode);
 
-    if (m_bDirectMode)
+    if (m_bAndroidMode)
+    {
+        /*
+         * ANDROID (USB): no hay monitor. SteamVR entrega los frames al driver
+         * mediante IVRDriverDirectModeComponent; el driver hace SBS + AMF + TCP.
+         * No se publica EDID y el driver genera los eventos de vsync.
+         */
+        vr::VRProperties()->SetBoolProperty(
+            m_ulPropertyContainer,
+            vr::Prop_IsOnDesktop_Bool,
+            false);
+
+        vr::VRProperties()->SetBoolProperty(
+            m_ulPropertyContainer,
+            vr::Prop_HasDriverDirectModeComponent_Bool,
+            true);
+
+        vr::VRProperties()->SetBoolProperty(
+            m_ulPropertyContainer,
+            vr::Prop_DriverDirectModeSendsVsyncEvents_Bool,
+            true);
+
+        vr::VRProperties()->SetInt32Property(
+            m_ulPropertyContainer,
+            vr::Prop_EdidVendorID_Int32,
+            0);
+
+        vr::VRProperties()->SetInt32Property(
+            m_ulPropertyContainer,
+            vr::Prop_EdidProductID_Int32,
+            0);
+
+        DriverLog("[HMD] Display mode: ANDROID (USB) - direct mode component");
+    }
+    else if (m_bDirectMode)
     {
         /*
          * DIRECT MODE: Visor como display real conectado a GPU
@@ -538,6 +586,34 @@ vr::EVRInitError MyHMDDeviceDriver::Activate(uint32_t unObjectId)
         "{pixelvr}/rendermodels/hmd");
 
     ApplyRuntimeProperties();
+
+    if (m_bAndroidMode)
+    {
+        PixelVRDirectMode::Options options;
+        options.eyeWidth = m_renderWidth;
+        options.eyeHeight = m_renderHeight;
+        options.displayHz = m_fDisplayFrequency;
+        options.stream = ConfigManager::LoadStreamConfig();
+        // Stream (SBS) size: streamWidth/streamHeight, or the "window" size (phone panel).
+        options.sbsWidth = options.stream.width ? options.stream.width : m_windowWidth;
+        options.sbsHeight = options.stream.height ? options.stream.height : m_windowHeight;
+
+        auto directMode = std::make_unique<PixelVRDirectMode>();
+        if (!directMode->Start(options))
+        {
+            DriverLog("[HMD] No se pudo iniciar el modo Android (ver mensajes [AMD]/[DirectMode])");
+            return vr::VRInitError_Driver_Failed;
+        }
+
+        // SteamVR must render on the same GPU that owns the shared textures / AMF encoder.
+        vr::VRProperties()->SetUint64Property(
+            m_ulPropertyContainer,
+            vr::Prop_GraphicsAdapterLuid_Uint64,
+            directMode->GetAdapterLuid());
+
+        m_directMode = std::move(directMode);
+    }
+
     ApplyDisplayProperties();
 
     DriverLog("[HMD] Activated successfully");
@@ -548,6 +624,11 @@ vr::EVRInitError MyHMDDeviceDriver::Activate(uint32_t unObjectId)
 void MyHMDDeviceDriver::Deactivate()
 {
     DriverLog("[HMD] Deactivated");
+    if (m_directMode)
+    {
+        m_directMode->Stop();
+        m_directMode.reset();
+    }
 
     m_unObjectId = vr::k_unTrackedDeviceIndexInvalid;
     m_ulPropertyContainer = vr::k_ulInvalidPropertyContainer;
@@ -589,7 +670,7 @@ void MyHMDDeviceDriver::GetWindowBounds(
 bool MyHMDDeviceDriver::IsDisplayOnDesktop()
 {
     std::lock_guard<std::mutex> lock(m_displayStateMutex);
-    return !m_bDirectMode;
+    return !m_bDirectMode && !m_bAndroidMode;
 }
 
 bool MyHMDDeviceDriver::IsDisplayRealDisplay()
@@ -851,6 +932,14 @@ void* MyHMDDeviceDriver::GetComponent(
         vr::IVRDisplayComponent_Version) == 0)
     {
         return static_cast<vr::IVRDisplayComponent*>(this);
+    }
+
+    if (m_directMode &&
+        _stricmp(
+            pchComponentNameAndVersion,
+            vr::IVRDriverDirectModeComponent_Version) == 0)
+    {
+        return static_cast<vr::IVRDriverDirectModeComponent*>(m_directMode.get());
     }
 
     return nullptr;

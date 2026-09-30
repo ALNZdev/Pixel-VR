@@ -5,3 +5,15 @@ C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\src\driver_factory.cpp;C:\Users\g
 C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\src\pipe_handler.cpp;C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\driver_pixelvr.dir\Release\pipe_handler.obj
 C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\src\driverlog.cpp;C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\driver_pixelvr.dir\Release\driverlog.obj
 C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\src\psm_tracking_manager.cpp;C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\driver_pixelvr.dir\Release\psm_tracking_manager.obj
+C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\src\encoders\video_encoder_factory.cpp;C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\driver_pixelvr.dir\Release\video_encoder_factory.obj
+C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\src\encoders\video_encoder_nvidia.cpp;C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\driver_pixelvr.dir\Release\video_encoder_nvidia.obj
+C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\src\encoders\video_encoder_amd.cpp;C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\driver_pixelvr.dir\Release\video_encoder_amd.obj
+C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\src\encoders\video_encoder_intel.cpp;C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\driver_pixelvr.dir\Release\video_encoder_intel.obj
+C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\src\d3d11_helper.cpp;C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\driver_pixelvr.dir\Release\d3d11_helper.obj
+C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\src\direct_mode.cpp;C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\driver_pixelvr.dir\Release\direct_mode.obj
+C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\src\sbs_composer.cpp;C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\driver_pixelvr.dir\Release\sbs_composer.obj
+C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\src\streaming_server.cpp;C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\driver_pixelvr.dir\Release\streaming_server.obj
+C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\src\config_manager.cpp;C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\driver_pixelvr.dir\Release\config_manager.obj
+C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\src\display_mode.cpp;C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\driver_pixelvr.dir\Release\display_mode.obj
+C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\src\encoders\video_encoder_mf.cpp;C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\driver_pixelvr.dir\Release\video_encoder_mf.obj
+C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\src\video_stream_pipeline.cpp;C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\driver_pixelvr.dir\Release\video_stream_pipeline.obj

@@ -1,9 +1,23 @@
-﻿  controllers.cpp
-  driver_factory.cpp
-  hmd.cpp
-C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\src\hmd.cpp(231,21): warning C4566: character represented by universal-character-name '\u26A0' cannot be represented in the current code page (1252)
-C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\src\hmd.cpp(231,21): warning C4566: character represented by universal-character-name '\uFE0F' cannot be represented in the current code page (1252)
+﻿  Building Custom Rule C:/Users/gabum/Desktop/Pixel VR/PixelVR Driver/CMakeLists.txt
   main.cpp
+  hmd.cpp
+  controllers.cpp
+  driver_factory.cpp
+  pipe_handler.cpp
+  driverlog.cpp
+  psm_tracking_manager.cpp
+  video_encoder_factory.cpp
+  video_encoder_nvidia.cpp
+  video_encoder_amd.cpp
+  video_encoder_intel.cpp
+  d3d11_helper.cpp
+  direct_mode.cpp
+  sbs_composer.cpp
+  streaming_server.cpp
+  config_manager.cpp
+  display_mode.cpp
+  video_encoder_mf.cpp
+  video_stream_pipeline.cpp
   Generating Code...
      Creating library C:/Users/gabum/Desktop/Pixel VR/PixelVR Driver/Release/driver_pixelvr.lib and object C:/Users/gabum/Desktop/Pixel VR/PixelVR Driver/Release/driver_pixelvr.exp
   driver_pixelvr.vcxproj -> C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\pixelvr\bin\win64\driver_pixelvr.dll

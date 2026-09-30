@@ -3,6 +3,7 @@
 #include "hmd.h"
 #include "pipe_handler.h"
 #include "driverlog.h"
+#include "video_stream_pipeline.h"
 
 PSMTrackingManager g_psmTracking;
 MyControllerDeviceDriver* g_pLeftController = nullptr;
@@ -52,6 +53,7 @@ void MyDeviceProvider::RunFrame() {
 }
 
 void MyDeviceProvider::Cleanup() {
+    VideoStreamPipeline::Instance().Stop();
     StopPipeThread();
     m_hmd_device.reset();
     my_left_controller_device_.reset();

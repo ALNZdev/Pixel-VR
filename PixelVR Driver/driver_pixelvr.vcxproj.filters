@@ -22,6 +22,42 @@
     <ClCompile Include="C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\src\psm_tracking_manager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\src\encoders\video_encoder_factory.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\src\encoders\video_encoder_nvidia.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\src\encoders\video_encoder_amd.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\src\encoders\video_encoder_intel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\src\d3d11_helper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\src\direct_mode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\src\sbs_composer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\src\streaming_server.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\src\config_manager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\src\display_mode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\src\encoders\video_encoder_mf.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\src\video_stream_pipeline.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\src\main.h">
@@ -43,6 +79,45 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\src\psm_tracking_manager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\src\video_encoder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\src\encoders\video_encoder_nvidia.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\src\encoders\video_encoder_amd.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\src\encoders\video_encoder_intel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\src\d3d11_helper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\src\direct_mode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\src\sbs_composer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\src\streaming_server.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\src\config_manager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\src\display_mode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\src\stream_protocol.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\src\encoders\video_encoder_mf.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\src\video_stream_pipeline.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

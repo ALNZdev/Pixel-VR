@@ -2,10 +2,13 @@
 
 #include <string>
 #include <chrono>
+#include <memory>
 #include <mutex>
 
 #include "openvr_driver.h"
 #include "pipe_handler.h"
+
+class PixelVRDirectMode;
 
 class MyHMDDeviceDriver final
     : public vr::ITrackedDeviceServerDriver
@@ -13,7 +16,7 @@ class MyHMDDeviceDriver final
 {
 public:
     MyHMDDeviceDriver();
-    ~MyHMDDeviceDriver() = default;
+    ~MyHMDDeviceDriver();
 
     // ITrackedDeviceServerDriver
     vr::EVRInitError Activate(uint32_t unObjectId) override;
@@ -103,6 +106,12 @@ private:
     // No debe cambiar durante la ejecución del compositor.
     bool m_bDebugMode = false;
     bool m_bDirectMode = false;
+
+    // Display Mode = "Android Phone (USB)": SteamVR renders through
+    // IVRDriverDirectModeComponent and the SBS frame is streamed to the phone.
+    // Mutually exclusive with m_bDirectMode (EDID/monitor direct).
+    bool m_bAndroidMode = false;
+    std::unique_ptr<PixelVRDirectMode> m_directMode;
 
     // EDID para modo direct (solo se usa si m_bDirectMode == true)
     int32_t m_nEdidVid = 0;

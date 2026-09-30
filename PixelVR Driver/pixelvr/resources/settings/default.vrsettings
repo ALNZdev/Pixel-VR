@@ -40,7 +40,16 @@
     "vsyncEnabled": true,
     "powerManagement": "full",
     "standbyTimeout": 300,
-    "settingsCheckInterval": 500
+    "settingsCheckInterval": 500,
+    "displayMode": "monitor",
+    "streamEnable": false,
+    "streamBindAll": false,
+    "streamPort": 9944,
+    "streamBitrateKbps": 30000,
+    "streamFramerate": 0,
+    "streamCodec": "h264",
+    "streamWidth": 0,
+    "streamHeight": 0
   },
   "driver_pixelvr_left_controller": {
     "serialNumber": "PixelVR_LEFT_001",
