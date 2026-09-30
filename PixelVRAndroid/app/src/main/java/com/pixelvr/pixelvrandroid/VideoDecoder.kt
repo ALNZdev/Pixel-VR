@@ -1,48 +1,43 @@
-package com.pixelvr.pixelvrandroid
+package com.pixelvr
 
 import android.media.MediaCodec
 import android.media.MediaCodecInfo
-import android.media.MediaCodecList
 import android.media.MediaFormat
 import android.util.Log
 import android.view.Surface
-import java.nio.ByteBuffer
 
 class VideoDecoder(private val surface: Surface) {
     private var codec: MediaCodec? = null
-    private var width = 0
-    private var height = 0
+    private var currentCodec = -1
 
-    fun decodeFrame(buffer: ByteArray, offset: Int, length: Int, codecType: Int) {
-        try {
-            // Inicializar codec si es necesario
-            if (codec == null) {
-                initCodec(1920, 1080, codecType)
-            }
+    fun decodeFrame(payload: ByteArray, codecType: Int) {
+        if (codec == null || currentCodec != codecType) {
+            initCodec(codecType)
+        }
 
-            val inputBufferIndex = codec!!.dequeueInputBuffer(10000)
-            if (inputBufferIndex >= 0) {
-                val inputBuffer = codec!!.getInputBuffer(inputBufferIndex)
-                inputBuffer!!.clear()
-                inputBuffer.put(buffer, offset, length)
-                codec!!.queueInputBuffer(inputBufferIndex, 0, length, 0, 0)
-            }
+        val mediaCodec = codec ?: return
 
-            // Decodificar
-            val outputBufferIndex = codec!!.dequeueOutputBuffer(MediaCodec.BufferInfo(), 0)
-            if (outputBufferIndex >= 0) {
-                codec!!.releaseOutputBuffer(outputBufferIndex, true)
+        val inIndex = mediaCodec.dequeueInputBuffer(10000)
+        if (inIndex >= 0) {
+            val inputBuffer = mediaCodec.getInputBuffer(inIndex)
+            if (inputBuffer != null) {
+                inputBuffer.clear()
+                inputBuffer.put(payload)
+                mediaCodec.queueInputBuffer(inIndex, 0, payload.size, 0, 0)
             }
-        } catch (e: Exception) {
-            Log.e(TAG, "Error decodificando frame: ${e.message}", e)
+        }
+
+        val info = MediaCodec.BufferInfo()
+        val outIndex = mediaCodec.dequeueOutputBuffer(info, 0)
+        if (outIndex >= 0) {
+            mediaCodec.releaseOutputBuffer(outIndex, true)
         }
     }
 
-    private fun initCodec(width: Int, height: Int, codecType: Int) {
+    private fun initCodec(codecType: Int) {
         release()
 
-        this.width = width
-        this.height = height
+        currentCodec = codecType
 
         val mimeType = if (codecType == PacketParser.CODEC_HEVC) {
             "video/hevc"
@@ -50,24 +45,31 @@ class VideoDecoder(private val surface: Surface) {
             "video/avc"
         }
 
-        Log.d(TAG, "Inicializando MediaCodec: $mimeType ${width}x${height}")
+        Log.d(TAG, "Initializing decoder $mimeType")
 
-        val format = MediaFormat.createVideoFormat(mimeType, width, height)
-        format.setInteger(MediaFormat.KEY_COLOR_FORMAT, MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface)
+        try {
+            val format = MediaFormat.createVideoFormat(mimeType, 1920, 1080)
+            format.setInteger(
+                MediaFormat.KEY_COLOR_FORMAT,
+                MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface
+            )
 
-        codec = MediaCodec.createDecoderByType(mimeType)
-        codec!!.configure(format, surface, null, 0)
-        codec!!.start()
+            codec = MediaCodec.createDecoderByType(mimeType)
+            codec?.configure(format, surface, null, 0)
+            codec?.start()
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to init codec: ${e.message}", e)
+        }
     }
 
     fun release() {
         try {
             codec?.stop()
             codec?.release()
-        } catch (e: Exception) {
-            Log.e(TAG, "Error liberando codec: ${e.message}")
+        } catch (_: Exception) {
         }
         codec = null
+        currentCodec = -1
     }
 
     companion object {

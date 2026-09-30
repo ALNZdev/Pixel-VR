@@ -1,17 +1,14 @@
-package com.pixelvr.pixelvrandroid
+package com.pixelvr
+
+import android.app.Activity
 import android.os.Bundle
 import android.util.Log
 import android.view.SurfaceHolder
 import android.view.SurfaceView
-import androidx.appcompat.app.AppCompatActivity
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
-class MainActivity : AppCompatActivity(), SurfaceHolder.Callback {
+class MainActivity : Activity(), SurfaceHolder.Callback {
     private lateinit var surfaceView: SurfaceView
     private var streamReceiver: StreamReceiver? = null
-    private var videoDecoder: VideoDecoder? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -20,18 +17,18 @@ class MainActivity : AppCompatActivity(), SurfaceHolder.Callback {
         surfaceView = findViewById(R.id.surfaceView)
         surfaceView.holder.addCallback(this)
 
-        Log.d(TAG, "PixelVR Android iniciado")
+        Log.d(TAG, "PixelVR Android started")
     }
 
     override fun surfaceCreated(holder: SurfaceHolder) {
-        Log.d(TAG, "Surface creada")
+        Log.d(TAG, "Surface created")
 
-        videoDecoder = VideoDecoder(holder.surface)
-        streamReceiver = StreamReceiver(videoDecoder!!)
+        val decoder = VideoDecoder(holder.surface)
+        streamReceiver = StreamReceiver(decoder)
 
-        CoroutineScope(Dispatchers.Default).launch {
-            streamReceiver!!.start()
-        }
+        Thread {
+            streamReceiver?.start()
+        }.start()
     }
 
     override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {
@@ -39,18 +36,16 @@ class MainActivity : AppCompatActivity(), SurfaceHolder.Callback {
     }
 
     override fun surfaceDestroyed(holder: SurfaceHolder) {
-        Log.d(TAG, "Surface destruida")
+        Log.d(TAG, "Surface destroyed")
         streamReceiver?.stop()
-        videoDecoder?.release()
     }
 
     override fun onDestroy() {
         super.onDestroy()
         streamReceiver?.stop()
-        videoDecoder?.release()
     }
 
     companion object {
         private const val TAG = "PixelVR"
     }
-}}
+}

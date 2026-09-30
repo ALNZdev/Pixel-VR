@@ -1,71 +1,72 @@
-package com.pixelvr.pixelvrandroid
+package com.pixelvr
 
 import android.util.Log
 import java.io.InputStream
 import java.net.Socket
 
-class StreamReceiver(private val videoDecoder: VideoDecoder) {
+class StreamReceiver(private val decoder: VideoDecoder) {
     private var socket: Socket? = null
     private var running = true
 
     fun start() {
         try {
-            Log.d(TAG, "Conectando a 127.0.0.1:9944...")
-            socket = Socket("127.0.0.1", 9944)
-            socket!!.noDelay = true  // TCP_NODELAY
+            Log.d(TAG, "Connecting to 127.0.0.1:9944")
 
-            val inputStream = socket!!.getInputStream()
-            val buffer = ByteArray(28 + (16 * 1024 * 1024))  // header + max payload
+            socket = Socket("127.0.0.1", 9944)
+            socket?.tcpNoDelay = true
+
+            val input = socket?.getInputStream() ?: return
 
             while (running) {
-                // Leer header (28 bytes)
-                if (!readFully(inputStream, buffer, 0, 28)) {
-                    Log.w(TAG, "Conexión cerrada por servidor")
+                val header = ByteArray(28)
+                if (!readFully(input, header, 28)) {
+                    Log.w(TAG, "Connection closed by server")
                     break
                 }
 
-                // Parsear header
-                val packet = PacketParser.parseHeader(buffer, 0)
-                if (packet == null) {
-                    Log.e(TAG, "Header inválido, resincronizando...")
-                    // TODO: resync (buscar magic en el stream)
+                val frame = PacketParser.parseHeader(header, 0)
+                if (frame == null) {
+                    Log.w(TAG, "Invalid header, skipping packet")
                     continue
                 }
 
-                Log.d(TAG, "Frame ${packet.frameId}: ${packet.width}x${packet.height}, " +
-                        "payload ${packet.payloadBytes} bytes, keyframe=${packet.isKeyframe}")
-
-                // Leer payload
-                if (!readFully(inputStream, buffer, 28, packet.payloadBytes)) {
-                    Log.w(TAG, "Payload incompleto, reconectando...")
+                val payload = ByteArray(frame.payloadBytes)
+                if (!readFully(input, payload, frame.payloadBytes)) {
+                    Log.w(TAG, "Incomplete payload")
                     break
                 }
 
-                // Decodificar
-                videoDecoder.decodeFrame(buffer, 28, packet.payloadBytes, packet.codec)
+                Log.d(TAG, "Frame ${frame.frameId} ${frame.width}x${frame.height} codec=${frame.codec} key=${frame.isKeyframe}")
+                decoder.decodeFrame(payload, frame.codec)
             }
         } catch (e: Exception) {
-            Log.e(TAG, "Error en StreamReceiver: ${e.message}", e)
+            Log.e(TAG, "StreamReceiver error: ${e.message}", e)
         } finally {
-            socket?.close()
-            Log.d(TAG, "StreamReceiver detenido")
+            running = false
+            try {
+                socket?.close()
+            } catch (_: Exception) {
+            }
+            Log.d(TAG, "StreamReceiver stopped")
         }
     }
 
     fun stop() {
         running = false
-        socket?.close()
+        try {
+            socket?.close()
+        } catch (_: Exception) {
+        }
     }
 
-    private fun readFully(inputStream: InputStream, buffer: ByteArray, offset: Int, length: Int): Boolean {
-        var bytesRead = 0
-        while (bytesRead < length) {
-            val n = inputStream.read(buffer, offset + bytesRead, length - bytesRead)
-            if (n == -1) {
-                Log.w(TAG, "EOF alcanzado")
+    private fun readFully(input: InputStream, buffer: ByteArray, length: Int): Boolean {
+        var total = 0
+        while (total < length) {
+            val read = input.read(buffer, total, length - total)
+            if (read == -1) {
                 return false
             }
-            bytesRead += n
+            total += read
         }
         return true
     }

@@ -1,50 +1,54 @@
-package com.pixelvr.pixelvrandroid
+package com.pixelvr
 
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
 object PacketParser {
-    private const val PACKET_MAGIC = 0x46525650U  // 'P','V','R','F'
+    private const val PACKET_MAGIC = 0x46525650 // 'PVRF'
+
     const val CODEC_H264 = 0
     const val CODEC_HEVC = 1
     const val FLAG_KEYFRAME = 1
 
-    data class StreamPacket(
-        val magic: UInt,
-        val frameId: UInt,
-        val timestampUs: ULong,
-        val width: UShort,
-        val height: UShort,
-        val codec: UByte,
-        val flags: UByte,
-        val payloadBytes: UInt,
+    data class ParsedFrame(
+        val frameId: Int,
+        val timestampUs: Long,
+        val width: Int,
+        val height: Int,
+        val codec: Int,
+        val flags: Int,
+        val payloadBytes: Int,
         val isKeyframe: Boolean
     )
 
-    fun parseHeader(buffer: ByteArray, offset: Int): StreamPacket? {
-        if (buffer.size < offset + 28) {
+    fun parseHeader(buffer: ByteArray, offset: Int): ParsedFrame? {
+        if (buffer.size - offset < 28) return null
+
+        val bb = ByteBuffer.wrap(buffer, offset, 28).order(ByteOrder.LITTLE_ENDIAN)
+
+        val magic = bb.int.toLong() and 0xffffffffL
+        if (magic != PACKET_MAGIC.toLong()) {
             return null
         }
 
-        val bb = ByteBuffer.wrap(buffer, offset, 28).apply {
-            order(ByteOrder.LITTLE_ENDIAN)
-        }
+        val frameId = bb.int
+        val timestampUs = bb.long
+        val width = bb.short.toInt() and 0xffff
+        val height = bb.short.toInt() and 0xffff
+        val codec = bb.get().toInt() and 0xff
+        val flags = bb.get().toInt() and 0xff
+        bb.short // reserved
+        val payloadBytes = bb.int
 
-        val magic = bb.int.toUInt()
-        if (magic != PACKET_MAGIC) {
-            return null
-        }
-
-        return StreamPacket(
-            magic = magic,
-            frameId = bb.int.toUInt(),
-            timestampUs = bb.long.toULong(),
-            width = bb.short.toUShort(),
-            height = bb.short.toUShort(),
-            codec = bb.get().toUByte(),
-            flags = bb.get().toUByte(),
-            payloadBytes = bb.int.toUInt(),
-            isKeyframe = (bb.get(-2).toInt() and FLAG_KEYFRAME) != 0
+        return ParsedFrame(
+            frameId = frameId,
+            timestampUs = timestampUs,
+            width = width,
+            height = height,
+            codec = codec,
+            flags = flags,
+            payloadBytes = payloadBytes,
+            isKeyframe = (flags and FLAG_KEYFRAME) != 0
         )
     }
 }
