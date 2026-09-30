@@ -14,6 +14,7 @@ using Color = System.Windows.Media.Color;
 using MessageBox = System.Windows.MessageBox;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Linq;
 
 namespace PixelVR
 {
@@ -21,6 +22,8 @@ namespace PixelVR
     {
         private PipeManager? pipeManager;
         private USBCDCManager? usbcdcManager;
+        private AdbManager? adbManager;
+
         private uint leftButtons = 0;
         private uint rightButtons = 0;
         private bool driverTestActive = false;
@@ -29,10 +32,6 @@ namespace PixelVR
         private DriverSettingsManager? settingsManager;
         private DriverSettings? currentSettings;
 
-        // Evita que los eventos ValueChanged/Checked disparados por WPF durante
-        // InitializeComponent() (al setear los valores iniciales del XAML) intenten
-        // tocar controles que todavía no fueron asignados (ej. lblConfigStatus),
-        // lo cual provoca NullReferenceException al abrir la app.
         private bool uiReady = false;
         private const string DriverSettingsPath = @"C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\pixelvr\resources\settings\default.vrsettings";
 
@@ -48,6 +47,8 @@ namespace PixelVR
             InitializeControllerData();
             InitializeUSBCDC();
 
+            adbManager = new AdbManager();
+
             settingsManager = new DriverSettingsManager(DriverSettingsPath);
             currentSettings = settingsManager.LoadSettings();
             InitializeSettingsUI();
@@ -55,16 +56,12 @@ namespace PixelVR
             SelectNavSection("main");
             this.Loaded += MainWindow_Loaded;
 
-            // A partir de acá sí es seguro reaccionar a los eventos de los
-            // controles (sliders, checkboxes, etc.) generados por el usuario.
             uiReady = true;
         }
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
         }
-
-        // ==================== CONFIGURACIÓN DRIVER ====================
 
         private void InitializeSettingsUI()
         {
@@ -108,6 +105,44 @@ namespace PixelVR
             lblTrackingScale.Text = currentSettings.TrackingScale.ToString("F1");
             lblLeftHaptic.Text = currentSettings.LeftHapticAmplitude.ToString("F1");
             lblRightHaptic.Text = currentSettings.RightHapticAmplitude.ToString("F1");
+
+            // Display Mode UI (Initialize after all XAML controls are loaded)
+            if (radioPcMonitor != null && radioAndroidUsb != null)
+            {
+                radioPcMonitor.IsChecked = string.Equals(currentSettings.DisplayMode, "monitor", StringComparison.OrdinalIgnoreCase) ||
+                                          string.IsNullOrWhiteSpace(currentSettings.DisplayMode);
+                radioAndroidUsb.IsChecked = string.Equals(currentSettings.DisplayMode, "android", StringComparison.OrdinalIgnoreCase);
+
+                if (txtAdbPath != null)
+                    txtAdbPath.Text = string.IsNullOrWhiteSpace(currentSettings.AdbPath)
+                        ? (adbManager?.AdbPath ?? "")
+                        : currentSettings.AdbPath;
+
+                if (txtAndroidSerial != null)
+                    txtAndroidSerial.Text = currentSettings.AndroidDeviceSerial;
+
+                if (txtStreamingPort != null)
+                    txtStreamingPort.Text = currentSettings.StreamPort.ToString();
+
+                if (txtStreamingBitrate != null)
+                    txtStreamingBitrate.Text = currentSettings.StreamBitrateKbps.ToString();
+
+                if (txtStreamWidth != null)
+                    txtStreamWidth.Text = currentSettings.StreamWidth.ToString();
+
+                if (txtStreamHeight != null)
+                    txtStreamHeight.Text = currentSettings.StreamHeight.ToString();
+
+                if (cmbAndroidCodec != null)
+                {
+                    cmbAndroidCodec.Items.Clear();
+                    cmbAndroidCodec.Items.Add("H264");
+                    cmbAndroidCodec.Items.Add("HEVC");
+                    cmbAndroidCodec.SelectedIndex = string.Equals(currentSettings.StreamCodec, "hevc", StringComparison.OrdinalIgnoreCase) ? 1 : 0;
+                }
+
+                UpdateAndroidUiState();
+            }
 
             lblConfigStatus.Text = "Configuración cargada";
             lblConfigStatus.Foreground = new SolidColorBrush(Color.FromRgb(34, 201, 147));
@@ -184,6 +219,37 @@ namespace PixelVR
                 currentSettings.EnableAsyncReprojection = chkAsyncReprojection.IsChecked == true;
                 currentSettings.VsyncEnabled = chkVsyncEnabled.IsChecked == true;
 
+                // Android mode settings
+                currentSettings.DisplayMode = radioAndroidUsb.IsChecked == true ? "android" : "monitor";
+                currentSettings.StreamEnable = radioAndroidUsb.IsChecked == true;
+                currentSettings.StreamBindAll = false;
+
+                currentSettings.AdbPath = txtAdbPath?.Text.Trim() ?? "";
+                currentSettings.AndroidDeviceSerial = txtAndroidSerial?.Text.Trim() ?? "";
+
+                if (int.TryParse(txtStreamingPort?.Text, out int port))
+                    currentSettings.StreamPort = port;
+                else
+                    currentSettings.StreamPort = 9944;
+
+                if (int.TryParse(txtStreamingBitrate?.Text, out int bitrate))
+                    currentSettings.StreamBitrateKbps = bitrate;
+                else
+                    currentSettings.StreamBitrateKbps = 15000;
+
+                if (int.TryParse(txtStreamWidth?.Text, out int streamWidth))
+                    currentSettings.StreamWidth = streamWidth;
+                else
+                    currentSettings.StreamWidth = 1920;
+
+                if (int.TryParse(txtStreamHeight?.Text, out int streamHeight))
+                    currentSettings.StreamHeight = streamHeight;
+                else
+                    currentSettings.StreamHeight = 1080;
+
+                currentSettings.StreamCodec = cmbAndroidCodec?.SelectedIndex == 1 ? "hevc" : "h264";
+                currentSettings.StreamFramerate = 90;
+
                 if (settingsManager == null)
                     settingsManager = new DriverSettingsManager(DriverSettingsPath);
 
@@ -209,6 +275,76 @@ namespace PixelVR
 
                 lblConfigStatus.Text = "Valores predeterminados restaurados";
                 lblConfigStatus.Foreground = new SolidColorBrush(Color.FromRgb(250, 180, 50));
+            }
+        }
+
+        private void UpdateAndroidUiState()
+        {
+            // Safety check: ensure all controls exist
+            if (radioPcMonitor == null || radioAndroidUsb == null ||
+                txtAdbPath == null || txtAndroidSerial == null ||
+                txtStreamingPort == null || txtStreamingBitrate == null ||
+                txtStreamWidth == null || txtStreamHeight == null ||
+                cmbAndroidCodec == null)
+                return;
+
+            bool androidMode = radioAndroidUsb.IsChecked == true;
+
+            txtAdbPath.IsEnabled = androidMode;
+            txtAndroidSerial.IsEnabled = androidMode;
+            txtStreamingPort.IsEnabled = androidMode;
+            txtStreamingBitrate.IsEnabled = androidMode;
+            txtStreamWidth.IsEnabled = androidMode;
+            txtStreamHeight.IsEnabled = androidMode;
+            cmbAndroidCodec.IsEnabled = androidMode;
+
+            if (btnScanAndroidDevices != null)
+                btnScanAndroidDevices.IsEnabled = androidMode;
+        }
+
+        private void radioPcMonitor_Checked(object sender, RoutedEventArgs e)
+        {
+            if (!uiReady)
+                return;
+
+            UpdateAndroidUiState();
+            UpdateSettingsLabels();
+        }
+
+        private void radioAndroidUsb_Checked(object sender, RoutedEventArgs e)
+        {
+            if (!uiReady)
+                return;
+
+            UpdateAndroidUiState();
+            UpdateSettingsLabels();
+
+            if (adbManager != null && adbManager.IsAvailable && txtAdbPath != null)
+            {
+                txtAdbPath.Text = adbManager.AdbPath ?? txtAdbPath.Text;
+            }
+        }
+
+        private void btnScanAndroidDevices_Click(object sender, RoutedEventArgs e)
+        {
+            if (adbManager == null || !adbManager.IsAvailable)
+            {
+                MessageBox.Show("No se encontró adb.exe. Añádelo al PATH o configura la ruta manualmente.", "ADB", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            var devices = adbManager.GetConnectedDevices();
+            if (devices.Length == 0)
+            {
+                MessageBox.Show("No hay teléfonos Android conectados por USB.", "ADB", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            if (txtAndroidSerial != null)
+            {
+                txtAndroidSerial.Text = devices[0];
+                var info = adbManager.GetDeviceInfo(devices[0]);
+                MessageBox.Show($"Dispositivo detectado:\n{devices[0]}\n\n{info}", "ADB", MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
 
@@ -405,8 +541,7 @@ namespace PixelVR
                     return false;
                 }
 
-                var selectedScreen =
-                    screens[hmdScreenComboBox.SelectedIndex];
+                var selectedScreen = screens[hmdScreenComboBox.SelectedIndex];
 
                 int modeIndex = hmsScreenModeComboBox.SelectedIndex;
 
@@ -703,8 +838,7 @@ namespace PixelVR
                     return;
                 }
 
-                var selectedScreen =
-                    screens[hmdScreenComboBox.SelectedIndex];
+                var selectedScreen = screens[hmdScreenComboBox.SelectedIndex];
 
                 int modeIndex = hmsScreenModeComboBox.SelectedIndex;
 
@@ -1007,6 +1141,11 @@ namespace PixelVR
             pipeManager?.Dispose();
             pipeManager = null;
             usbcdcManager?.Disconnect();
+
+            if (adbManager != null && radioAndroidUsb?.IsChecked == true)
+            {
+                adbManager.ClearAllReversals();
+            }
         }
 
         private void CloseSteamVR()
@@ -1072,119 +1211,195 @@ namespace PixelVR
             }
         }
 
-        private void sliderDisplayFreq_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e) { if (lblDisplayFreq == null) return; lblDisplayFreq.Text = sliderDisplayFreq.Value.ToString("F0"); UpdateSettingsLabels(); }
-        private void sliderIpd_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e) { if (lblIpd == null) return; lblIpd.Text = sliderIpd.Value.ToString("F3"); UpdateSettingsLabels(); }
-        private void sliderFovLeft_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e) { if (lblFovLeft == null) return; lblFovLeft.Text = sliderFovLeft.Value.ToString("F0"); UpdateSettingsLabels(); }
-        private void sliderFovRight_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e) { if (lblFovRight == null) return; lblFovRight.Text = sliderFovRight.Value.ToString("F0"); UpdateSettingsLabels(); }
-        private void sliderFovTop_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e) { if (lblFovTop == null) return; lblFovTop.Text = sliderFovTop.Value.ToString("F0"); UpdateSettingsLabels(); }
-        private void sliderFovBottom_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e) { if (lblFovBottom == null) return; lblFovBottom.Text = sliderFovBottom.Value.ToString("F0"); UpdateSettingsLabels(); }
-        private void sliderTrackingScale_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e) { if (lblTrackingScale == null) return; lblTrackingScale.Text = sliderTrackingScale.Value.ToString("F1"); UpdateSettingsLabels(); }
-        private void sliderLeftHaptic_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e) { if (lblLeftHaptic == null) return; lblLeftHaptic.Text = sliderLeftHaptic.Value.ToString("F1"); UpdateSettingsLabels(); }
-        private void sliderRightHaptic_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e) { if (lblRightHaptic == null) return; lblRightHaptic.Text = sliderRightHaptic.Value.ToString("F1"); UpdateSettingsLabels(); }
-    
-        private bool ConfigureDisplaySettingsForSteamVR(
-    System.Windows.Forms.Screen selectedScreen,
-    bool requestedDirectMode,
-    bool debugMode,
-    out bool useDirectMode)
-{
-    useDirectMode = false;
-
-    if (selectedScreen == null)
-    {
-        MessageBox.Show(
-            "No se seleccionó una pantalla válida.",
-            "PixelVR",
-            MessageBoxButton.OK,
-            MessageBoxImage.Warning);
-
-        return false;
-    }
-
-    var monitorIds =
-        MonitorHardwareID.GetIdsFromDeviceName(
-            selectedScreen.DeviceName);
-
-    if (requestedDirectMode)
-    {
-        if (!monitorIds.IsValid)
+        private void sliderDisplayFreq_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            /*
-             * Nunca reutilizar un VID/PID antiguo de otro monitor.
-             * En este caso se fuerza el modo ventana.
-             */
-            MessageBox.Show(
-                "No se pudo obtener un VID/PID válido para la pantalla seleccionada.\n\n" +
-                "El modo directo requiere un monitor físico correctamente identificado. " +
-                "Se utilizará modo ventana.",
-                "Direct Mode no disponible",
-                MessageBoxButton.OK,
-                MessageBoxImage.Warning);
-
-            useDirectMode = false;
+            if (lblDisplayFreq == null) return;
+            lblDisplayFreq.Text = sliderDisplayFreq.Value.ToString("F0");
+            UpdateSettingsLabels();
         }
-        else
+
+        private void sliderIpd_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            useDirectMode = true;
+            if (lblIpd == null) return;
+            lblIpd.Text = sliderIpd.Value.ToString("F3");
+            UpdateSettingsLabels();
+        }
+
+        private void sliderFovLeft_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (lblFovLeft == null) return;
+            lblFovLeft.Text = sliderFovLeft.Value.ToString("F0");
+            UpdateSettingsLabels();
+        }
+
+        private void sliderFovRight_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (lblFovRight == null) return;
+            lblFovRight.Text = sliderFovRight.Value.ToString("F0");
+            UpdateSettingsLabels();
+        }
+
+        private void sliderFovTop_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (lblFovTop == null) return;
+            lblFovTop.Text = sliderFovTop.Value.ToString("F0");
+            UpdateSettingsLabels();
+        }
+
+        private void sliderFovBottom_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (lblFovBottom == null) return;
+            lblFovBottom.Text = sliderFovBottom.Value.ToString("F0");
+            UpdateSettingsLabels();
+        }
+
+        private void sliderTrackingScale_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (lblTrackingScale == null) return;
+            lblTrackingScale.Text = sliderTrackingScale.Value.ToString("F1");
+            UpdateSettingsLabels();
+        }
+
+        private void sliderLeftHaptic_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (lblLeftHaptic == null) return;
+            lblLeftHaptic.Text = sliderLeftHaptic.Value.ToString("F1");
+            UpdateSettingsLabels();
+        }
+
+        private void sliderRightHaptic_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (lblRightHaptic == null) return;
+            lblRightHaptic.Text = sliderRightHaptic.Value.ToString("F1");
+            UpdateSettingsLabels();
+        }
+
+        private bool ConfigureDisplaySettingsForSteamVR(
+            System.Windows.Forms.Screen selectedScreen,
+            bool requestedDirectMode,
+            bool debugMode,
+            out bool useDirectMode)
+        {
+            useDirectMode = false;
+
+            // Android mode
+            if (radioAndroidUsb?.IsChecked == true)
+            {
+                DriverSettings settings = settingsManager?.LoadSettings() ?? new DriverSettings();
+
+                settings.DisplayMode = "android";
+                settings.DebugMode = debugMode;
+                settings.DirectMode = false;
+                settings.EdidVid = 0;
+                settings.EdidPid = 0;
+
+                settings.StreamEnable = true;
+                settings.StreamBindAll = false;
+                settings.StreamPort = int.TryParse(txtStreamingPort?.Text, out int p) ? p : 9944;
+                settings.StreamBitrateKbps = int.TryParse(txtStreamingBitrate?.Text, out int b) ? b : 15000;
+                settings.StreamFramerate = 90;
+                settings.StreamCodec = cmbAndroidCodec?.SelectedIndex == 1 ? "hevc" : "h264";
+                settings.StreamWidth = int.TryParse(txtStreamWidth?.Text, out int sw) ? sw : 1920;
+                settings.StreamHeight = int.TryParse(txtStreamHeight?.Text, out int sh) ? sh : 1080;
+
+                settings.WindowX = 0;
+                settings.WindowY = 0;
+                settings.WindowWidth = settings.StreamWidth;
+                settings.WindowHeight = settings.StreamHeight;
+                settings.RenderWidth = settings.StreamWidth;
+                settings.RenderHeight = settings.StreamHeight;
+
+                settingsManager ??= new DriverSettingsManager(DriverSettingsPath);
+                settingsManager.SaveSettings(settings);
+
+                return true;
+            }
+
+            // PC Monitor mode
+            if (selectedScreen == null)
+            {
+                MessageBox.Show(
+                    "No se seleccionó una pantalla válida.",
+                    "PixelVR",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning);
+
+                return false;
+            }
+
+            var monitorIds = MonitorHardwareID.GetIdsFromDeviceName(selectedScreen.DeviceName);
+
+            if (requestedDirectMode)
+            {
+                if (!monitorIds.IsValid)
+                {
+                    MessageBox.Show(
+                        "No se pudo obtener un VID/PID válido para la pantalla seleccionada.\n\n" +
+                        "El modo directo requiere un monitor físico correctamente identificado. " +
+                        "Se utilizará modo ventana.",
+                        "Direct Mode no disponible",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Warning);
+
+                    useDirectMode = false;
+                }
+                else
+                {
+                    useDirectMode = true;
+
+                    Debug.WriteLine(
+                        $"Direct Mode: monitor={selectedScreen.DeviceName}, " +
+                        $"VID=0x{monitorIds.VendorID:X4}, " +
+                        $"PID=0x{monitorIds.ProductID:X4}");
+                }
+            }
+
+            DriverSettings settings2 =
+                settingsManager?.LoadSettings()
+                ?? new DriverSettings();
+
+            settings2.WindowX = selectedScreen.Bounds.X;
+            settings2.WindowY = selectedScreen.Bounds.Y;
+            settings2.WindowWidth = selectedScreen.Bounds.Width;
+            settings2.WindowHeight = selectedScreen.Bounds.Height;
+
+            settings2.RenderWidth = selectedScreen.Bounds.Width;
+            settings2.RenderHeight = selectedScreen.Bounds.Height;
+
+            settings2.DebugMode = debugMode;
+            settings2.DisplayMode = "monitor";
+            settings2.DirectMode = useDirectMode;
+
+            settings2.StreamEnable = false;
+            settings2.StreamBindAll = false;
+
+            settings2.EdidVid = useDirectMode
+                ? monitorIds.VendorID
+                : 0;
+
+            settings2.EdidPid = useDirectMode
+                ? monitorIds.ProductID
+                : 0;
+
+            settingsManager ??=
+                new DriverSettingsManager(DriverSettingsPath);
+
+            settingsManager.SaveSettings(settings2);
 
             Debug.WriteLine(
-                $"Direct Mode: monitor={selectedScreen.DeviceName}, " +
-                $"VID=0x{monitorIds.VendorID:X4}, " +
-                $"PID=0x{monitorIds.ProductID:X4}");
+                $"PixelVR display config: " +
+                $"mode={(useDirectMode ? "direct" : "desktop")}, " +
+                $"screen={selectedScreen.DeviceName}, " +
+                $"bounds=({selectedScreen.Bounds.X}," +
+                $"{selectedScreen.Bounds.Y} " +
+                $"{selectedScreen.Bounds.Width}x" +
+                $"{selectedScreen.Bounds.Height}), " +
+                $"VID=0x{settings2.EdidVid:X4}, " +
+                $"PID=0x{settings2.EdidPid:X4}");
+
+            return true;
         }
-    }
 
-    DriverSettings settings =
-        settingsManager?.LoadSettings()
-        ?? new DriverSettings();
-
-    settings.WindowX = selectedScreen.Bounds.X;
-    settings.WindowY = selectedScreen.Bounds.Y;
-    settings.WindowWidth = selectedScreen.Bounds.Width;
-    settings.WindowHeight = selectedScreen.Bounds.Height;
-
-    /*
-     * El tamaño recomendado puede ser menor que la pantalla física,
-     * pero conservar el tamaño de la pantalla seleccionada es válido
-     * para la configuración actual del driver.
-     */
-    settings.RenderWidth = selectedScreen.Bounds.Width;
-    settings.RenderHeight = selectedScreen.Bounds.Height;
-
-    settings.DebugMode = debugMode;
-
-    settings.DirectMode = useDirectMode;
-
-    /*
-     * En modo ventana se limpian expresamente los valores EDID.
-     * Así no se reutiliza un EDID de una ejecución anterior.
-     */
-    settings.EdidVid = useDirectMode
-        ? monitorIds.VendorID
-        : 0;
-
-    settings.EdidPid = useDirectMode
-        ? monitorIds.ProductID
-        : 0;
-
-    settingsManager ??=
-        new DriverSettingsManager(DriverSettingsPath);
-
-    settingsManager.SaveSettings(settings);
-
-    Debug.WriteLine(
-        $"PixelVR display config: " +
-        $"mode={(useDirectMode ? "direct" : "desktop")}, " +
-        $"screen={selectedScreen.DeviceName}, " +
-        $"bounds=({selectedScreen.Bounds.X}," +
-        $"{selectedScreen.Bounds.Y} " +
-        $"{selectedScreen.Bounds.Width}x" +
-        $"{selectedScreen.Bounds.Height}), " +
-        $"VID=0x{settings.EdidVid:X4}, " +
-        $"PID=0x{settings.EdidPid:X4}");
-
-    return true;
-}
     }
 
     public sealed class MonitorHardwareID
@@ -1267,8 +1482,6 @@ namespace PixelVR
                     continue;
                 }
 
-                // Enumerar el monitor físico asociado a DISPLAY1,
-                // DISPLAY2, etc.
                 for (uint monitorIndex = 0; ; monitorIndex++)
                 {
                     var monitorDevice = new DISPLAY_DEVICE
@@ -1309,15 +1522,6 @@ namespace PixelVR
             if (string.IsNullOrWhiteSpace(deviceId))
                 return Empty();
 
-            /*
-             * Ejemplo de DeviceID:
-             *
-             * DISPLAY\DEL4098\5&10A589A&0&UID4352
-             *
-             * El bloque DEL4098 contiene:
-             * - DEL: fabricante EISA
-             * - 4098: product ID hexadecimal
-             */
             string[] parts = deviceId.Split('\\');
 
             if (parts.Length < 2)
@@ -1371,7 +1575,6 @@ namespace PixelVR
                 ((vendor[1] - '@') << 5) |
                 (vendor[2] - '@');
 
-            // EDID usa el valor en orden little-endian para esta propiedad.
             return (ushort)((value >> 8) | (value << 8));
         }
 

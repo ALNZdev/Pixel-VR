@@ -226,7 +226,8 @@
 
         <TabControl x:Name="mainTabs"
                     Style="{StaticResource MainNavTabControl}"
-                    SelectedIndex="0">
+                    SelectedIndex="0" 
+                    >
 
             <!-- PESTAÑA MAIN -->
             <TabItem x:Name="tabMain" Style="{StaticResource VerticalNavTabItem}">
@@ -1257,6 +1258,161 @@
                                     <CheckBox x:Name="chkVerboseLogging" Content="Logging Detallado" Foreground="#C8CEDD" Margin="0,4,0,0"/>
                                     <CheckBox x:Name="chkAsyncReprojection" Content="Async Reprojection" Foreground="#C8CEDD" Margin="0,4,0,0" IsChecked="True"/>
                                     <CheckBox x:Name="chkVsyncEnabled" Content="VSync Habilitado" Foreground="#C8CEDD" Margin="0,4,0,0" IsChecked="True"/>
+                                </StackPanel>
+                            </Border>
+
+                            <Border Background="#0E1120"
+                                BorderBrush="#1E2235"
+                                BorderThickness="1"
+                                CornerRadius="10"
+                                Padding="14"
+                                Margin="0,0,0,14">
+
+                                <StackPanel>
+                                    <TextBlock Text="Display Mode"
+                                        FontFamily="Segoe UI"
+                                        FontSize="11"
+                                        Foreground="#9EA3B8"
+                                        Margin="0,0,0,10"/>
+
+                                    <RadioButton x:Name="radioPcMonitor"
+                                        GroupName="DisplayMode"
+                                        Content="PC Monitor"
+                                        Foreground="#E8EAF6"
+                                        IsChecked="True"
+                                        Checked="radioPcMonitor_Checked"
+                                        Margin="0,0,0,8"/>
+
+                                    <RadioButton x:Name="radioAndroidUsb"
+                                        GroupName="DisplayMode"
+                                        Content="Android Phone (USB)"
+                                        Foreground="#E8EAF6"
+                                        Checked="radioAndroidUsb_Checked"
+                                        Margin="0,0,0,12"/>
+
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <StackPanel Grid.Column="0" Margin="0,0,8,0">
+                                            <TextBlock Text="ADB Path"
+                                                FontFamily="Segoe UI"
+                                                FontSize="10"
+                                                Foreground="#9EA3B8"
+                                                Margin="0,0,0,4"/>
+                                            <TextBox x:Name="txtAdbPath"
+                                                Height="32"
+                                                Background="#12151F"
+                                                Foreground="#E8EAF6"
+                                                BorderBrush="#2A2E42"/>
+                                        </StackPanel>
+
+                                        <StackPanel Grid.Column="1" Margin="8,0,0,0">
+                                            <TextBlock Text="Android Serial"
+                                                FontFamily="Segoe UI"
+                                                FontSize="10"
+                                                Foreground="#9EA3B8"
+                                                Margin="0,0,0,4"/>
+                                            <TextBox x:Name="txtAndroidSerial"
+                                                Height="32"
+                                                Background="#12151F"
+                                                Foreground="#E8EAF6"
+                                                BorderBrush="#2A2E42"/>
+                                        </StackPanel>
+                                    </Grid>
+
+                                    <Grid Margin="0,10,0,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <StackPanel Grid.Column="0" Margin="0,0,8,0">
+                                            <TextBlock Text="Streaming Port"
+                                                FontFamily="Segoe UI"
+                                                FontSize="10"
+                                                Foreground="#9EA3B8"
+                                                Margin="0,0,0,4"/>
+                                            <TextBox x:Name="txtStreamingPort"
+                                                Height="32"
+                                                Text="9944"
+                                                Background="#12151F"
+                                                Foreground="#E8EAF6"
+                                                BorderBrush="#2A2E42"/>
+                                        </StackPanel>
+
+                                        <StackPanel Grid.Column="1" Margin="8,0,0,0">
+                                            <TextBlock Text="Bitrate (kbps)"
+                                                FontFamily="Segoe UI"
+                                                FontSize="10"
+                                                Foreground="#9EA3B8"
+                                                Margin="0,0,0,4"/>
+                                            <TextBox x:Name="txtStreamingBitrate"
+                                                Height="32"
+                                                Text="15000"
+                                                Background="#12151F"
+                                                Foreground="#E8EAF6"
+                                                BorderBrush="#2A2E42"/>
+                                        </StackPanel>
+                                    </Grid>
+
+                                    <Grid Margin="0,10,0,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <StackPanel Grid.Column="0" Margin="0,0,8,0">
+                                            <TextBlock Text="Resolution Width"
+                                                FontFamily="Segoe UI"
+                                                FontSize="10"
+                                                Foreground="#9EA3B8"
+                                                Margin="0,0,0,4"/>
+                                            <TextBox x:Name="txtStreamWidth"
+                                                Height="32"
+                                                Text="1920"
+                                                Background="#12151F"
+                                                Foreground="#E8EAF6"
+                                                BorderBrush="#2A2E42"/>
+                                        </StackPanel>
+
+                                        <StackPanel Grid.Column="1" Margin="8,0,0,0">
+                                            <TextBlock Text="Resolution Height"
+                                                FontFamily="Segoe UI"
+                                                FontSize="10"
+                                                Foreground="#9EA3B8"
+                                                Margin="0,0,0,4"/>
+                                            <TextBox x:Name="txtStreamHeight"
+                                                Height="32"
+                                                Text="1080"
+                                                Background="#12151F"
+                                                Foreground="#E8EAF6"
+                                                BorderBrush="#2A2E42"/>
+                                        </StackPanel>
+                                    </Grid>
+
+                                    <StackPanel Margin="0,10,0,0">
+                                        <TextBlock Text="Codec"
+                                            FontFamily="Segoe UI"
+                                            FontSize="10"
+                                            Foreground="#9EA3B8"
+                                            Margin="0,0,0,4"/>
+                                        <ComboBox x:Name="cmbAndroidCodec"
+                                            Height="32"
+                                            Style="{StaticResource DarkComboBox}">
+                                            <ComboBoxItem Content="H264"/>
+                                            <ComboBoxItem Content="HEVC"/>
+                                        </ComboBox>
+                                    </StackPanel>
+
+                                    <Button x:Name="btnScanAndroidDevices"
+                                        Height="34"
+                                        Margin="0,12,0,0"
+                                        Content="Detectar teléfono Android"
+                                        Click="btnScanAndroidDevices_Click"
+                                        Style="{StaticResource BtnPrimary}"/>
                                 </StackPanel>
                             </Border>
 
