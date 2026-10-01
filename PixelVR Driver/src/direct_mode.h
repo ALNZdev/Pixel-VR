@@ -38,7 +38,7 @@ public:
     PixelVRDirectMode() = default;
     ~PixelVRDirectMode();
 
-    /// Creates the D3D11 device (AMD adapter preferred), the composer and the stream pipeline.
+    /// Tries AMD adapters until both composition and the requested encoder initialize.
     bool Start(const Options& options);
     void Stop();
 
@@ -73,7 +73,7 @@ private:
 
     static constexpr uint32_t kMaxLayers = 4;
 
-    bool PickAdapterAndCreateDevice();
+    bool CreateDeviceForAdapter(IDXGIAdapter1* adapter);
     ID3D11Texture2D* FindTexture(vr::SharedTextureHandle_t handle);
     void VsyncThreadMain();
 

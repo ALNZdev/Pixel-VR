@@ -1393,6 +1393,32 @@
                                         </StackPanel>
                                     </Grid>
 
+                                    <TextBlock Text="Prueba inicial de baja latencia: 1920 × 852 y 60 FPS."
+                                        FontFamily="Segoe UI"
+                                        FontSize="10"
+                                        Foreground="#7F879F"
+                                        Margin="0,8,0,0"/>
+
+                                    <StackPanel Margin="0,10,0,0">
+                                        <TextBlock Text="Streaming FPS (prueba 60 para reducir latencia)"
+                                            FontFamily="Segoe UI"
+                                            FontSize="10"
+                                            Foreground="#9EA3B8"
+                                            Margin="0,0,0,4"/>
+                                        <TextBox x:Name="txtStreamFramerate"
+                                            Height="32"
+                                            Text="60"
+                                            Background="#12151F"
+                                            Foreground="#E8EAF6"
+                                            BorderBrush="#2A2E42"/>
+                                        <CheckBox x:Name="chkStreamFollowsDisplayFrequency"
+                                            Content="Igualar FPS de transmisión con Hz del HMD"
+                                            Margin="0,6,0,0"
+                                            Foreground="#C8CEDD"
+                                            Checked="chkStreamFollowsDisplayFrequency_CheckedChanged"
+                                            Unchecked="chkStreamFollowsDisplayFrequency_CheckedChanged"/>
+                                    </StackPanel>
+
                                     <StackPanel Margin="0,10,0,0">
                                         <TextBlock Text="Codec"
                                             FontFamily="Segoe UI"

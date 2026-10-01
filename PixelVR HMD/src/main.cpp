@@ -4,7 +4,6 @@
 #include "esp_now.h"
 #include "Wire.h"
 #include "FastIMU.h"
-#include "MadgwickAHRS.h"
 
 uint8_t mac[6] = {0xAC, 0xA7, 0x04, 0x27, 0xAE, 0x90};// Dirección MAC física del ESP32-S3 receptor; destino al que este HMD transmitirá por ESP-NOW
 
@@ -38,48 +37,16 @@ static const uint32_t USB_BAUD_RATE = 115200;
 // ─── IMU ─────────────────────────────────────────────────────────────────────
 #define MPU_ADDRESS  0x68
 #define I2C_CLOCK    400000
-int currentImuGeometry = 0;   // Mutable para poder probar geometrías sin recompilar (ver comando "geo")
-#define GYRO_DEADZONE_DPS 1.5f    // Sube si el giroscopio sigue inyectando ruido en reposo
+int currentImuGeometry = 2;   // Mutable para poder probar geometrías sin recompilar (ver comando "geo")
 MPU6050 IMU;
 calData calibIMU = { 0 };
 AccelData IMUAccel;
 GyroData IMUGyro;
 
-// ─── Suavizado NLERP de cuaternión de salida ──────────────────────────────────
-// NLERP (Normalized Linear Interpolation) es el equivalente al EMA pero en el
-// espacio esférico. Aplicar EMA componente a componente sin normalizar produce
-// cuaterniones fuera de la esfera unitaria → rotaciones inválidas → más temblor.
-// NLERP interpola linealmente y normaliza, manteniendo el cuaternión válido.
-//
-// Rango útil de QUAT_SMOOTH_ALPHA:
-//   0.10 → muy suave, lag perceptible al mover rápido
-//   0.25 → balance recomendado (punto de partida)
-//   0.50 → casi sin lag, menos filtrado
-#define QUAT_SMOOTH_ALPHA 0.08f   // ~2.5 Hz de corte a 200 Hz — subir si hay lag perceptible
-
-struct QuatState {
-  float w, x, y, z;
-} quatFiltered;
-
-bool quatFilterInit = false;
-
-// ─── Madgwick beta adaptativo ─────────────────────────────────────────────────
-// Idea: durante un movimiento brusco, el acelerómetro deja de medir solo
-// gravedad (hay aceleración lineal mezclada) y si confiamos mucho en él el
-// filtro se "ensucia" y queda desalineado en pitch/roll aunque después te
-// quedes quieto. La solución es bajar beta (confiar más en el giroscopio)
-// mientras hay movimiento, y subirlo automáticamente apenas detecta que el
-// visor está quieto, para que la fusión se auto-corrija contra la gravedad
-// sin necesidad de mandar "recenter" a mano. Esto SOLO corrige pitch/roll
-// (referenciados a la gravedad); el yaw no tiene referencia absoluta sin
-// magnetómetro, así que puede seguir derivando con el tiempo.
-#define MADGWICK_BETA_MIN     0.02f   // Movimiento brusco -> confiar en giroscopio
-#define MADGWICK_BETA_MAX     0.08f   // Quieto → menos corrección del accel = menos ruido
-#define ACCEL_STILL_TOL_G     0.15f   // Tolerancia |accel|-1g para considerar "quieto"
-#define GYRO_STILL_TOL_DPS    15.0f   // Velocidad angular máx. para considerar "quieto"
-#define BETA_SMOOTH_ALPHA     0.10f   // Suaviza el propio cambio de beta (evita saltos)
-float currentBeta = MADGWICK_BETA_MIN;
-Madgwick filter;
+// ─── Filtro Mahony 6D autocontenido ──────────────────────────────────────────
+// Fusión giroscopio + acelerómetro, sin dependencia AHRS externa.
+// La corrección del acelerómetro pierde peso durante giros rápidos o cuando
+// su magnitud se aleja de 1 g. La integral estima sesgo cuando el HMD está quieto.
 
 // ─── Offset de recentrado ─────────────────────────────────────────────────────
 float yawOffset   = 0.0f;
@@ -94,6 +61,107 @@ float rollOffset  = 0.0f;
 #define UPDATE_RATE_HZ  200.0f
 const unsigned long INTERVALO_US = 1000000UL / (unsigned long)UPDATE_RATE_HZ;
 unsigned long ultimoTiempoUS = 0;
+
+struct Mahony6D {
+  float q0 = 1.0f, q1 = 0.0f, q2 = 0.0f, q3 = 0.0f; // w, x, y, z
+  float integralFBx = 0.0f, integralFBy = 0.0f, integralFBz = 0.0f;
+  float accelLPFx = 0.0f, accelLPFy = 0.0f, accelLPFz = 1.0f;
+  bool accelLPFInitialized = false;
+
+  void reset() {
+    q0 = 1.0f; q1 = q2 = q3 = 0.0f;
+    integralFBx = integralFBy = integralFBz = 0.0f;
+    accelLPFx = accelLPFy = 0.0f; accelLPFz = 1.0f;
+    accelLPFInitialized = false;
+  }
+
+  void update(float gxDps, float gyDps, float gzDps,
+              float axG, float ayG, float azG, float dt) {
+    const float degToRad = 0.01745329252f;
+    float gx = gxDps * degToRad;
+    float gy = gyDps * degToRad;
+    float gz = gzDps * degToRad;
+
+    const float accelMag = sqrtf(axG * axG + ayG * ayG + azG * azG);
+    if (accelMag > 0.0001f) {
+      const float ax = axG / accelMag;
+      const float ay = ayG / accelMag;
+      const float az = azG / accelMag;
+
+      // LPF solo en la referencia de gravedad; el giro sigue integrado en crudo.
+      const float alpha = dt / (0.06f + dt);
+      if (!accelLPFInitialized) {
+        accelLPFx = ax; accelLPFy = ay; accelLPFz = az;
+        accelLPFInitialized = true;
+      } else {
+        accelLPFx += alpha * (ax - accelLPFx);
+        accelLPFy += alpha * (ay - accelLPFy);
+        accelLPFz += alpha * (az - accelLPFz);
+      }
+
+      const float lpfNorm = sqrtf(accelLPFx * accelLPFx +
+                                  accelLPFy * accelLPFy +
+                                  accelLPFz * accelLPFz);
+      if (lpfNorm > 0.0001f) {
+        const float mx = accelLPFx / lpfNorm;
+        const float my = accelLPFy / lpfNorm;
+        const float mz = accelLPFz / lpfNorm;
+
+        // Gravedad estimada por la orientación actual (medio vector).
+        const float vx = q1 * q3 - q0 * q2;
+        const float vy = q0 * q1 + q2 * q3;
+        const float vz = q0 * q0 - 0.5f + q3 * q3;
+
+        const float ex = my * vz - mz * vy;
+        const float ey = mz * vx - mx * vz;
+        const float ez = mx * vy - my * vx;
+
+        const float gyroMagDps = sqrtf(gxDps * gxDps +
+                                      gyDps * gyDps +
+                                      gzDps * gzDps);
+        const float magnitudeError = fabsf(accelMag - 1.0f);
+        float accelWeight = 1.0f - magnitudeError / 0.25f;
+        if (accelWeight < 0.0f) accelWeight = 0.0f;
+        if (accelWeight > 1.0f) accelWeight = 1.0f;
+        const float turnWeight = 1.0f / (1.0f +
+                                  (gyroMagDps / 90.0f) * (gyroMagDps / 90.0f));
+        accelWeight *= turnWeight;
+
+        // Integral feedback se actualiza solo en reposo, para no confundir
+        // aceleración lineal con sesgo del giroscopio.
+        if (gyroMagDps < 4.0f && magnitudeError < 0.12f && accelWeight > 0.5f) {
+          const float twoKi = 0.10f;
+          integralFBx += twoKi * ex * dt;
+          integralFBy += twoKi * ey * dt;
+          integralFBz += twoKi * ez * dt;
+        }
+
+        const float twoKp = 2.0f;
+        gx += integralFBx + twoKp * accelWeight * ex;
+        gy += integralFBy + twoKp * accelWeight * ey;
+        gz += integralFBz + twoKp * accelWeight * ez;
+      }
+    }
+
+    // Integración del cuaternión con el tiempo real entre muestras.
+    const float halfDt = 0.5f * dt;
+    const float q0 = this->q0, q1 = this->q1;
+    const float q2 = this->q2, q3 = this->q3;
+    this->q0 += (-q1 * gx - q2 * gy - q3 * gz) * halfDt;
+    this->q1 += ( q0 * gx + q2 * gz - q3 * gy) * halfDt;
+    this->q2 += ( q0 * gy - q1 * gz + q3 * gx) * halfDt;
+    this->q3 += ( q0 * gz + q1 * gy - q2 * gx) * halfDt;
+
+    const float qNorm = sqrtf(this->q0 * this->q0 + this->q1 * this->q1 +
+                              this->q2 * this->q2 + this->q3 * this->q3);
+    if (qNorm > 0.0001f) {
+      this->q0 /= qNorm; this->q1 /= qNorm;
+      this->q2 /= qNorm; this->q3 /= qNorm;
+    } else {
+      reset();
+    }
+  }
+} orientationFilter;
 
 float        errorCode   = 0.0f;
 
@@ -110,50 +178,6 @@ void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status) // Callba
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
-static inline float applyDeadzone(float value, float threshold) {
-  return (fabsf(value) < threshold) ? 0.0f : value;
-}
-
-// Normaliza un ángulo a [-180, 180). Necesario porque getYaw()/getRoll() (y, en
-// casos extremos, getPitch()) pueden cruzar el límite ±180°, y comparar o
-// promediar ángulos "crudos" ahí produce saltos falsos.
-static inline float wrapAngle180(float angle) {
-  angle = fmodf(angle + 180.0f, 360.0f);
-  if (angle < 0.0f) angle += 360.0f;
-  return angle - 180.0f;
-}
-
-// Diferencia angular más corta entre "target" y "current" (en [-180, 180]).
-// Ej: shortestAngleDelta(-179, 179) = -2, no -358 ni +358.
-static inline float shortestAngleDelta(float target, float current) {
-  return wrapAngle180(target - current);
-}
-
-// ─── NLERP de cuaterniones ────────────────────────────────────────────────────
-// Filtra el cuaternión raw del Madgwick para eliminar temblor de alta frecuencia.
-// Garantiza shortest-path (dot < 0 → invertir signo del nuevo cuaternión para
-// evitar que el filtro interpole "por el camino largo" y genere un salto brusco).
-static QuatState nlerpQuat(const QuatState& prev,
-                            float nw, float nx, float ny, float nz,
-                            float alpha)
-{
-  // Shortest-path: si el punto más cercano en la esfera es el antipodal, invertir
-  float dot = prev.w*nw + prev.x*nx + prev.y*ny + prev.z*nz;
-  if (dot < 0.f) { nw = -nw; nx = -nx; ny = -ny; nz = -nz; }
-
-  // Interpolación lineal componente a componente
-  QuatState r; r.w = r.x = r.y = r.z = 0.f;
-  r.w = prev.w + alpha * (nw - prev.w);
-  r.x = prev.x + alpha * (nx - prev.x);
-  r.y = prev.y + alpha * (ny - prev.y);
-  r.z = prev.z + alpha * (nz - prev.z);
-
-  // Normalización obligatoria para mantener el cuaternión en la esfera unitaria
-  float inv = 1.f / sqrtf(r.w*r.w + r.x*r.x + r.y*r.y + r.z*r.z);
-  r.w *= inv; r.x *= inv; r.y *= inv; r.z *= inv;
-  return r;
-}
-
 static void printCalibration() {
   Serial.println(F("Log: --- Sesgo de Calibración Actual ---"));
   Serial.print(F("Accel Bias: "));
@@ -236,9 +260,6 @@ void setup()
 
   printCalibration();
   
-  filter.begin(UPDATE_RATE_HZ);
-  filter.beta = currentBeta;
-
   // Inicializar paquete en identidad
   memset(&hmddata, 0, sizeof(hmddata));               // Limpia primero (padding/basura), DEBE ir antes de setear los valores reales
   hmddata.packetType = PACKET_TYPE_HMD;                // Identifica este paquete como del HMD ante el receptor
@@ -247,11 +268,6 @@ void setup()
   hmddata.qy = 0.0f; 
   hmddata.qz = 0.0f;
   hmddata.error = 0.0f;
-
-  // Inicializar el estado del filtro NLERP en identidad
-  quatFiltered.w = 1.f; quatFiltered.x = 0.f;
-  quatFiltered.y = 0.f; quatFiltered.z = 0.f;
-  quatFilterInit = false;
 
   // WiFi
   WiFi.mode(WIFI_STA);                                // Pone el ESP32 en modo Station; ESP-NOW requiere este modo
@@ -307,8 +323,7 @@ void loop()
         printCalibration();
       } else if (serialCommand == "recenter") {
         espNowPaused = true;               // Corta el envío mientras se procesa el recentrado
-        yawOffset = filter.getYaw();  
-        Serial.println(F("Log: Recentrado en YAW."));
+        Serial.println(F("Log: Sin magnetómetro, el yaw no tiene referencia absoluta."));
         espNowPaused = false;
       } else if (serialCommand.startsWith("geo ")) {
         int idx = serialCommand.substring(4).toInt();
@@ -316,9 +331,7 @@ void loop()
           currentImuGeometry = idx;
           IMU.setIMUGeometry(currentImuGeometry);
           yawOffset = pitchOffset = rollOffset = 0.0f;
-          // Resetear el filtro NLERP al cambiar geometría para evitar
-          // que interpole desde la orientación anterior a la nueva
-          quatFilterInit = false;
+          orientationFilter.reset();
           Serial.print(F("Log: IMU_GEOMETRY cambiada a "));
           Serial.println(currentImuGeometry);
         } else {
@@ -340,6 +353,7 @@ void loop()
   // ── Control de tiempo ──────────────────────────────────────────────────────
   unsigned long ahora = micros();
   if (ahora - ultimoTiempoUS < INTERVALO_US) return;
+  const unsigned long elapsedUS = ahora - ultimoTiempoUS;
   ultimoTiempoUS = ahora;
 
 
@@ -349,53 +363,17 @@ void loop()
   IMU.getGyro(&IMUGyro);
 
 
-  // ── Zona muerta en giroscopio ──────────────────────────────────────────────
-  float gx = applyDeadzone(IMUGyro.gyroX, GYRO_DEADZONE_DPS);
-  float gy = applyDeadzone(IMUGyro.gyroY, GYRO_DEADZONE_DPS);
-  float gz = applyDeadzone(IMUGyro.gyroZ, GYRO_DEADZONE_DPS);
-
-
-  // ── Beta adaptativo ────────────────────────────────────────────────────────
-  float accelMagG = sqrtf(IMUAccel.accelX * IMUAccel.accelX +
-                           IMUAccel.accelY * IMUAccel.accelY +
-                           IMUAccel.accelZ * IMUAccel.accelZ);
-  float accelDeviation = fabsf(accelMagG - 1.0f);
-  float gyroMagDps = sqrtf(gx * gx + gy * gy + gz * gz);
-
-
-  bool isStill = (accelDeviation < ACCEL_STILL_TOL_G) && (gyroMagDps < GYRO_STILL_TOL_DPS);
-  float targetBeta = isStill ? MADGWICK_BETA_MAX : MADGWICK_BETA_MIN;
-  currentBeta = BETA_SMOOTH_ALPHA * targetBeta + (1.0f - BETA_SMOOTH_ALPHA) * currentBeta;
-  filter.beta = currentBeta;
-
-
-  // ── Actualizar filtro ──────────────────────────────────────────────────────
-  filter.updateIMU(gx, gy, gz,
-                   IMUAccel.accelX, IMUAccel.accelY, IMUAccel.accelZ);
-
-
-  // ── Obtener cuaternión y aplicar NLERP ────────────────────────────────────
-  // El cuaternión raw del Madgwick tiene ruido de alta frecuencia que a 200 Hz
-  // se traduce en temblor visible en SteamVR. El NLERP actúa como un EMA pero
-  // en el espacio esférico, manteniendo el cuaternión unitario en todo momento.
-  Madgwick::Quat qIMU = filter.getQuaternion();
-
-  if (!quatFilterInit) {
-    // Primera muestra: inicializar el estado con el cuaternión actual sin filtrar
-    quatFiltered.w = qIMU.w; quatFiltered.x = qIMU.x;
-    quatFiltered.y = qIMU.y; quatFiltered.z = qIMU.z;
-    quatFilterInit = true;
-  } else {
-    quatFiltered = nlerpQuat(quatFiltered,
-                             qIMU.w, qIMU.x, qIMU.y, qIMU.z,
-                             QUAT_SMOOTH_ALPHA);
-  }
+  const float dt = constrain(elapsedUS * 1.0e-6f,
+                             0.001f, 0.020f);
+  orientationFilter.update(IMUGyro.gyroX, IMUGyro.gyroY, IMUGyro.gyroZ,
+                           IMUAccel.accelX, IMUAccel.accelY, IMUAccel.accelZ,
+                           dt);
 
   // ── Transformación de ejes a SteamVR (sin cambios respecto al original) ───
-  hmddata.qw = quatFiltered.w;
-  hmddata.qx = -quatFiltered.y;   // y del sensor → x de SteamVR
-  hmddata.qy = quatFiltered.z;   // z del sensor → y de SteamVR
-  hmddata.qz = quatFiltered.x;    
+  hmddata.qw = orientationFilter.q0;
+  hmddata.qx = orientationFilter.q2;
+  hmddata.qy = orientationFilter.q3;
+  hmddata.qz = orientationFilter.q1;
 
 
   digitalWrite(led_r, HIGH);

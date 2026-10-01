@@ -34,7 +34,7 @@ namespace pixelvr
         uint16_t height;         // full SBS frame height
         uint8_t  codec;          // kCodecH264 / kCodecHevc
         uint8_t  flags;          // kPacketFlagKeyframe
-        uint16_t reserved;       // 0
+        uint16_t framerate;      // desired presentation rate (0 = unspecified)
         uint32_t payloadBytes;   // bytes that follow this header
     };
 #pragma pack(pop)

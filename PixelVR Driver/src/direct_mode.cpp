@@ -26,48 +26,23 @@ PixelVRDirectMode::~PixelVRDirectMode()
     Stop();
 }
 
-bool PixelVRDirectMode::PickAdapterAndCreateDevice()
+bool PixelVRDirectMode::CreateDeviceForAdapter(IDXGIAdapter1* adapter)
 {
-    ComPtr<IDXGIFactory1> factory;
-    if (FAILED(CreateDXGIFactory1(IID_PPV_ARGS(&factory))))
+    if (!adapter)
     {
-        DriverLog("[DirectMode] CreateDXGIFactory1 fallo");
+        DriverLog("[DirectMode] Adaptador AMD invalido");
         return false;
     }
 
-    ComPtr<IDXGIAdapter1> chosen;
-    ComPtr<IDXGIAdapter1> fallback;
-    for (UINT i = 0;; ++i)
-    {
-        ComPtr<IDXGIAdapter1> adapter;
-        if (factory->EnumAdapters1(i, &adapter) == DXGI_ERROR_NOT_FOUND)
-            break;
-
-        DXGI_ADAPTER_DESC1 desc{};
-        adapter->GetDesc1(&desc);
-        if (desc.Flags & DXGI_ADAPTER_FLAG_SOFTWARE)
-            continue;
-
-        DriverLog("[DirectMode] Adaptador %u: %s (vendor 0x%04X)", i, WideToUtf8(desc.Description).c_str(), desc.VendorId);
-
-        if (!fallback)
-            fallback = adapter;
-        if (!chosen && desc.VendorId == kVendorAmd)
-            chosen = adapter;
-    }
-
-    if (!chosen)
-    {
-        DriverLog("[DirectMode] No hay GPU AMD: AMF no estara disponible. Usando el primer adaptador.");
-        chosen = fallback;
-    }
-    if (!chosen)
-        return false;
+    m_device.Reset();
+    m_context.Reset();
+    m_adapter.Reset();
+    m_adapterLuid = 0;
 
     const D3D_FEATURE_LEVEL levels[] = { D3D_FEATURE_LEVEL_11_1, D3D_FEATURE_LEVEL_11_0 };
     D3D_FEATURE_LEVEL got{};
     HRESULT hr = D3D11CreateDevice(
-        chosen.Get(), D3D_DRIVER_TYPE_UNKNOWN, nullptr,
+        adapter, D3D_DRIVER_TYPE_UNKNOWN, nullptr,
         D3D11_CREATE_DEVICE_BGRA_SUPPORT,
         levels, static_cast<UINT>(std::size(levels)), D3D11_SDK_VERSION,
         &m_device, &got, &m_context);
@@ -83,8 +58,8 @@ bool PixelVRDirectMode::PickAdapterAndCreateDevice()
         mt->SetMultithreadProtected(TRUE);
 
     DXGI_ADAPTER_DESC1 desc{};
-    chosen->GetDesc1(&desc);
-    m_adapter = chosen;
+    adapter->GetDesc1(&desc);
+    m_adapter = adapter;
     m_adapterLuid = (static_cast<uint64_t>(desc.AdapterLuid.HighPart) << 32) | desc.AdapterLuid.LowPart;
 
     DriverLog("[DirectMode] Dispositivo D3D11 en '%s'", WideToUtf8(desc.Description).c_str());
@@ -96,32 +71,77 @@ bool PixelVRDirectMode::Start(const Options& options)
     Stop();
     m_options = options;
 
-    if (!PickAdapterAndCreateDevice())
-        return false;
-
-    if (!m_composer.Initialize(m_device.Get(), m_context.Get()))
+    ComPtr<IDXGIFactory1> factory;
+    if (FAILED(CreateDXGIFactory1(IID_PPV_ARGS(&factory))))
     {
-        DriverLog("[DirectMode] SbsComposer no pudo inicializarse");
-        Stop();
+        DriverLog("[DirectMode] CreateDXGIFactory1 fallo");
+        return false;
+    }
+
+    std::vector<ComPtr<IDXGIAdapter1>> amdAdapters;
+    for (UINT i = 0;; ++i)
+    {
+        ComPtr<IDXGIAdapter1> adapter;
+        if (factory->EnumAdapters1(i, &adapter) == DXGI_ERROR_NOT_FOUND)
+            break;
+
+        DXGI_ADAPTER_DESC1 desc{};
+        adapter->GetDesc1(&desc);
+        if ((desc.Flags & DXGI_ADAPTER_FLAG_SOFTWARE) || desc.VendorId != kVendorAmd)
+            continue;
+
+        DriverLog("[DirectMode] Adaptador AMD candidato %u: %s", i, WideToUtf8(desc.Description).c_str());
+        amdAdapters.push_back(adapter);
+    }
+
+    if (amdAdapters.empty())
+    {
+        DriverLog("[DirectMode] No se encontro ningun adaptador AMD para AMF");
         return false;
     }
 
     const uint32_t sbsW = m_options.sbsWidth ? m_options.sbsWidth : m_options.eyeWidth * 2;
     const uint32_t sbsH = m_options.sbsHeight ? m_options.sbsHeight : m_options.eyeHeight;
+    const uint32_t displayFps = static_cast<uint32_t>(m_options.displayHz + 0.5f);
+    const uint32_t fps = m_options.stream.framerate > 0 ? m_options.stream.framerate : displayFps;
 
-    if (!VideoStreamPipeline::Instance().Start(
-        m_device.Get(), m_context.Get(), m_options.stream, sbsW, sbsH,
-        static_cast<uint32_t>(m_options.displayHz + 0.5f)))
+    for (const auto& adapter : amdAdapters)
     {
-        DriverLog("[DirectMode] El pipeline de streaming no pudo iniciarse");
-        Stop();
-        return false;
+        VideoStreamPipeline::Instance().Stop();
+        m_composer.Shutdown();
+        if (!CreateDeviceForAdapter(adapter.Get()))
+            continue;
+
+        DXGI_ADAPTER_DESC1 desc{};
+        adapter->GetDesc1(&desc);
+        const std::string name = WideToUtf8(desc.Description);
+
+        if (!m_composer.Initialize(m_device.Get(), m_context.Get()))
+        {
+            DriverLog("[DirectMode] SbsComposer no pudo inicializarse en '%s'; probando otro adaptador", name.c_str());
+            m_composer.Shutdown();
+            continue;
+        }
+
+        if (!VideoStreamPipeline::Instance().Start(
+            m_device.Get(), m_context.Get(), m_options.stream, sbsW, sbsH, fps))
+        {
+            DriverLog("[DirectMode] Encoder o pipeline no disponible en '%s'; probando otro adaptador AMD", name.c_str());
+            VideoStreamPipeline::Instance().Stop();
+            m_composer.Shutdown();
+            continue;
+        }
+
+        DriverLog("[DirectMode] Adaptador AMD seleccionado tras inicializar AMF: '%s'", name.c_str());
+        m_started = true;
+        m_stopVsync = false;
+        m_vsyncThread = std::thread(&PixelVRDirectMode::VsyncThreadMain, this);
+        return true;
     }
 
-    m_started = true;
-    m_stopVsync = false;
-    m_vsyncThread = std::thread(&PixelVRDirectMode::VsyncThreadMain, this);
-    return true;
+    DriverLog("[DirectMode] Ningun adaptador AMD pudo inicializar el compositor y el encoder");
+    Stop();
+    return false;
 }
 
 void PixelVRDirectMode::Stop()

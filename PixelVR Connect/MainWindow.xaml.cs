@@ -133,11 +133,18 @@ namespace PixelVR
                 if (txtStreamHeight != null)
                     txtStreamHeight.Text = currentSettings.StreamHeight.ToString();
 
+                if (chkStreamFollowsDisplayFrequency != null)
+                    chkStreamFollowsDisplayFrequency.IsChecked = currentSettings.StreamFramerateFollowsDisplayFrequency;
+                if (txtStreamFramerate != null)
+                {
+                    txtStreamFramerate.Text = currentSettings.StreamFramerateFollowsDisplayFrequency
+                        ? currentSettings.DisplayFrequency.ToString("F0")
+                        : currentSettings.StreamFramerate.ToString();
+                    txtStreamFramerate.IsEnabled = !currentSettings.StreamFramerateFollowsDisplayFrequency;
+                }
+
                 if (cmbAndroidCodec != null)
                 {
-                    cmbAndroidCodec.Items.Clear();
-                    cmbAndroidCodec.Items.Add("H264");
-                    cmbAndroidCodec.Items.Add("HEVC");
                     cmbAndroidCodec.SelectedIndex = string.Equals(currentSettings.StreamCodec, "hevc", StringComparison.OrdinalIgnoreCase) ? 1 : 0;
                 }
 
@@ -248,17 +255,29 @@ namespace PixelVR
                     currentSettings.StreamHeight = 1080;
 
                 currentSettings.StreamCodec = cmbAndroidCodec?.SelectedIndex == 1 ? "hevc" : "h264";
-                currentSettings.StreamFramerate = 90;
+                currentSettings.StreamFramerateFollowsDisplayFrequency = chkStreamFollowsDisplayFrequency?.IsChecked == true;
+                currentSettings.StreamFramerate = GetEffectiveStreamFramerate();
 
                 if (settingsManager == null)
                     settingsManager = new DriverSettingsManager(DriverSettingsPath);
 
                 settingsManager.SaveSettings(currentSettings);
 
-                lblConfigStatus.Text = "Configuración guardada correctamente";
+                string adbMessage = string.Empty;
+                bool adbReverseReady = radioAndroidUsb?.IsChecked != true ||
+                    TryCreateAndroidAdbReverse(out adbMessage);
+
+                lblConfigStatus.Text = adbReverseReady
+                    ? "Configuración guardada correctamente"
+                    : "Configuración guardada; ADB pendiente";
                 lblConfigStatus.Foreground = new SolidColorBrush(Color.FromRgb(34, 201, 147));
 
-                MessageBox.Show("Configuración guardada. Reinicia SteamVR para aplicar los ajustes del driver.", "PixelVR", MessageBoxButton.OK, MessageBoxImage.Information);
+                string message = "Configuración guardada. Reinicia SteamVR para aplicar los ajustes del driver.";
+                if (!adbReverseReady)
+                    message += "\n\nNo se pudo preparar la conexión USB ADB: " + adbMessage;
+
+                MessageBox.Show(message, "PixelVR", MessageBoxButton.OK,
+                    adbReverseReady ? MessageBoxImage.Information : MessageBoxImage.Warning);
             }
             catch (Exception ex)
             {
@@ -604,6 +623,7 @@ namespace PixelVR
             }
 
             CloseSteamVR();
+            RemoveAndroidAdbReverse();
             Debug.WriteLine("SteamVR detenido");
         }
 
@@ -899,6 +919,7 @@ namespace PixelVR
             }
 
             CloseSteamVR();
+            RemoveAndroidAdbReverse();
             Debug.WriteLine("Named Pipe detenido y recursos liberados.");
         }
 
@@ -1142,10 +1163,8 @@ namespace PixelVR
             pipeManager = null;
             usbcdcManager?.Disconnect();
 
-            if (adbManager != null && radioAndroidUsb?.IsChecked == true)
-            {
-                adbManager.ClearAllReversals();
-            }
+            // Keep PixelVR's reverse mapping alive if the WPF window closes while SteamVR
+            // and the Android receiver are still running. Stop buttons remove only our port.
         }
 
         private void CloseSteamVR()
@@ -1215,6 +1234,25 @@ namespace PixelVR
         {
             if (lblDisplayFreq == null) return;
             lblDisplayFreq.Text = sliderDisplayFreq.Value.ToString("F0");
+            if (chkStreamFollowsDisplayFrequency?.IsChecked == true && txtStreamFramerate != null)
+                txtStreamFramerate.Text = sliderDisplayFreq.Value.ToString("F0");
+            UpdateSettingsLabels();
+        }
+
+        private int GetEffectiveStreamFramerate()
+        {
+            if (chkStreamFollowsDisplayFrequency?.IsChecked == true)
+                return (int)Math.Round(sliderDisplayFreq.Value);
+            return int.TryParse(txtStreamFramerate?.Text, out int fps) ? Math.Clamp(fps, 15, 240) : 60;
+        }
+
+        private void chkStreamFollowsDisplayFrequency_CheckedChanged(object sender, RoutedEventArgs e)
+        {
+            if (txtStreamFramerate == null || sliderDisplayFreq == null || chkStreamFollowsDisplayFrequency == null)
+                return;
+            txtStreamFramerate.IsEnabled = chkStreamFollowsDisplayFrequency.IsChecked != true;
+            if (chkStreamFollowsDisplayFrequency.IsChecked == true)
+                txtStreamFramerate.Text = sliderDisplayFreq.Value.ToString("F0");
             UpdateSettingsLabels();
         }
 
@@ -1285,6 +1323,12 @@ namespace PixelVR
             // Android mode
             if (radioAndroidUsb?.IsChecked == true)
             {
+                if (!TryCreateAndroidAdbReverse(out string adbError))
+                {
+                    MessageBox.Show(adbError, "Android USB", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return false;
+                }
+
                 DriverSettings settings = settingsManager?.LoadSettings() ?? new DriverSettings();
 
                 settings.DisplayMode = "android";
@@ -1297,10 +1341,13 @@ namespace PixelVR
                 settings.StreamBindAll = false;
                 settings.StreamPort = int.TryParse(txtStreamingPort?.Text, out int p) ? p : 9944;
                 settings.StreamBitrateKbps = int.TryParse(txtStreamingBitrate?.Text, out int b) ? b : 15000;
-                settings.StreamFramerate = 90;
+                settings.StreamFramerateFollowsDisplayFrequency = chkStreamFollowsDisplayFrequency?.IsChecked == true;
+                settings.StreamFramerate = GetEffectiveStreamFramerate();
                 settings.StreamCodec = cmbAndroidCodec?.SelectedIndex == 1 ? "hevc" : "h264";
                 settings.StreamWidth = int.TryParse(txtStreamWidth?.Text, out int sw) ? sw : 1920;
                 settings.StreamHeight = int.TryParse(txtStreamHeight?.Text, out int sh) ? sh : 1080;
+                settings.AdbPath = adbManager?.AdbPath ?? txtAdbPath?.Text.Trim() ?? "";
+                settings.AndroidDeviceSerial = txtAndroidSerial?.Text.Trim() ?? "";
 
                 settings.WindowX = 0;
                 settings.WindowY = 0;
@@ -1398,6 +1445,61 @@ namespace PixelVR
                 $"PID=0x{settings2.EdidPid:X4}");
 
             return true;
+        }
+
+        private bool TryCreateAndroidAdbReverse(out string error)
+        {
+            error = string.Empty;
+            if (adbManager == null || !adbManager.IsAvailable)
+            {
+                error = "No se encontró adb.exe. Revisa la ruta de Android SDK Platform-Tools.";
+                return false;
+            }
+
+            if (!int.TryParse(txtStreamingPort?.Text, out int port) || port < 1024 || port > 65535)
+            {
+                error = "El puerto TCP debe estar entre 1024 y 65535.";
+                return false;
+            }
+
+            string[] devices = adbManager.GetConnectedDevices();
+            if (devices.Length == 0)
+            {
+                error = "ADB no ve ningún teléfono autorizado. Comprueba adb devices y acepta el aviso USB Debugging en el teléfono.";
+                return false;
+            }
+
+            string serial = txtAndroidSerial?.Text.Trim() ?? "";
+            if (string.IsNullOrWhiteSpace(serial))
+            {
+                serial = devices[0];
+                if (txtAndroidSerial != null)
+                    txtAndroidSerial.Text = serial;
+            }
+
+            if (!devices.Contains(serial, StringComparer.OrdinalIgnoreCase))
+            {
+                error = $"El teléfono '{serial}' no aparece autorizado en ADB. Pulsa Detectar teléfono Android y vuelve a guardar.";
+                return false;
+            }
+
+            if (!adbManager.ReversePort(port, serial))
+            {
+                error = $"ADB no pudo crear reverse tcp:{port} tcp:{port} para {serial}. Desconecta y vuelve a conectar el teléfono, y revisa USB Debugging.";
+                return false;
+            }
+
+            Debug.WriteLine($"PixelVR ADB reverse listo: {serial}, TCP {port}.");
+            return true;
+        }
+
+        private void RemoveAndroidAdbReverse()
+        {
+            if (adbManager == null || !adbManager.IsAvailable ||
+                !int.TryParse(txtStreamingPort?.Text, out int port))
+                return;
+
+            adbManager.RemoveReversePort(port, txtAndroidSerial?.Text.Trim() ?? "");
         }
 
     }

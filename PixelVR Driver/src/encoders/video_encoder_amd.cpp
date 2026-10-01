@@ -10,6 +10,7 @@
 #include <algorithm>
 #include <chrono>
 #include <cstring>
+#include <string>
 #include <thread>
 
 #include "core/Buffer.h"
@@ -22,6 +23,31 @@
 namespace
 {
     constexpr auto kEncodeTimeout = std::chrono::milliseconds(50);
+
+    const char* AMFResultName(AMF_RESULT result)
+    {
+        switch (result)
+        {
+        case AMF_OK: return "AMF_OK";
+        case AMF_CODEC_NOT_SUPPORTED: return "AMF_CODEC_NOT_SUPPORTED";
+        case AMF_ENCODER_NOT_PRESENT: return "AMF_ENCODER_NOT_PRESENT";
+        case AMF_NO_DEVICE: return "AMF_NO_DEVICE";
+        case AMF_NOT_SUPPORTED: return "AMF_NOT_SUPPORTED";
+        default: return "AMF_RESULT_UNKNOWN";
+        }
+    }
+
+    std::string AMFModulePath(HMODULE module)
+    {
+        wchar_t path[MAX_PATH]{};
+        const DWORD length = GetModuleFileNameW(module, path, MAX_PATH);
+        if (length == 0 || length >= MAX_PATH)
+            return "(ruta no disponible)";
+
+        char utf8[MAX_PATH * 4]{};
+        const int bytes = WideCharToMultiByte(CP_UTF8, 0, path, -1, utf8, static_cast<int>(sizeof(utf8)), nullptr, nullptr);
+        return bytes > 0 ? std::string(utf8) : std::string("(ruta no disponible)");
+    }
 }
 
 AMDEncoder::AMDEncoder()
@@ -83,6 +109,22 @@ bool AMDEncoder::Initialize(
     }
     m_amfModule = module;
 
+    amf_uint64 runtimeVersion = 0;
+    auto amfQueryVersion = reinterpret_cast<AMFQueryVersion_Fn>(GetProcAddress(module, AMF_QUERY_VERSION_FUNCTION_NAME));
+    if (amfQueryVersion && amfQueryVersion(&runtimeVersion) == AMF_OK)
+    {
+        DriverLog("[AMD] Runtime AMF %u.%u.%u.%u cargado desde %s",
+            static_cast<unsigned>(AMF_GET_MAJOR_VERSION(runtimeVersion)),
+            static_cast<unsigned>(AMF_GET_MINOR_VERSION(runtimeVersion)),
+            static_cast<unsigned>(AMF_GET_SUBMINOR_VERSION(runtimeVersion)),
+            static_cast<unsigned>(AMF_GET_BUILD_VERSION(runtimeVersion)),
+            AMFModulePath(module).c_str());
+    }
+    else
+    {
+        DriverLog("[AMD] AMFQueryVersion no disponible; runtime cargado desde %s", AMFModulePath(module).c_str());
+    }
+
     auto amfInit = reinterpret_cast<AMFInit_Fn>(GetProcAddress(module, AMF_INIT_FUNCTION_NAME));
     if (!amfInit || amfInit(AMF_FULL_VERSION, &m_factory) != AMF_OK || !m_factory)
     {
@@ -132,10 +174,14 @@ bool AMDEncoder::Initialize(
 
     // --- Encoder ------------------------------------------------------------------------------
     const bool h264 = (codec == VideoCodec::H264);
-    res = m_factory->CreateComponent(m_amfContext, h264 ? AMFVideoEncoderVCE_AVC : AMFVideoEncoder_HEVC, &m_encoder);
+    const wchar_t* componentName = h264 ? AMFVideoEncoderVCE_AVC : AMFVideoEncoder_HEVC;
+    DriverLog("[AMD] Creando componente AMF para %s en %ux%u",
+        h264 ? "H.264" : "HEVC", width, height);
+    res = m_factory->CreateComponent(m_amfContext, componentName, &m_encoder);
     if (res != AMF_OK)
     {
-        DriverLog("[AMD] No se pudo crear el encoder VCN (%d)", static_cast<int>(res));
+        DriverLog("[AMD] CreateComponent encoder %s fallo: %d (%s)",
+            h264 ? "H.264" : "HEVC", static_cast<int>(res), AMFResultName(res));
         Shutdown();
         return false;
     }

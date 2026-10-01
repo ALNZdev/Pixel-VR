@@ -25,7 +25,8 @@ namespace PixelVR
         public bool StreamBindAll { get; set; } = false;
         public int StreamPort { get; set; } = 9944;
         public int StreamBitrateKbps { get; set; } = 15000;
-        public int StreamFramerate { get; set; } = 90;
+        public int StreamFramerate { get; set; } = 60;
+        public bool StreamFramerateFollowsDisplayFrequency { get; set; } = true;
         public int StreamWidth { get; set; } = 1920;
         public int StreamHeight { get; set; } = 1080;
         public string StreamCodec { get; set; } = "h264";
@@ -126,7 +127,8 @@ namespace PixelVR
                     settings.StreamBindAll = GetJsonBool(driverSection, "streamBindAll", false);
                     settings.StreamPort = GetJsonInt(driverSection, "streamPort", 9944);
                     settings.StreamBitrateKbps = GetJsonInt(driverSection, "streamBitrateKbps", 15000);
-                    settings.StreamFramerate = GetJsonInt(driverSection, "streamFramerate", 90);
+                    settings.StreamFramerate = GetJsonInt(driverSection, "streamFramerate", 60);
+                    settings.StreamFramerateFollowsDisplayFrequency = GetJsonBool(driverSection, "streamFramerateFollowsDisplayFrequency", true);
                     settings.StreamWidth = GetJsonInt(driverSection, "streamWidth", 1920);
                     settings.StreamHeight = GetJsonInt(driverSection, "streamHeight", 1080);
                     settings.StreamCodec = GetJsonString(driverSection, "streamCodec", "h264");
@@ -215,6 +217,7 @@ namespace PixelVR
                     { "streamPort", settings.StreamPort },
                     { "streamBitrateKbps", settings.StreamBitrateKbps },
                     { "streamFramerate", settings.StreamFramerate },
+                    { "streamFramerateFollowsDisplayFrequency", settings.StreamFramerateFollowsDisplayFrequency },
                     { "streamCodec", settings.StreamCodec },
                     { "streamWidth", settings.StreamWidth },
                     { "streamHeight", settings.StreamHeight },

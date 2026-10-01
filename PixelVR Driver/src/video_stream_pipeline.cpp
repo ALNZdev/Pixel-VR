@@ -10,6 +10,7 @@
 #include "streaming_server.h"
 #include "video_encoder.h"
 #include "encoders/video_encoder_amd.h"
+#include "encoders/video_encoder_mf.h"
 
 #include <chrono>
 #include <vector>
@@ -105,12 +106,29 @@ bool VideoStreamPipeline::Start(
         s.state = SlotState::Free;
     }
 
-    auto encoder = std::make_unique<AMDEncoder>();
+    std::unique_ptr<IStreamVideoEncoder> encoder = std::make_unique<AMDEncoder>();
     if (!encoder->Initialize(device, context, m_width, m_height, m_config.bitrateKbps, m_fps, m_config.codec))
     {
-        DriverLog("[Stream] AMD AMF no pudo inicializarse (GPU AMD + drivers Adrenalin requeridos)");
-        Stop();
-        return false;
+        encoder.reset();
+        DriverLog("[Stream] AMF no disponible; intentando encoder Media Foundation por GPU (%s)",
+            m_config.codec == VideoCodec::H264 ? "H.264" : "HEVC");
+        auto fallback = std::make_unique<MediaFoundationEncoder>();
+        if (fallback->Initialize(device, context, m_width, m_height, m_config.bitrateKbps, m_fps, m_config.codec))
+            encoder = std::move(fallback);
+        else
+        {
+            fallback = std::make_unique<MediaFoundationEncoder>(false);
+            DriverLog("[Stream] MFT de hardware no disponible; probando encoder Media Foundation por CPU");
+            if (fallback->Initialize(device, context, m_width, m_height, m_config.bitrateKbps, m_fps, m_config.codec))
+                encoder = std::move(fallback);
+        }
+
+        if (!encoder)
+        {
+            DriverLog("[Stream] No se pudo iniciar un encoder compatible con el codec configurado");
+            Stop();
+            return false;
+        }
     }
     m_encoder = std::move(encoder);
 
@@ -185,6 +203,7 @@ bool VideoStreamPipeline::SendPacket(const std::vector<uint8_t>& payload, bool k
     header.height = static_cast<uint16_t>(m_height);
     header.codec = m_config.codec == VideoCodec::HEVC ? pixelvr::kCodecHevc : pixelvr::kCodecH264;
     header.flags = keyframe ? pixelvr::kPacketFlagKeyframe : 0;
+    header.framerate = static_cast<uint16_t>(m_fps);
     header.payloadBytes = static_cast<uint32_t>(payload.size());
 
     // One send() for header+payload would need a copy; two sends with TCP_NODELAY off would
@@ -196,6 +215,11 @@ bool VideoStreamPipeline::SendPacket(const std::vector<uint8_t>& payload, bool k
 
 void VideoStreamPipeline::ThreadMain()
 {
+    const HRESULT comHr = CoInitializeEx(nullptr, COINIT_MULTITHREADED);
+    const bool uninitializeCom = SUCCEEDED(comHr);
+    if (FAILED(comHr) && comHr != RPC_E_CHANGED_MODE)
+        DriverLog("[Stream] No se pudo inicializar COM en el hilo de encode (%08X)", comHr);
+
     DriverLog("[Stream] Hilo de encode/envio iniciado");
 
     std::vector<uint8_t> bitstream;
@@ -262,4 +286,6 @@ void VideoStreamPipeline::ThreadMain()
     }
 
     DriverLog("[Stream] Hilo de encode/envio detenido");
+    if (uninitializeCom)
+        CoUninitialize();
 }
