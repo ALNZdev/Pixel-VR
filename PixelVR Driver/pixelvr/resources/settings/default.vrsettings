@@ -18,7 +18,7 @@
     "streamBitrateKbps": 30000,
     "streamFramerate": 60,
     "streamFramerateFollowsDisplayFrequency": true,
-    "streamCodec": "hevc",
+    "streamCodec": "h264",
     "streamWidth": 1920,
     "streamHeight": 1080,
     "adbPath": "C:\\Users\\gabum\\AppData\\Local\\Android\\Sdk\\platform-tools\\adb.exe",

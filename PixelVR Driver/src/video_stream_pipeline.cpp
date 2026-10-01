@@ -67,7 +67,8 @@ bool VideoStreamPipeline::Start(
     const StreamConfig& config,
     uint32_t sbsWidth,
     uint32_t sbsHeight,
-    uint32_t fps)
+    uint32_t fps,
+    EncoderSelection selection)
 {
     Stop();
     m_stop = false;
@@ -106,19 +107,32 @@ bool VideoStreamPipeline::Start(
         s.state = SlotState::Free;
     }
 
-    std::unique_ptr<IStreamVideoEncoder> encoder = std::make_unique<AMDEncoder>();
-    if (!encoder->Initialize(device, context, m_width, m_height, m_config.bitrateKbps, m_fps, m_config.codec))
+    std::unique_ptr<IStreamVideoEncoder> encoder;
+    if (selection != EncoderSelection::MediaFoundationOnly)
     {
-        encoder.reset();
-        DriverLog("[Stream] AMF no disponible; intentando encoder Media Foundation por GPU (%s)",
+        auto amd = std::make_unique<AMDEncoder>();
+        if (amd->Initialize(device, context, m_width, m_height, m_config.bitrateKbps, m_fps, m_config.codec))
+            encoder = std::move(amd);
+        else if (selection == EncoderSelection::AMDOnly)
+        {
+            DriverLog("[Stream] AMF no disponible en este adaptador; se continuará probando los demás adaptadores AMD");
+            Stop();
+            return false;
+        }
+    }
+
+    if (!encoder && selection != EncoderSelection::AMDOnly)
+    {
+        DriverLog("[Stream] Iniciando Media Foundation para %s",
             m_config.codec == VideoCodec::H264 ? "H.264" : "HEVC");
         auto fallback = std::make_unique<MediaFoundationEncoder>();
         if (fallback->Initialize(device, context, m_width, m_height, m_config.bitrateKbps, m_fps, m_config.codec))
             encoder = std::move(fallback);
         else
-        {
-            fallback = std::make_unique<MediaFoundationEncoder>(false);
             DriverLog("[Stream] MFT de hardware no disponible; probando encoder Media Foundation por CPU");
+        if (!encoder)
+        {
+            auto fallback = std::make_unique<MediaFoundationEncoder>(false);
             if (fallback->Initialize(device, context, m_width, m_height, m_config.bitrateKbps, m_fps, m_config.codec))
                 encoder = std::move(fallback);
         }
@@ -142,7 +156,9 @@ bool VideoStreamPipeline::Start(
 
     m_running = true;
     m_thread = std::thread(&VideoStreamPipeline::ThreadMain, this);
-    DriverLog("[Stream] Pipeline listo: SBS %ux%u @ %u fps, %u kbps, puerto %u",
+    const EncoderInfo& encoderInfo = m_encoder->GetInfo();
+    DriverLog("[Stream] Pipeline listo: encoder=%s (%s), SBS %ux%u @ %u fps, %u kbps, puerto %u",
+        encoderInfo.name.c_str(), encoderInfo.isHardware ? "hardware" : "CPU",
         m_width, m_height, m_fps, m_config.bitrateKbps, m_config.port);
     return true;
 }

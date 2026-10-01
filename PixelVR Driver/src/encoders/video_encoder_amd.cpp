@@ -19,6 +19,7 @@
 #include "components/VideoConverter.h"
 #include "components/VideoEncoderVCE.h"
 #include "components/VideoEncoderHEVC.h"
+#include "components/ComponentCaps.h"
 
 namespace
 {
@@ -63,7 +64,10 @@ AMDEncoder::~AMDEncoder()
 
 bool AMDEncoder::IsAvailable()
 {
-    HMODULE module = LoadLibraryW(AMF_DLL_NAME);
+    // Keep a single runtime reference for the process. Adapter probes may create and
+    // destroy multiple AMF contexts; loading the DLL per probe would leak references.
+    static HMODULE runtimeModule = LoadLibraryW(AMF_DLL_NAME);
+    HMODULE module = runtimeModule;
     if (module)
     {
         FreeLibrary(module);
@@ -153,25 +157,6 @@ bool AMDEncoder::Initialize(
         return false;
     }
 
-    // --- BGRA -> NV12 (GPU) -------------------------------------------------------------------
-    res = m_factory->CreateComponent(m_amfContext, AMFVideoConverter, &m_converter);
-    if (res != AMF_OK)
-    {
-        DriverLog("[AMD] No se pudo crear AMFVideoConverter (%d)", static_cast<int>(res));
-        Shutdown();
-        return false;
-    }
-    m_converter->SetProperty(AMF_VIDEO_CONVERTER_MEMORY_TYPE, amf_int64(amf::AMF_MEMORY_DX11));
-    m_converter->SetProperty(AMF_VIDEO_CONVERTER_OUTPUT_FORMAT, amf_int64(amf::AMF_SURFACE_NV12));
-    m_converter->SetProperty(AMF_VIDEO_CONVERTER_OUTPUT_SIZE, ::AMFConstructSize(width, height));
-    res = m_converter->Init(amf::AMF_SURFACE_BGRA, width, height);
-    if (res != AMF_OK)
-    {
-        DriverLog("[AMD] Converter Init fallo (%d)", static_cast<int>(res));
-        Shutdown();
-        return false;
-    }
-
     // --- Encoder ------------------------------------------------------------------------------
     const bool h264 = (codec == VideoCodec::H264);
     const wchar_t* componentName = h264 ? AMFVideoEncoderVCE_AVC : AMFVideoEncoder_HEVC;
@@ -209,7 +194,7 @@ bool AMDEncoder::Initialize(
         m_encoder->SetProperty(AMF_VIDEO_ENCODER_IDR_PERIOD, idrPeriod);
         m_encoder->SetProperty(AMF_VIDEO_ENCODER_HEADER_INSERTION_SPACING, idrPeriod);
         m_encoder->SetProperty(AMF_VIDEO_ENCODER_FULL_RANGE_COLOR, false);
-        m_encoder->SetProperty(AMF_VIDEO_ENCODER_QUERY_TIMEOUT, amf_int64(20)); // ms, makes QueryOutput block briefly
+        m_encoder->SetProperty(AMF_VIDEO_ENCODER_QUERY_TIMEOUT, amf_int64(0));
     }
     else
     {
@@ -222,11 +207,66 @@ bool AMDEncoder::Initialize(
         m_encoder->SetProperty(AMF_VIDEO_ENCODER_HEVC_PEAK_BITRATE, bitrate);
         m_encoder->SetProperty(AMF_VIDEO_ENCODER_HEVC_VBV_BUFFER_SIZE, bitrate / framerate * 2);
         m_encoder->SetProperty(AMF_VIDEO_ENCODER_HEVC_GOP_SIZE, idrPeriod);
+        m_encoder->SetProperty(AMF_VIDEO_ENCODER_HEVC_LOWLATENCY_MODE, true);
         m_encoder->SetProperty(AMF_VIDEO_ENCODER_HEVC_HEADER_INSERTION_MODE, amf_int64(AMF_VIDEO_ENCODER_HEVC_HEADER_INSERTION_MODE_IDR_ALIGNED));
-        m_encoder->SetProperty(AMF_VIDEO_ENCODER_HEVC_QUERY_TIMEOUT, amf_int64(20));
+        m_encoder->SetProperty(AMF_VIDEO_ENCODER_HEVC_QUERY_TIMEOUT, amf_int64(0));
     }
 
-    res = m_encoder->Init(amf::AMF_SURFACE_NV12, width, height);
+    // EFC lets the AMF encoder consume the captured BGRA texture directly, avoiding
+    // a second component and an extra surface handoff. Fall back to AMFVideoConverter
+    // only on runtimes/devices whose encoder caps do not expose DX11 BGRA input.
+    bool supportsBgraDx11 = false;
+    amf::AMFCaps* caps = nullptr;
+    if (m_encoder->GetCaps(&caps) == AMF_OK && caps)
+    {
+        amf::AMFIOCaps* inputCaps = nullptr;
+        if (caps->GetInputCaps(&inputCaps) == AMF_OK && inputCaps)
+        {
+            bool supportsBgra = false;
+            for (amf_int32 i = 0; i < inputCaps->GetNumOfFormats(); ++i)
+            {
+                amf::AMF_SURFACE_FORMAT format{};
+                amf_bool native = false;
+                if (inputCaps->GetFormatAt(i, &format, &native) == AMF_OK && format == amf::AMF_SURFACE_BGRA)
+                    supportsBgra = true;
+            }
+            bool supportsDx11 = false;
+            for (amf_int32 i = 0; i < inputCaps->GetNumOfMemoryTypes(); ++i)
+            {
+                amf::AMF_MEMORY_TYPE memory{};
+                amf_bool native = false;
+                if (inputCaps->GetMemoryTypeAt(i, &memory, &native) == AMF_OK && memory == amf::AMF_MEMORY_DX11)
+                    supportsDx11 = true;
+            }
+            supportsBgraDx11 = supportsBgra && supportsDx11;
+            inputCaps->Release();
+        }
+        caps->Release();
+    }
+
+    m_useConverter = !supportsBgraDx11;
+    if (m_useConverter)
+    {
+        res = m_factory->CreateComponent(m_amfContext, AMFVideoConverter, &m_converter);
+        if (res != AMF_OK)
+        {
+            DriverLog("[AMD] AMF encoder no acepta BGRA DX11 y no se pudo crear AMFVideoConverter (%d)", static_cast<int>(res));
+            Shutdown();
+            return false;
+        }
+        m_converter->SetProperty(AMF_VIDEO_CONVERTER_MEMORY_TYPE, amf_int64(amf::AMF_MEMORY_DX11));
+        m_converter->SetProperty(AMF_VIDEO_CONVERTER_OUTPUT_FORMAT, amf_int64(amf::AMF_SURFACE_NV12));
+        m_converter->SetProperty(AMF_VIDEO_CONVERTER_OUTPUT_SIZE, ::AMFConstructSize(width, height));
+        res = m_converter->Init(amf::AMF_SURFACE_BGRA, width, height);
+        if (res != AMF_OK)
+        {
+            DriverLog("[AMD] Converter Init fallo (%d)", static_cast<int>(res));
+            Shutdown();
+            return false;
+        }
+    }
+
+    res = m_encoder->Init(m_useConverter ? amf::AMF_SURFACE_NV12 : amf::AMF_SURFACE_BGRA, width, height);
     if (res != AMF_OK)
     {
         DriverLog("[AMD] Encoder Init fallo (%d)", static_cast<int>(res));
@@ -242,8 +282,9 @@ bool AMDEncoder::Initialize(
     m_info.isInitialized = true;
     m_forceIdr = true;
 
-    DriverLog("[AMD] Encoder VCN listo: %ux%u @ %u kbps, %u fps (%s)",
-        width, height, bitrateKbps, framerate, h264 ? "H.264" : "HEVC");
+    DriverLog("[AMD] Encoder VCN listo: %ux%u @ %u kbps, %u fps (%s, entrada %s)",
+        width, height, bitrateKbps, framerate, h264 ? "H.264" : "HEVC",
+        m_useConverter ? "BGRA->NV12 AMF" : "BGRA directo EFC");
     return true;
 }
 
@@ -267,35 +308,40 @@ bool AMDEncoder::EncodeFrame(
         return false;
     }
 
-    // BGRA -> NV12 on the GPU.
-    if (m_converter->SubmitInput(surface) != AMF_OK)
-        return false;
-
-    amf::AMFDataPtr nv12;
-    const auto convDeadline = std::chrono::steady_clock::now() + kEncodeTimeout;
-    AMF_RESULT res = AMF_REPEAT;
-    while (res == AMF_REPEAT && std::chrono::steady_clock::now() < convDeadline)
+    amf::AMFDataPtr encoderInput = surface;
+    AMF_RESULT res = AMF_OK;
+    if (m_useConverter)
     {
-        res = m_converter->QueryOutput(&nv12);
-        if (res == AMF_REPEAT)
-            std::this_thread::sleep_for(std::chrono::microseconds(200));
+        // Compatibility path: convert to NV12 in AMF when encoder EFC is unavailable.
+        res = m_converter->SubmitInput(surface);
+        if (res != AMF_OK)
+            return false;
+        encoderInput = nullptr;
+        const auto convDeadline = std::chrono::steady_clock::now() + kEncodeTimeout;
+        res = AMF_REPEAT;
+        while (res == AMF_REPEAT && std::chrono::steady_clock::now() < convDeadline)
+        {
+            res = m_converter->QueryOutput(&encoderInput);
+            if (res == AMF_REPEAT)
+                std::this_thread::sleep_for(std::chrono::microseconds(200));
+        }
+        if (res != AMF_OK || !encoderInput)
+            return false;
     }
-    if (res != AMF_OK || !nv12)
-        return false;
 
     const bool forceIdr = m_forceIdr.exchange(false);
     if (forceIdr)
     {
         if (m_codec == VideoCodec::H264)
         {
-            nv12->SetProperty(AMF_VIDEO_ENCODER_FORCE_PICTURE_TYPE, amf_int64(AMF_VIDEO_ENCODER_PICTURE_TYPE_IDR));
-            nv12->SetProperty(AMF_VIDEO_ENCODER_INSERT_SPS, true);
-            nv12->SetProperty(AMF_VIDEO_ENCODER_INSERT_PPS, true);
+            encoderInput->SetProperty(AMF_VIDEO_ENCODER_FORCE_PICTURE_TYPE, amf_int64(AMF_VIDEO_ENCODER_PICTURE_TYPE_IDR));
+            encoderInput->SetProperty(AMF_VIDEO_ENCODER_INSERT_SPS, true);
+            encoderInput->SetProperty(AMF_VIDEO_ENCODER_INSERT_PPS, true);
         }
         else
         {
-            nv12->SetProperty(AMF_VIDEO_ENCODER_HEVC_FORCE_PICTURE_TYPE, amf_int64(AMF_VIDEO_ENCODER_HEVC_PICTURE_TYPE_IDR));
-            nv12->SetProperty(AMF_VIDEO_ENCODER_HEVC_INSERT_HEADER, true);
+            encoderInput->SetProperty(AMF_VIDEO_ENCODER_HEVC_FORCE_PICTURE_TYPE, amf_int64(AMF_VIDEO_ENCODER_HEVC_PICTURE_TYPE_IDR));
+            encoderInput->SetProperty(AMF_VIDEO_ENCODER_HEVC_INSERT_HEADER, true);
         }
     }
 
@@ -303,7 +349,7 @@ bool AMDEncoder::EncodeFrame(
     const auto submitDeadline = std::chrono::steady_clock::now() + kEncodeTimeout;
     do
     {
-        res = m_encoder->SubmitInput(nv12);
+        res = m_encoder->SubmitInput(encoderInput);
         if (res == AMF_INPUT_FULL)
             std::this_thread::sleep_for(std::chrono::microseconds(300));
     } while (res == AMF_INPUT_FULL && std::chrono::steady_clock::now() < submitDeadline);

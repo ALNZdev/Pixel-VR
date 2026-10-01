@@ -29,6 +29,13 @@ class StreamingServer;
 class VideoStreamPipeline
 {
 public:
+    enum class EncoderSelection
+    {
+        Auto,
+        AMDOnly,
+        MediaFoundationOnly
+    };
+
     static VideoStreamPipeline& Instance();
 
     /// (Re)starts the pipeline on `device` (must be on the GPU that owns the AMF encoder).
@@ -39,7 +46,8 @@ public:
         const StreamConfig& config,
         uint32_t sbsWidth,
         uint32_t sbsHeight,
-        uint32_t fps);
+        uint32_t fps,
+        EncoderSelection selection = EncoderSelection::Auto);
 
     void Stop();
 

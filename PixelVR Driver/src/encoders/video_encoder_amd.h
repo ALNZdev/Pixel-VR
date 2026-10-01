@@ -59,6 +59,7 @@ private:
     amf::AMFContextPtr m_amfContext;
     amf::AMFComponentPtr m_converter;
     amf::AMFComponentPtr m_encoder;
+    bool m_useConverter = true;
 
     std::atomic<bool> m_forceIdr{ true }; // first frame is always an IDR
     VideoCodec m_codec = VideoCodec::H264;

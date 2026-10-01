@@ -1,4 +1,21 @@
-﻿  video_encoder_factory.cpp
+﻿  Building Custom Rule C:/Users/gabum/Desktop/Pixel VR/PixelVR Driver/CMakeLists.txt
+  main.cpp
+  hmd.cpp
+  controllers.cpp
+  driver_factory.cpp
+  pipe_handler.cpp
+  driverlog.cpp
+  psm_tracking_manager.cpp
+  video_encoder_factory.cpp
+  video_encoder_nvidia.cpp
+  video_encoder_amd.cpp
+  video_encoder_intel.cpp
+  d3d11_helper.cpp
+  direct_mode.cpp
+  sbs_composer.cpp
+  streaming_server.cpp
+  config_manager.cpp
+  display_mode.cpp
   video_encoder_mf.cpp
   video_stream_pipeline.cpp
   Generating Code...

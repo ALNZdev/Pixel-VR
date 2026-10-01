@@ -105,41 +105,55 @@ bool PixelVRDirectMode::Start(const Options& options)
     const uint32_t displayFps = static_cast<uint32_t>(m_options.displayHz + 0.5f);
     const uint32_t fps = m_options.stream.framerate > 0 ? m_options.stream.framerate : displayFps;
 
-    for (const auto& adapter : amdAdapters)
+    auto tryAdapters = [&](VideoStreamPipeline::EncoderSelection selection, const char* phase) -> bool
     {
-        VideoStreamPipeline::Instance().Stop();
-        m_composer.Shutdown();
-        if (!CreateDeviceForAdapter(adapter.Get()))
-            continue;
-
-        DXGI_ADAPTER_DESC1 desc{};
-        adapter->GetDesc1(&desc);
-        const std::string name = WideToUtf8(desc.Description);
-
-        if (!m_composer.Initialize(m_device.Get(), m_context.Get()))
+        for (const auto& adapter : amdAdapters)
         {
-            DriverLog("[DirectMode] SbsComposer no pudo inicializarse en '%s'; probando otro adaptador", name.c_str());
-            m_composer.Shutdown();
-            continue;
-        }
-
-        if (!VideoStreamPipeline::Instance().Start(
-            m_device.Get(), m_context.Get(), m_options.stream, sbsW, sbsH, fps))
-        {
-            DriverLog("[DirectMode] Encoder o pipeline no disponible en '%s'; probando otro adaptador AMD", name.c_str());
             VideoStreamPipeline::Instance().Stop();
             m_composer.Shutdown();
-            continue;
+            if (!CreateDeviceForAdapter(adapter.Get()))
+                continue;
+
+            DXGI_ADAPTER_DESC1 desc{};
+            adapter->GetDesc1(&desc);
+            const std::string name = WideToUtf8(desc.Description);
+
+            if (!m_composer.Initialize(m_device.Get(), m_context.Get()))
+            {
+                DriverLog("[DirectMode] SbsComposer no pudo inicializarse en '%s'; probando otro adaptador", name.c_str());
+                m_composer.Shutdown();
+                continue;
+            }
+
+            if (!VideoStreamPipeline::Instance().Start(
+                m_device.Get(), m_context.Get(), m_options.stream, sbsW, sbsH, fps, selection))
+            {
+                DriverLog("[DirectMode] Fase %s no pudo iniciar encoder/pipeline en '%s'; probando otro adaptador AMD",
+                    phase, name.c_str());
+                VideoStreamPipeline::Instance().Stop();
+                m_composer.Shutdown();
+                continue;
+            }
+
+            DriverLog("[DirectMode] Adaptador AMD seleccionado (%s): '%s'", phase, name.c_str());
+            m_started = true;
+            m_stopVsync = false;
+            m_vsyncThread = std::thread(&PixelVRDirectMode::VsyncThreadMain, this);
+            return true;
         }
+        return false;
+    };
 
-        DriverLog("[DirectMode] Adaptador AMD seleccionado tras inicializar AMF: '%s'", name.c_str());
-        m_started = true;
-        m_stopVsync = false;
-        m_vsyncThread = std::thread(&PixelVRDirectMode::VsyncThreadMain, this);
+    // Probe every AMD adapter for AMF first. An MF CPU fallback on the first adapter
+    // must not prevent trying the 5700G's integrated Radeon VCN encoder.
+    if (tryAdapters(VideoStreamPipeline::EncoderSelection::AMDOnly, "AMF"))
         return true;
-    }
 
-    DriverLog("[DirectMode] Ningun adaptador AMD pudo inicializar el compositor y el encoder");
+    DriverLog("[DirectMode] AMF no inició en ningún adaptador AMD; probando Media Foundation (hardware y luego CPU)");
+    if (tryAdapters(VideoStreamPipeline::EncoderSelection::MediaFoundationOnly, "Media Foundation"))
+        return true;
+
+    DriverLog("[DirectMode] Ningun adaptador AMD pudo inicializar compositor, encoder AMF ni Media Foundation");
     Stop();
     return false;
 }
