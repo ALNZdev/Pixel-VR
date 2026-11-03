@@ -1,0 +1,79 @@
+{
+  "jsonid": "input_profile",
+  "controller_type": "pixelvr_left",
+  "device_class": "TrackedDeviceClass_Controller",
+  "resource_root": "pixelvr",
+  "driver_name": "pixelvr",
+  "remapping": "{pixelvr}/input/left/pixelvr_left_remapping.json",
+  "legacy_binding": "{pixelvr}/input/left/legacy_pixelvr_left.json",
+  "input_bindingui_mode": "controller_handed",
+  "should_show_binding_errors": true,
+  "input_bindingui_left": {
+    "image": "{pixelvr}/icons/oculus_touch_left.svg"
+  },
+  "input_source": {
+    "/input/trigger": {
+      "type": "trigger",
+      "value": true,
+      "click": true,
+      "touch": true,
+      "binding_image_point": [ 22, 85 ],
+      "order": 1
+    },
+    "/input/joystick": {
+      "type": "joystick",
+      "click": true,
+      "touch": true,
+      "binding_image_point": [ 54, 31 ],
+      "order": 2
+    },
+    "/input/grip": {
+      "type": "trigger",
+      "value": true,
+      "click": true,
+      "touch": true,
+      "binding_image_point": [ 100, 86 ],
+      "order": 3
+    },
+    "/input/x": {
+      "type": "button",
+      "side": "left",
+      "click": true,
+      "touch": true,
+      "binding_image_point": [ 70, 49 ],
+      "order": 4
+    },
+    "/input/y": {
+      "type": "button",
+      "side": "left",
+      "click": true,
+      "touch": true,
+      "binding_image_point": [ 54, 55 ],
+      "order": 5
+    },
+    "/input/system": {
+      "type": "button",
+      "click": true,
+      "binding_image_point": [ 72, 39 ],
+      "order": 6
+    },
+    "/input/menu": {
+      "type": "button",
+      "click": true,
+      "binding_image_point": [ 72, 39 ],
+      "order": 7
+    },
+    "/pose/raw": {
+      "type": "pose",
+      "binding_image_point": [ 14, 16 ]
+    },
+    "/pose/openxr_grip": {
+      "type": "pose",
+      "binding_image_point": [ 14, 16 ]
+    },
+    "/pose/openxr_aim": {
+      "type": "pose",
+      "binding_image_point": [ 22, 85 ]
+    }
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "to_controller_type": "pixelvr_left",
+  "layouts": [
+    {
+      "priority": 100,
+      "from_controller_type": "oculus_touch",
+      "simulate_controller_type": true,
+      "simulate_render_model": true,
+      "simulate_HMD": false,
+      "autoremappings": [
+        { "from": "/user/hand/left/input/system", "to": "/user/hand/left/input/system", "mirror": false },
+        { "from": "/user/hand/left/input/x", "to": "/user/hand/left/input/x", "mirror": false },
+        { "from": "/user/hand/left/input/y", "to": "/user/hand/left/input/y", "mirror": false },
+        { "from": "/user/hand/left/input/trigger", "to": "/user/hand/left/input/trigger", "mirror": false },
+        { "from": "/user/hand/left/input/joystick", "to": "/user/hand/left/input/joystick", "mirror": false },
+        { "from": "/user/hand/left/input/grip", "to": "/user/hand/left/input/grip", "mirror": false }
+      ]
+    }
+  ]
+}

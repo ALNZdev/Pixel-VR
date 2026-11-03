@@ -1,0 +1,112 @@
+{
+  "bindings": {
+    "/actions/legacy": {
+      "poses": [
+        {
+          "output": "/actions/legacy/in/Left_Pose",
+          "path": "/user/hand/left/pose/raw"
+        }
+      ],
+      "sources": [
+        {
+          "inputs": {
+            "click": {
+              "output": "/actions/legacy/in/left_axis1_press"
+            },
+            "pull": {
+              "output": "/actions/legacy/in/left_axis1_value"
+            },
+            "touch": {
+              "output": "/actions/legacy/in/left_axis1_touch"
+            }
+          },
+          "parameters": {
+            "haptic_amplitude": "0"
+          },
+          "mode": "trigger",
+          "path": "/user/hand/left/input/trigger"
+        },
+        {
+          "inputs": {
+            "click": {
+              "output": "/actions/legacy/in/left_axis0_press"
+            },
+            "position": {
+              "output": "/actions/legacy/in/left_axis0_value"
+            },
+            "touch": {
+              "output": "/actions/legacy/in/left_axis0_touch"
+            }
+          },
+          "mode": "joystick",
+          "path": "/user/hand/left/input/joystick"
+        },
+        {
+          "inputs": {
+            "click": {
+              "output": "/actions/legacy/in/left_axis2_press"
+            },
+            "pull": {
+              "output": "/actions/legacy/in/left_axis2_value1"
+            },
+            "touch": {
+              "output": "/actions/legacy/in/left_axis2_touch"
+            }
+          },
+          "parameters": {
+            "haptic_amplitude": "0"
+          },
+          "mode": "trigger",
+          "path": "/user/hand/left/input/grip"
+        },
+        {
+          "inputs": {
+            "click": {
+              "output": "/actions/legacy/in/left_a_press"
+            },
+            "touch": {
+              "output": "/actions/legacy/in/left_a_touch"
+            }
+          },
+          "mode": "button",
+          "path": "/user/hand/left/input/x"
+        },
+        {
+          "inputs": {
+            "click": {
+              "output": "/actions/legacy/in/left_applicationmenu_press"
+            },
+            "touch": {
+              "output": "/actions/legacy/in/left_applicationmenu_touch"
+            }
+          },
+          "mode": "button",
+          "path": "/user/hand/left/input/y"
+        },
+        {
+          "inputs": {
+            "click": {
+              "output": "/actions/legacy/in/left_grip_press"
+            },
+            "touch": {
+              "output": "/actions/legacy/in/left_grip_touch"
+            }
+          },
+          "parameters": {
+            "haptic_amplitude": "0"
+          },
+          "mode": "button",
+          "path": "/user/hand/left/input/grip"
+        }
+      ]
+    }
+  },
+  "controller_type": "pixelvr_left",
+  "description": "Oculus Touch compatible legacy bindings for PixelVR",
+  "name": "PixelVR left controller legacy bindings",
+  "options": {
+    "simulated_controller_type": "oculus_touch",
+    "simulate_rendermodel": true,
+    "simulate_hmd": false
+  }
+}

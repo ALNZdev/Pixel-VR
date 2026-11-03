@@ -1,0 +1,24 @@
+﻿  Building Custom Rule C:/Users/gabum/Desktop/Pixel VR/PixelVR Driver/CMakeLists.txt
+  config_manager.cpp
+  controllers.cpp
+  d3d11_helper.cpp
+  direct_mode.cpp
+  display_mode.cpp
+  driver_factory.cpp
+  driverlog.cpp
+  ffmpeg_video_encoder.cpp
+  video_encoder_amd.cpp
+  video_encoder_factory.cpp
+  video_encoder_intel.cpp
+  video_encoder_mf.cpp
+  video_encoder_nvidia.cpp
+  hmd.cpp
+  main.cpp
+  pipe_handler.cpp
+  psm_tracking_manager.cpp
+  sbs_composer.cpp
+  streaming_server.cpp
+  video_stream_pipeline.cpp
+  Generating Code...
+     Creating library C:/Users/gabum/Desktop/Pixel VR/PixelVR Driver/Release/driver_pixelvr.lib and object C:/Users/gabum/Desktop/Pixel VR/PixelVR Driver/Release/driver_pixelvr.exp
+  driver_pixelvr.vcxproj -> C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\pixelvr\bin\win64\driver_pixelvr.dll

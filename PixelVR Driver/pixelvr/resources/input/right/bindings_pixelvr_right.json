@@ -1,0 +1,79 @@
+{
+  "controller_type": "pixelvr_right",
+  "bindings": {
+    "/actions/default": [
+      {
+        "path": "/input/a/click",
+        "inputs": {
+          "click": {
+            "output": "/actions/default/in/InteractUI"
+          }
+        }
+      },
+      {
+        "path": "/input/b/click",
+        "inputs": {
+          "click": {
+            "output": "/actions/default/in/GrabPinch"
+          }
+        }
+      },
+      {
+        "path": "/input/trigger/value",
+        "inputs": {
+          "value": {
+            "output": "/actions/default/in/TriggerValue"
+          }
+        }
+      },
+      {
+        "path": "/input/trigger/click",
+        "inputs": {
+          "click": {
+            "output": "/actions/default/in/TriggerClick"
+          }
+        }
+      },
+      {
+        "path": "/input/grip/value",
+        "inputs": {
+          "value": {
+            "output": "/actions/default/in/GrabGrip"
+          }
+        }
+      },
+      {
+        "path": "/input/grip/click",
+        "inputs": {
+          "click": {
+            "output": "/actions/default/in/GrabGrip"
+          }
+        }
+      },
+      {
+        "path": "/input/system/click",
+        "inputs": {
+          "click": {
+            "output": "/actions/default/in/SystemMenu"
+          }
+        }
+      },
+      {
+        "path": "/input/joystick",
+        "inputs": {
+          "x": {
+            "output": "/actions/default/in/JoystickMove",
+            "range": "joystick_x"
+          },
+          "y": {
+            "output": "/actions/default/in/JoystickMove",
+            "range": "joystick_y"
+          },
+          "click": {
+            "output": "/actions/default/in/JoystickClick"
+          }
+        }
+      }
+    ]
+  }
+}

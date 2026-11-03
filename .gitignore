@@ -1,0 +1,4 @@
+# Carpetas generadas por Visual Studio
+.vs/
+.vscode/
+/PixelVR Driver/lib/ffmpeg/

@@ -1,0 +1,40 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <RootNamespace>PixelVR_Connect</RootNamespace>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
+    <Platforms>AnyCPU;x64;ARM64</Platforms>
+    <AssemblyTitle>PixelVR Connect</AssemblyTitle>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="game-controller derecho.PNG" />
+    <None Remove="game-controller.png" />
+    <None Remove="handheld_controller_100dp_5137FF_FILL0_wght400_GRAD0_opsz48.png" />
+    <None Remove="handheld_controller_100dp_5DE6C8_FILL0_wght400_GRAD0_opsz48.png" />
+    <None Remove="head_mounted_device_100dp_F05252_FILL0_wght400_GRAD0_opsz48.png" />
+    <None Remove="head_mounted_device_24dp_F05252_FILL0_wght400_GRAD0_opsz24.png" />
+    <None Remove="virtual-reality-glasses.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MaterialDesignColors" Version="5.3.2" />
+    <PackageReference Include="MaterialDesignThemes" Version="5.3.2" />
+    <PackageReference Include="System.IO.Ports" Version="10.0.12" />
+    <PackageReference Include="System.Management" Version="10.0.12" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="game-controller derecho.PNG" />
+    <Resource Include="game-controller.png" />
+    <Resource Include="handheld_controller_100dp_5137FF_FILL0_wght400_GRAD0_opsz48.png" />
+    <Resource Include="handheld_controller_100dp_5DE6C8_FILL0_wght400_GRAD0_opsz48.png" />
+    <Resource Include="head_mounted_device_100dp_F05252_FILL0_wght400_GRAD0_opsz48.png" />
+    <Resource Include="head_mounted_device_24dp_F05252_FILL0_wght400_GRAD0_opsz24.png" />
+    <Resource Include="virtual-reality-glasses.png" />
+  </ItemGroup>
+</Project>
