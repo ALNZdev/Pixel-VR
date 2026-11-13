@@ -8,7 +8,7 @@
 
 uint8_t mac[6] = {0xAC, 0xA7, 0x04, 0x27, 0xAE, 0x90}; // MAC física del receptor ESP-NOW
 
-int lado = 0;   // 1 = izquierdo, 0 = derecho
+int lado = 1;   // 1 = izquierdo, 0 = derecho
 
 // USB-Serial
 static const uint32_t USB_BAUD_RATE = 115200;
@@ -26,6 +26,7 @@ typedef struct __attribute__((packed)) ControllerData
   float stick_x, stick_y;
   bool  status;
   float error;
+  float gyroX, gyroY, gyroZ;
 } ControllerData;
 
 ControllerData ctrldata;
@@ -74,7 +75,7 @@ AccelData IMUAccel;
 GyroData IMUGyro;
 
 // ─── Suavizado NLERP de cuaternión de salida ──────────────────────────────────
-#define QUAT_SMOOTH_ALPHA 0.08f
+#define QUAT_SMOOTH_ALPHA 0.50f
 
 struct QuatState {
   float w, x, y, z;
@@ -460,6 +461,10 @@ void loop()
   ctrldata.qx = quatFiltered.y;
   ctrldata.qy = quatFiltered.z;
   ctrldata.qz = quatFiltered.x;
+  constexpr float kDegreesToRadians = 0.017453292519943295f;
+  ctrldata.gyroX = gy * kDegreesToRadians;
+  ctrldata.gyroY = gz * kDegreesToRadians;
+  ctrldata.gyroZ = gx * kDegreesToRadians;
 
   ctrldata.a           = !digitalRead(button_a);
   ctrldata.b           = !digitalRead(button_b);

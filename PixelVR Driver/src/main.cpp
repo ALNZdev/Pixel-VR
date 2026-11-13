@@ -4,6 +4,8 @@
 #include "pipe_handler.h"
 #include "driverlog.h"
 #include "video_stream_pipeline.h"
+#include "config_manager.h"
+#include "alvr_pose_bridge.h"
 
 PSMTrackingManager g_psmTracking;
 MyControllerDeviceDriver* g_pLeftController = nullptr;
@@ -14,8 +16,8 @@ vr::EVRInitError MyDeviceProvider::Init(vr::IVRDriverContext* pDriverContext) {
     DriverLog("[Main] ===== PixelVR Driver Iniciado =====");
     DriverLog("[Main] Versión: 1.0");
 
-    StartPipeThread();
-    DriverLog("[Main] Pipe thread iniciado");
+    StartTrackingInput();
+    DriverLog("[Main] Modo del driver: %s", ConfigManager::LoadDriverMode().c_str());
 
     DriverLog("[Main] Iniciando PSMoveServiceEx...");
     if (g_psmTracking.Initialize())
@@ -36,10 +38,14 @@ vr::EVRInitError MyDeviceProvider::Init(vr::IVRDriverContext* pDriverContext) {
     DriverLog("[Main] Controlador derecho registrado");
 
     m_hmd_device = std::make_unique<MyHMDDeviceDriver>();
-    if (m_hmd_device)
+    if (m_hmd_device && ConfigManager::LoadDisplayMode() != DisplayModeSetting::AlvrBridge)
     {
         vr::VRServerDriverHost()->TrackedDeviceAdded(m_hmd_device->GetSerialNumber().c_str(), vr::TrackedDeviceClass_HMD, m_hmd_device.get());
         DriverLog("[Main] HMD registrado");
+    }
+    else if (m_hmd_device)
+    {
+        DriverLog("[Main] Modo ALVR: pose HMD externa, no se registra un segundo HMD en SteamVR");
     }
 
     DriverLog("[Main] ===== Driver listo =====");
@@ -54,7 +60,8 @@ void MyDeviceProvider::RunFrame() {
 
 void MyDeviceProvider::Cleanup() {
     VideoStreamPipeline::Instance().Stop();
-    StopPipeThread();
+    StopTrackingInput();
+    AlvrPoseBridge::Shutdown();
     m_hmd_device.reset();
     my_left_controller_device_.reset();
     my_right_controller_device_.reset();

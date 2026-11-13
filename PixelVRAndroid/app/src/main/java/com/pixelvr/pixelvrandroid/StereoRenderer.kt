@@ -1,104 +1,94 @@
 package com.pixelvr
 
+import android.app.Activity
 import android.graphics.SurfaceTexture
+import android.opengl.EGL14
 import android.opengl.GLES11Ext
 import android.opengl.GLES20
 import android.opengl.GLSurfaceView
-import java.nio.ByteBuffer
-import java.nio.ByteOrder
-import java.nio.FloatBuffer
+import android.util.Log
+import android.view.Surface
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 
-class StereoRenderer : GLSurfaceView.Renderer {
+/** Decodes the SBS stream to an external GL texture and submits it through OpenXR. */
+class StereoRenderer(
+    private val activity: Activity,
+    private val onDecoderSurfaceReady: (Surface) -> Unit
+) : GLSurfaceView.Renderer {
     private var surfaceTexture: SurfaceTexture? = null
+    private var decoderSurface: Surface? = null
+    private val openXrSession = OpenXrSession()
     private var textureId = 0
-    private var programId = 0
-    private var positionHandle = 0
-    private var texCoordHandle = 0
-    private var textureHandle = 0
-    private var frameAvailable = false
-
-    private val quadVertices = floatArrayOf(
-        -1f, -1f,
-        1f, -1f,
-        -1f,  1f,
-        1f,  1f
-    )
-
-    private val quadTexCoords = floatArrayOf(
-        0f, 0f,
-        1f, 0f,
-        0f, 1f,
-        1f, 1f
-    )
-
-    fun setSurfaceTexture(surfaceTexture: SurfaceTexture) {
-        this.surfaceTexture = surfaceTexture
-        this.surfaceTexture?.setOnFrameAvailableListener {
-            synchronized(this) {
-                frameAvailable = true
-            }
-        }
-    }
+    private var xrReady = false
+    private val textureMatrix = FloatArray(16)
 
     override fun onSurfaceCreated(gl: GL10?, config: EGLConfig?) {
+        // The EGL context and OpenXR session are recreated after the activity resumes.
+        release()
         val textures = IntArray(1)
         GLES20.glGenTextures(1, textures, 0)
         textureId = textures[0]
-
-        val tex = SurfaceTexture(textureId)
-        setSurfaceTexture(tex)
-
-        val vertexShaderCode = """
-            attribute vec2 aPosition;
-            attribute vec2 aTexCoord;
-            varying vec2 vTexCoord;
-
-            void main() {
-                gl_Position = vec4(aPosition, 0.0, 1.0);
-                vTexCoord = aTexCoord;
-            }
-        """.trimIndent()
-
-        val fragmentShaderCode = """
-            #extension GL_OES_EGL_image_external : require
-            precision mediump float;
-
-            uniform samplerExternalOES uTexture;
-            varying vec2 vTexCoord;
-
-            void main() {
-                vec2 uv = vTexCoord;
-                float eye = step(0.5, uv.x);
-                float xEye = (uv.x - eye * 0.5) / 0.5;
-                vec2 p = vec2(xEye, uv.y);
-
-                vec2 centered = vec2(p.x * 2.0 - 1.0, p.y * 2.0 - 1.0);
-                float r2 = dot(centered, centered);
-                centered *= 1.0 + r2 * 0.35;
-
-                vec2 src = (centered + 1.0) * 0.5;
-                src.x = mix(src.x * 0.5, 0.5 + src.x * 0.5, eye);
-
-                vec4 color = texture2D(uTexture, clamp(src, 0.0, 1.0));
-                gl_FragColor = color;
-            }
-        """.trimIndent()
-
-        programId = createProgram(vertexShaderCode, fragmentShaderCode)
-        positionHandle = GLES20.glGetAttribLocation(programId, "aPosition")
-        texCoordHandle = GLES20.glGetAttribLocation(programId, "aTexCoord")
-        textureHandle = GLES20.glGetUniformLocation(programId, "uTexture")
-
         GLES20.glBindTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, textureId)
         GLES20.glTexParameteri(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_LINEAR)
         GLES20.glTexParameteri(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR)
         GLES20.glTexParameteri(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE)
         GLES20.glTexParameteri(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE)
 
-        surfaceTexture?.setDefaultBufferSize(1920, 1080)
-        surfaceTexture?.attachToGLContext(textureId)
+        val texture = SurfaceTexture(textureId)
+        texture.setDefaultBufferSize(1920, 1080)
+        texture.setOnFrameAvailableListener { onFrameAvailable() }
+        surfaceTexture = texture
+        decoderSurface = Surface(texture)
+
+        xrReady = initializeOpenXr()
+        if (!xrReady) Log.e(TAG, "OpenXR initialization failed; immersive display stays black")
+        if (xrReady) onDecoderSurfaceReady(decoderSurface!!)
+    }
+
+    private fun initializeOpenXr(): Boolean {
+        val display = EGL14.eglGetCurrentDisplay()
+        val drawSurface = EGL14.eglGetCurrentSurface(EGL14.EGL_DRAW)
+        val context = EGL14.eglGetCurrentContext()
+        if (display == EGL14.EGL_NO_DISPLAY || drawSurface == EGL14.EGL_NO_SURFACE ||
+            context == EGL14.EGL_NO_CONTEXT
+        ) return false
+
+        val configId = IntArray(1)
+        if (!EGL14.eglQuerySurface(display, drawSurface, EGL14.EGL_CONFIG_ID, configId, 0)) return false
+
+        val configs = arrayOfNulls<android.opengl.EGLConfig>(1)
+        val configCount = IntArray(1)
+        val found = EGL14.eglChooseConfig(
+            display,
+            intArrayOf(EGL14.EGL_CONFIG_ID, configId[0], EGL14.EGL_NONE),
+            0,
+            configs,
+            0,
+            configs.size,
+            configCount,
+            0
+        )
+        val eglConfig = configs.firstOrNull() ?: return false
+        return found && openXrSession.initialize(
+            activity,
+            display.nativeHandle,
+            eglConfig.nativeHandle,
+            context.nativeHandle
+        )
+    }
+
+    /** Called on the GL thread while its EGL context is current. */
+    fun release() {
+        openXrSession.shutdown()
+        xrReady = false
+        decoderSurface?.release()
+        decoderSurface = null
+        surfaceTexture?.setOnFrameAvailableListener(null)
+        surfaceTexture?.release()
+        surfaceTexture = null
+        if (textureId != 0) GLES20.glDeleteTextures(1, intArrayOf(textureId), 0)
+        textureId = 0
     }
 
     override fun onSurfaceChanged(gl: GL10?, width: Int, height: Int) {
@@ -106,71 +96,23 @@ class StereoRenderer : GLSurfaceView.Renderer {
     }
 
     override fun onDrawFrame(gl: GL10?) {
-        synchronized(this) {
-            if (frameAvailable) {
-                surfaceTexture?.updateTexImage()
-                frameAvailable = false
-            }
-        }
-
+        // Keep the Android app surface black. The visible image is submitted only as an XR projection layer.
+        GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0)
         GLES20.glClearColor(0f, 0f, 0f, 1f)
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT)
-        GLES20.glUseProgram(programId)
+        if (!xrReady) return
 
-        val vertexBuffer = ByteBuffer.allocateDirect(quadVertices.size * 4).order(ByteOrder.nativeOrder())
-        val vertexFloatBuffer = vertexBuffer.asFloatBuffer()
-        vertexFloatBuffer.put(quadVertices)
-        vertexFloatBuffer.position(0)
-
-        val texBuffer = ByteBuffer.allocateDirect(quadTexCoords.size * 4).order(ByteOrder.nativeOrder())
-        val texFloatBuffer = texBuffer.asFloatBuffer()
-        texFloatBuffer.put(quadTexCoords)
-        texFloatBuffer.position(0)
-
-        GLES20.glEnableVertexAttribArray(positionHandle)
-        GLES20.glVertexAttribPointer(positionHandle, 2, GLES20.GL_FLOAT, false, 0, vertexFloatBuffer)
-
-        GLES20.glEnableVertexAttribArray(texCoordHandle)
-        GLES20.glVertexAttribPointer(texCoordHandle, 2, GLES20.GL_FLOAT, false, 0, texFloatBuffer)
-
-        GLES20.glActiveTexture(GLES20.GL_TEXTURE0)
-        GLES20.glBindTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, textureId)
-        GLES20.glUniform1i(textureHandle, 0)
-
-        GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4)
+        val texture = surfaceTexture ?: return
+        texture.updateTexImage()
+        texture.getTransformMatrix(textureMatrix)
+        openXrSession.render(textureId, textureMatrix, StreamFov.asDegrees(), StreamFov.frameRate())
     }
 
-    private fun createProgram(vertexSource: String, fragmentSource: String): Int {
-        val vertexShader = compileShader(GLES20.GL_VERTEX_SHADER, vertexSource)
-        val fragmentShader = compileShader(GLES20.GL_FRAGMENT_SHADER, fragmentSource)
-
-        val program = GLES20.glCreateProgram()
-        GLES20.glAttachShader(program, vertexShader)
-        GLES20.glAttachShader(program, fragmentShader)
-        GLES20.glLinkProgram(program)
-
-        val status = IntArray(1)
-        GLES20.glGetProgramiv(program, GLES20.GL_LINK_STATUS, status, 0)
-        if (status[0] == 0) {
-            throw RuntimeException("OpenGL link error: ${GLES20.glGetProgramInfoLog(program)}")
-        }
-
-        GLES20.glDeleteShader(vertexShader)
-        GLES20.glDeleteShader(fragmentShader)
-        return program
+    private fun onFrameAvailable() {
+        // GLSurfaceView is configured for continuous rendering; do not call GL from this callback.
     }
 
-    private fun compileShader(type: Int, source: String): Int {
-        val shader = GLES20.glCreateShader(type)
-        GLES20.glShaderSource(shader, source)
-        GLES20.glCompileShader(shader)
-
-        val status = IntArray(1)
-        GLES20.glGetShaderiv(shader, GLES20.GL_COMPILE_STATUS, status, 0)
-        if (status[0] == 0) {
-            throw RuntimeException("OpenGL shader error: ${GLES20.glGetProgramInfoLog(shader)}")
-        }
-
-        return shader
+    companion object {
+        private const val TAG = "StereoRenderer"
     }
 }

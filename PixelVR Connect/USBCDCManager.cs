@@ -14,6 +14,7 @@ namespace PixelVR
     {
         public float hmd_qW, hmd_qX, hmd_qY, hmd_qZ;
         public float hmd_error;
+        public float hmd_gyroX, hmd_gyroY, hmd_gyroZ;
 
         public float left_qW, left_qX, left_qY, left_qZ;
         [MarshalAs(UnmanagedType.I1)] public bool left_a;
@@ -25,6 +26,7 @@ namespace PixelVR
         public float left_stick_x, left_stick_y;
         [MarshalAs(UnmanagedType.I1)] public bool left_status;
         public float left_error;
+        public float left_gyroX, left_gyroY, left_gyroZ;
 
         public float right_qW, right_qX, right_qY, right_qZ;
         [MarshalAs(UnmanagedType.I1)] public bool right_a;
@@ -36,6 +38,7 @@ namespace PixelVR
         public float right_stick_x, right_stick_y;
         [MarshalAs(UnmanagedType.I1)] public bool right_status;
         public float right_error;
+        public float right_gyroX, right_gyroY, right_gyroZ;
     }
 
     public sealed class USBCDCManager : IDisposable
@@ -62,7 +65,7 @@ namespace PixelVR
         // Reconexión automática
         private bool _autoReconnectEnabled = false;
         private string? _lastConnectedPort;
-        private int _lastBaudRate = 115200;
+        private int _lastBaudRate = 460800;
         private CancellationTokenSource? _reconnectCts;
         private Task? _reconnectTask;
         private const int RECONNECT_INTERVAL_MS = 2000;
@@ -83,7 +86,7 @@ namespace PixelVR
             Debug.WriteLine($"[USB-CDC] Struct: {StructSize} bytes, Packet: {PacketSize} bytes");
         }
 
-        public bool Connect(string portName, int baudRate = 115200, bool enableAutoReconnect = false)
+        public bool Connect(string portName, int baudRate = 460800, bool enableAutoReconnect = false)
         {
             if (_disposed) return false;
 

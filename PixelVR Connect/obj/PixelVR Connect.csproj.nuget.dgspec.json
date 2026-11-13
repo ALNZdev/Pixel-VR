@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\gabum\\Desktop\\Pixel VR\\PixelVR Connect\\PixelVR Connect.csproj": {}
+    "C:\\Users\\gabum\\Desktop\\Pixel-VR\\PixelVR Connect\\PixelVR Connect.csproj": {}
   },
   "projects": {
-    "C:\\Users\\gabum\\Desktop\\Pixel VR\\PixelVR Connect\\PixelVR Connect.csproj": {
+    "C:\\Users\\gabum\\Desktop\\Pixel-VR\\PixelVR Connect\\PixelVR Connect.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\gabum\\Desktop\\Pixel VR\\PixelVR Connect\\PixelVR Connect.csproj",
+        "projectUniqueName": "C:\\Users\\gabum\\Desktop\\Pixel-VR\\PixelVR Connect\\PixelVR Connect.csproj",
         "projectName": "PixelVR Connect",
-        "projectPath": "C:\\Users\\gabum\\Desktop\\Pixel VR\\PixelVR Connect\\PixelVR Connect.csproj",
+        "projectPath": "C:\\Users\\gabum\\Desktop\\Pixel-VR\\PixelVR Connect\\PixelVR Connect.csproj",
         "packagesPath": "C:\\Users\\gabum\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\gabum\\Desktop\\Pixel VR\\PixelVR Connect\\obj\\",
+        "outputPath": "C:\\Users\\gabum\\Desktop\\Pixel-VR\\PixelVR Connect\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "E:\\Visual Studio Community 2026\\SDKs\\NuGetPackages"

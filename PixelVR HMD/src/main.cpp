@@ -21,6 +21,7 @@ typedef struct __attribute__((packed)) HmdData
   uint8_t packetType;   // Siempre PACKET_TYPE_HMD en este firmware
   float qw, qx, qy, qz;
   float error;
+  float gyroX, gyroY, gyroZ; // rad/s in the same axes as the transmitted quaternion
 } HmdData;
 
 HmdData hmddata;
@@ -46,7 +47,7 @@ GyroData IMUGyro;
 
 // ─── Filtro Madgwick igual al de PixelVR Controllers ─────────────────────────
 #define GYRO_DEADZONE_DPS    1.5f
-#define QUAT_SMOOTH_ALPHA    0.08f
+#define QUAT_SMOOTH_ALPHA    0.50f
 #define MADGWICK_BETA_MIN    0.02f
 #define MADGWICK_BETA_MAX    0.08f
 #define ACCEL_STILL_TOL_G    0.15f
@@ -373,6 +374,10 @@ void loop()
   hmddata.qx = quatFiltered.y;
   hmddata.qy = quatFiltered.z;
   hmddata.qz = quatFiltered.x;
+  constexpr float kDegreesToRadians = 0.017453292519943295f;
+  hmddata.gyroX = gy * kDegreesToRadians;
+  hmddata.gyroY = gz * kDegreesToRadians;
+  hmddata.gyroZ = gx * kDegreesToRadians;
 
 
   digitalWrite(led_r, HIGH);

@@ -10,8 +10,11 @@ import android.view.WindowManager
 
 class MainActivity : Activity() {
     private lateinit var glSurfaceView: GLSurfaceView
+    private lateinit var stereoRenderer: StereoRenderer
+    private var decoderSurface: android.view.Surface? = null
     private var receiver: StreamReceiver? = null
     private var receiverThread: Thread? = null
+    private var resumed = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,31 +26,32 @@ class MainActivity : Activity() {
         setContentView(R.layout.activity_main)
 
         glSurfaceView = findViewById(R.id.glSurfaceView)
-        glSurfaceView.setEGLContextClientVersion(2)
-        glSurfaceView.setRenderer(object : GLSurfaceView.Renderer {
-            override fun onSurfaceCreated(gl: javax.microedition.khronos.opengles.GL10?, config: javax.microedition.khronos.egl.EGLConfig?) {
-                val texNames = IntArray(1)
-                android.opengl.GLES20.glGenTextures(1, texNames, 0)
-
-                val surfaceTexture = android.graphics.SurfaceTexture(texNames[0])
-                surfaceTexture.setDefaultBufferSize(1920, 1080)
-
-                val decoderSurface = android.view.Surface(surfaceTexture)
-                val decoder = VideoDecoder(decoderSurface)
-
-                receiver = StreamReceiver(decoder)
-                receiverThread = Thread(receiver, "PixelVR-TCP-Receiver").also { it.start() }
+        glSurfaceView.setEGLContextClientVersion(3)
+        glSurfaceView.setPreserveEGLContextOnPause(false)
+        stereoRenderer = StereoRenderer(this) { surface ->
+            runOnUiThread {
+                decoderSurface = surface
+                if (resumed) startReceiver(surface)
             }
-
-            override fun onSurfaceChanged(gl: javax.microedition.khronos.opengles.GL10?, width: Int, height: Int) {
-                android.opengl.GLES20.glViewport(0, 0, width, height)
-            }
-
-            override fun onDrawFrame(gl: javax.microedition.khronos.opengles.GL10?) {
-                // El render stereo se hace en StereoRenderer real
-            }
-        })
+        }
+        glSurfaceView.setRenderer(stereoRenderer)
         glSurfaceView.renderMode = GLSurfaceView.RENDERMODE_CONTINUOUSLY
+    }
+
+    override fun onResume() {
+        super.onResume()
+        resumed = true
+        glSurfaceView.onResume()
+        decoderSurface?.let(::startReceiver)
+    }
+
+    override fun onPause() {
+        resumed = false
+        stopReceiver()
+        decoderSurface = null
+        glSurfaceView.queueEvent { stereoRenderer.release() }
+        glSurfaceView.onPause()
+        super.onPause()
     }
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
@@ -56,10 +60,31 @@ class MainActivity : Activity() {
     }
 
     override fun onDestroy() {
-        receiver?.stop()
-        receiverThread?.interrupt()
-        receiverThread = null
+        stopReceiver()
         super.onDestroy()
+    }
+
+    private fun startReceiver(surface: android.view.Surface) {
+        if (receiverThread?.isAlive == true) return
+        val streamReceiver = StreamReceiver(VideoDecoder(surface))
+        receiver = streamReceiver
+        receiverThread = Thread(streamReceiver, "PixelVR-TCP-Receiver").also { it.start() }
+    }
+
+    private fun stopReceiver() {
+        val oldReceiver = receiver
+        val oldThread = receiverThread
+        receiver = null
+        receiverThread = null
+        oldReceiver?.stop()
+        oldThread?.interrupt()
+        if (oldThread != null && oldThread !== Thread.currentThread()) {
+            try {
+                oldThread.join(2_000)
+            } catch (_: InterruptedException) {
+                Thread.currentThread().interrupt()
+            }
+        }
     }
 
     @SuppressLint("InlinedApi")

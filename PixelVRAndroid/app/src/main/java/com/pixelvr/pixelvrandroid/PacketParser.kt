@@ -4,7 +4,7 @@ import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
 object PacketParser {
-    const val HEADER_SIZE = 28
+    const val HEADER_SIZE = 44
     private const val PACKET_MAGIC = 0x46525650 // 'PVRF'
     const val MAX_PAYLOAD_BYTES = 16 * 1024 * 1024
 
@@ -20,6 +20,10 @@ object PacketParser {
         val codec: Int,
         val flags: Int,
         val frameRate: Int,
+        val fovLeftDegrees: Float,
+        val fovRightDegrees: Float,
+        val fovTopDegrees: Float,
+        val fovBottomDegrees: Float,
         val payloadBytes: Int,
         val isKeyframe: Boolean
     )
@@ -42,9 +46,18 @@ object PacketParser {
         val flags = bb.get().toInt() and 0xff
         val frameRate = bb.short.toInt() and 0xffff
         val payloadBytes = bb.int
+        val fovLeftDegrees = bb.float
+        val fovRightDegrees = bb.float
+        val fovTopDegrees = bb.float
+        val fovBottomDegrees = bb.float
 
         if (width == 0 || height == 0 || codec !in CODEC_H264..CODEC_HEVC) return null
         if (payloadBytes <= 0 || payloadBytes > MAX_PAYLOAD_BYTES) return null
+        if (!fovLeftDegrees.isFinite() || fovLeftDegrees !in 1f..179f ||
+            !fovRightDegrees.isFinite() || fovRightDegrees !in 1f..179f ||
+            !fovTopDegrees.isFinite() || fovTopDegrees !in 1f..179f ||
+            !fovBottomDegrees.isFinite() || fovBottomDegrees !in 1f..179f
+        ) return null
 
         return ParsedFrame(
             frameId = frameId,
@@ -54,6 +67,10 @@ object PacketParser {
             codec = codec,
             flags = flags,
             frameRate = frameRate,
+            fovLeftDegrees = fovLeftDegrees,
+            fovRightDegrees = fovRightDegrees,
+            fovTopDegrees = fovTopDegrees,
+            fovBottomDegrees = fovBottomDegrees,
             payloadBytes = payloadBytes,
             isKeyframe = (flags and FLAG_KEYFRAME) != 0
         )

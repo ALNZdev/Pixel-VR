@@ -16,7 +16,11 @@ namespace
         float qx,
         float qy,
         float qz,
-        bool tracked)
+        bool tracked,
+        double angularVelocityX = 0.0,
+        double angularVelocityY = 0.0,
+        double angularVelocityZ = 0.0,
+        double poseTimeOffset = 0.0)
     {
         vr::DriverPose_t pose{};
 
@@ -38,11 +42,11 @@ namespace
         pose.vecVelocity[1] = 0.0f;
         pose.vecVelocity[2] = 0.0f;
 
-        pose.vecAngularVelocity[0] = 0.0f;
-        pose.vecAngularVelocity[1] = 0.0f;
-        pose.vecAngularVelocity[2] = 0.0f;
+        pose.vecAngularVelocity[0] = angularVelocityX;
+        pose.vecAngularVelocity[1] = angularVelocityY;
+        pose.vecAngularVelocity[2] = angularVelocityZ;
 
-        pose.poseTimeOffset = 0.0;
+        pose.poseTimeOffset = poseTimeOffset;
 
         return pose;
     }
@@ -64,6 +68,17 @@ namespace
         qx /= length;
         qy /= length;
         qz /= length;
+    }
+
+    void RotateVectorByQuaternion(float qw, float qx, float qy, float qz,
+        double& x, double& y, double& z)
+    {
+        const double tx = 2.0 * (qy * z - qz * y);
+        const double ty = 2.0 * (qz * x - qx * z);
+        const double tz = 2.0 * (qx * y - qy * x);
+        x += qw * tx + (qy * tz - qz * ty);
+        y += qw * ty + (qz * tx - qx * tz);
+        z += qw * tz + (qx * ty - qy * tx);
     }
 }
 
@@ -198,23 +213,29 @@ vr::DriverPose_t MyControllerDeviceDriver::GetPose()
     // viaja en el paquete del pipe (lPos/rPos) en su lugar.
     float posX = 0.0f, posY = 0.0f, posZ = 0.0f;
     bool posTracked = false;
+    AllData remote{};
+    std::chrono::steady_clock::time_point receiptTime{};
+    {
+        std::lock_guard<std::mutex> lock(g_DataMutex);
+        remote = g_RemoteData;
+        receiptTime = g_RemoteDataReceiptTime;
+    }
 
     if (!m_bEnablePSMTracking)
     {
-        std::lock_guard<std::mutex> lock(g_DataMutex);
         if (m_eRole == vr::TrackedControllerRole_LeftHand)
         {
-            posX = g_RemoteData.lPosX;
-            posY = g_RemoteData.lPosY;
-            posZ = g_RemoteData.lPosZ;
-            posTracked = g_RemoteData.left_status;
+            posX = remote.lPosX;
+            posY = remote.lPosY;
+            posZ = remote.lPosZ;
+            posTracked = remote.left_status;
         }
         else
         {
-            posX = g_RemoteData.rPosX;
-            posY = g_RemoteData.rPosY;
-            posZ = g_RemoteData.rPosZ;
-            posTracked = g_RemoteData.right_status;
+            posX = remote.rPosX;
+            posY = remote.rPosY;
+            posZ = remote.rPosZ;
+            posTracked = remote.right_status;
         }
     }
     else
@@ -241,31 +262,43 @@ vr::DriverPose_t MyControllerDeviceDriver::GetPose()
     float qy = 0.0f;
     float qz = 0.0f;
 
+    double angularVelocityX, angularVelocityY, angularVelocityZ;
+    if (m_eRole == vr::TrackedControllerRole_LeftHand)
     {
-        std::lock_guard<std::mutex> lock(g_DataMutex);
-
-        if (m_eRole == vr::TrackedControllerRole_LeftHand)
-        {
-            qw = g_RemoteData.left_qw;
-            qx = g_RemoteData.left_qx;
-            qy = g_RemoteData.left_qy;
-            qz = g_RemoteData.left_qz;
-        }
-        else
-        {
-            qw = g_RemoteData.right_qw;
-            qx = g_RemoteData.right_qx;
-            qy = g_RemoteData.right_qy;
-            qz = g_RemoteData.right_qz;
-        }
+        qw = remote.left_qw; qx = remote.left_qx;
+        qy = remote.left_qy; qz = remote.left_qz;
+        angularVelocityX = remote.leftAngularVelocityX;
+        angularVelocityY = remote.leftAngularVelocityY;
+        angularVelocityZ = remote.leftAngularVelocityZ;
+    }
+    else
+    {
+        qw = remote.right_qw; qx = remote.right_qx;
+        qy = remote.right_qy; qz = remote.right_qz;
+        angularVelocityX = remote.rightAngularVelocityX;
+        angularVelocityY = remote.rightAngularVelocityY;
+        angularVelocityZ = remote.rightAngularVelocityZ;
     }
 
     NormalizeQuaternion(qw, qx, qy, qz);
+    RotateVectorByQuaternion(qw, qx, qy, qz,
+        angularVelocityX, angularVelocityY, angularVelocityZ);
+
+    double age = 0.0;
+    if (receiptTime != std::chrono::steady_clock::time_point{})
+    {
+        age = std::chrono::duration<double>(
+            std::chrono::steady_clock::now() - receiptTime).count();
+        if (!std::isfinite(age) || age < 0.0) age = 0.0;
+        if (age > 0.1) age = 0.1;
+    }
 
     return MakePositionAndPipeRotationPose(
         posX, posY, posZ,
         qw, qx, qy, qz,
-        posTracked
+        posTracked,
+        angularVelocityX, angularVelocityY, angularVelocityZ,
+        -age
     );
 }
 

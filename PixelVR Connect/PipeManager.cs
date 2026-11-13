@@ -33,6 +33,7 @@ namespace PixelVR
             public float hmdPosX, hmdPosY, hmdPosZ;
             public float hmd_qw, hmd_qx, hmd_qy, hmd_qz;
             public float hmd_error;
+            public float hmdAngularVelocityX, hmdAngularVelocityY, hmdAngularVelocityZ;
 
             // Left Controller
             public float lPosX, lPosY, lPosZ;
@@ -46,6 +47,7 @@ namespace PixelVR
             public float left_stick_x, left_stick_y;
             [MarshalAs(UnmanagedType.I1)] public bool left_status;
             public float left_error;
+            public float leftAngularVelocityX, leftAngularVelocityY, leftAngularVelocityZ;
 
             // Right Controller
             public float rPosX, rPosY, rPosZ;
@@ -59,6 +61,7 @@ namespace PixelVR
             public float right_stick_x, right_stick_y;
             [MarshalAs(UnmanagedType.I1)] public bool right_status;
             public float right_error;
+            public float rightAngularVelocityX, rightAngularVelocityY, rightAngularVelocityZ;
         }
 
         // ─── Campos privados ──────────────────────────────────────────────────

@@ -19,6 +19,7 @@ typedef struct __attribute__((packed)) ControllerData
   float stick_x, stick_y;
   bool  status;
   float error;
+  float gyroX, gyroY, gyroZ;
 } ControllerData;
 
 typedef struct __attribute__((packed)) HmdData
@@ -26,36 +27,41 @@ typedef struct __attribute__((packed)) HmdData
   uint8_t packetType;
   float qw, qx, qy, qz;
   float error;
+  float gyroX, gyroY, gyroZ;
 } HmdData;
 
-typedef struct __attribute__((packed)) allData   
+typedef struct __attribute__((packed)) allData
 {
   float hmd_qw, hmd_qx, hmd_qy, hmd_qz;          
   float hmd_error;                               
+  float hmd_gyroX, hmd_gyroY, hmd_gyroZ;
 
   float left_qw, left_qx, left_qy, left_qz;
   bool  left_a, left_b, left_system, left_grip, left_trigger, left_stick_click;
   float left_stick_x, left_stick_y;
   bool  left_status;
   float left_error;
+  float left_gyroX, left_gyroY, left_gyroZ;
 
   float right_qw, right_qx, right_qy, right_qz;
   bool  right_a, right_b, right_system, right_grip, right_trigger, right_stick_click; 
   float right_stick_x, right_stick_y;          
   bool  right_status;                                           
   float right_error;                           
+  float right_gyroX, right_gyroY, right_gyroZ;
 } allData;
 
 ControllerData ctrldata;                       
 HmdData        hmddata;
 allData        alldata;
+static portMUX_TYPE g_dataMux = portMUX_INITIALIZER_UNLOCKED;
 
 // USB-CDC
 static const uint8_t USB_SYNC1  = 0xAA;        
 static const uint8_t USB_SYNC2  = 0x55;        
 static const uint8_t USB_END1   = 0xFF;        
 static const uint8_t USB_END2   = 0xFE;
-static const uint32_t USB_BAUD_RATE  = 115200; 
+static const uint32_t USB_BAUD_RATE  = 460800;
 
 // Terminales (LEDs de estado del receptor)
 #define led_r   16                             
@@ -76,8 +82,9 @@ float errorCode = 0.0f;
 // Callback único de recepción ESP-NOW: ESP-NOW solo permite registrar uno, así
 // que acá se distingue el origen del paquete por su primer byte (packetType)
 // y se valida además el tamaño esperado para ese tipo antes de copiarlo.
-void OnDataRecv(const uint8_t *mac, const uint8_t *data, int len)
+void OnDataRecv(const esp_now_recv_info_t *recvInfo, const uint8_t *data, int len)
 {
+  (void)recvInfo;
   if (len < 1) return;
   uint8_t type = data[0];
 
@@ -86,6 +93,7 @@ void OnDataRecv(const uint8_t *mac, const uint8_t *data, int len)
     if (len != sizeof(ControllerData)) return;
     memcpy(&ctrldata, data, sizeof(ctrldata));
 
+    portENTER_CRITICAL(&g_dataMux);
     if (ctrldata.side == 1)
     {
       alldata.left_error       = ctrldata.error;
@@ -102,6 +110,9 @@ void OnDataRecv(const uint8_t *mac, const uint8_t *data, int len)
       alldata.left_stick_x     = ctrldata.stick_x;
       alldata.left_stick_y     = ctrldata.stick_y;
       alldata.left_status      = ctrldata.status;
+      alldata.left_gyroX       = ctrldata.gyroX;
+      alldata.left_gyroY       = ctrldata.gyroY;
+      alldata.left_gyroZ       = ctrldata.gyroZ;
     }
     else if (ctrldata.side == 0)
     {
@@ -119,18 +130,27 @@ void OnDataRecv(const uint8_t *mac, const uint8_t *data, int len)
       alldata.right_stick_x     = ctrldata.stick_x;
       alldata.right_stick_y     = ctrldata.stick_y;
       alldata.right_status      = ctrldata.status;
+      alldata.right_gyroX       = ctrldata.gyroX;
+      alldata.right_gyroY       = ctrldata.gyroY;
+      alldata.right_gyroZ       = ctrldata.gyroZ;
     }
+    portEXIT_CRITICAL(&g_dataMux);
   }
   else if (type == PACKET_TYPE_HMD)
   {
     if (len != sizeof(HmdData)) return;
     memcpy(&hmddata, data, sizeof(hmddata));
 
+    portENTER_CRITICAL(&g_dataMux);
     alldata.hmd_qw    = hmddata.qw;
     alldata.hmd_qx    = hmddata.qx;
     alldata.hmd_qy    = hmddata.qy;
     alldata.hmd_qz    = hmddata.qz;
     alldata.hmd_error = hmddata.error;
+    alldata.hmd_gyroX = hmddata.gyroX;
+    alldata.hmd_gyroY = hmddata.gyroY;
+    alldata.hmd_gyroZ = hmddata.gyroZ;
+    portEXIT_CRITICAL(&g_dataMux);
   }
   // Tipo desconocido: se ignora silenciosamente (paquete corrupto o de otro origen)
 }
@@ -188,6 +208,10 @@ void loop()
   ultimoTiempoUS = ahora;
 
   digitalWrite(led_r, HIGH);
-  sendUSBPacket(alldata);
+  allData snapshot;
+  portENTER_CRITICAL(&g_dataMux);
+  snapshot = alldata;
+  portEXIT_CRITICAL(&g_dataMux);
+  sendUSBPacket(snapshot);
   delay(1);
 }

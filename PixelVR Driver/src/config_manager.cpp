@@ -60,5 +60,31 @@ DisplayModeSetting ConfigManager::LoadDisplayMode()
 
     char mode[64] = {};
     settings->GetString(kSection, "displayMode", mode, sizeof(mode));
-    return _stricmp(mode, "android") == 0 ? DisplayModeSetting::Android : DisplayModeSetting::Monitor;
+    if (_stricmp(mode, "android") == 0)
+        return DisplayModeSetting::Android;
+    if (_stricmp(mode, "alvr") == 0)
+        return DisplayModeSetting::AlvrBridge;
+    return DisplayModeSetting::Monitor;
+}
+
+std::string ConfigManager::LoadDriverMode()
+{
+    vr::IVRSettings* settings = vr::VRSettings();
+    if (settings == nullptr)
+    return "driverNormal";
+
+    char source[32] = {};
+    settings->GetString(kSection, "driverMode", source, sizeof(source));
+    return _stricmp(source, "driverTest") == 0 ? "driverTest" : "driverNormal";
+}
+
+std::string ConfigManager::LoadComPort()
+{
+    vr::IVRSettings* settings = vr::VRSettings();
+    if (settings == nullptr)
+        return {};
+
+    char port[64] = {};
+    settings->GetString(kSection, "comPort", port, sizeof(port));
+    return port;
 }

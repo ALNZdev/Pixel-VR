@@ -17,6 +17,8 @@ namespace PixelVR
         public bool DebugMode { get; set; } = false;
         public bool DirectMode { get; set; } = false;
         public string DisplayMode { get; set; } = "monitor";
+        public string ComPort { get; set; } = "";
+        public string DriverMode { get; set; } = "driverNormal";
         public int EdidVid { get; set; } = 0;
         public int EdidPid { get; set; } = 0;
 
@@ -120,6 +122,8 @@ namespace PixelVR
                     settings.DebugMode = GetJsonBool(driverSection, "debugMode", false);
                     settings.DirectMode = GetJsonBool(driverSection, "directMode", false);
                     settings.DisplayMode = GetJsonString(driverSection, "displayMode", "monitor");
+                    settings.ComPort = GetJsonString(driverSection, "comPort", "");
+                    settings.DriverMode = GetJsonString(driverSection, "driverMode", "driverNormal");
                     settings.EdidVid = GetJsonInt(driverSection, "edidVid", 0);
                     settings.EdidPid = GetJsonInt(driverSection, "edidPid", 0);
 
@@ -209,6 +213,8 @@ namespace PixelVR
                     { "debugMode", settings.DebugMode },
                     { "directMode", settings.DirectMode },
                     { "displayMode", settings.DisplayMode },
+                    { "comPort", settings.ComPort },
+                    { "driverMode", settings.DriverMode },
                     { "edidVid", settings.DirectMode ? settings.EdidVid : 0 },
                     { "edidPid", settings.DirectMode ? settings.EdidPid : 0 },
 

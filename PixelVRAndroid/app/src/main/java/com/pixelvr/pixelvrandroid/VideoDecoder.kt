@@ -3,6 +3,7 @@ package com.pixelvr
 import android.media.MediaCodec
 import android.media.MediaFormat
 import android.os.Build
+import android.os.SystemClock
 import android.util.Log
 import android.view.Surface
 
@@ -12,48 +13,61 @@ class VideoDecoder(private val surface: Surface) {
     private var currentCodec = -1
     private var currentWidth = 0
     private var currentHeight = 0
-    private var currentFrameRate = 0
     private var nextPresentationTimeUs = 0L
 
     @Synchronized
     fun decodeFrame(frame: PacketParser.ParsedFrame, payload: ByteArray) {
+        StreamFov.update(frame)
         if (codec == null || currentCodec != frame.codec ||
             currentWidth != frame.width || currentHeight != frame.height
         ) {
             if (!initCodec(frame)) return
         }
 
-        requestSurfaceFrameRate(frame.frameRate)
-
         val mediaCodec = codec ?: return
         try {
-            val inputIndex = mediaCodec.dequeueInputBuffer(INPUT_TIMEOUT_US)
-            if (inputIndex >= 0) {
-                val input = mediaCodec.getInputBuffer(inputIndex)
-                if (input == null || payload.size > input.capacity()) {
-                    mediaCodec.queueInputBuffer(inputIndex, 0, 0, nextPresentationTimeUs, 0)
-                    Log.e(TAG, "Encoded access unit exceeds the decoder input buffer")
-                    return
-                }
+            // Preserve the encoded reference chain. Dropping one P-frame because the
+            // decoder was briefly busy can corrupt the picture until the next IDR.
+            val deadlineNs = SystemClock.elapsedRealtimeNanos() + INPUT_DEADLINE_NS
+            var inputIndex: Int
+            do {
+                inputIndex = mediaCodec.dequeueInputBuffer(INPUT_TIMEOUT_US)
+                if (inputIndex >= 0) break
+                drainOutput(mediaCodec)
+            } while (SystemClock.elapsedRealtimeNanos() < deadlineNs)
+            if (inputIndex < 0) {
+                throw IllegalStateException("Decoder input stalled at access unit ${frame.frameId}")
+            }
 
-                input.clear()
-                input.put(payload)
-                val pts = maxOf(frame.timestampUs, nextPresentationTimeUs)
-                mediaCodec.queueInputBuffer(inputIndex, 0, payload.size, pts, 0)
-                nextPresentationTimeUs = pts + 1
-            } else {
+            val input = mediaCodec.getInputBuffer(inputIndex)
+            if (input == null || payload.size > input.capacity()) {
+                mediaCodec.queueInputBuffer(inputIndex, 0, 0, nextPresentationTimeUs, 0)
+                Log.e(TAG, "Encoded access unit exceeds the decoder input buffer")
                 return
             }
 
-            val info = MediaCodec.BufferInfo()
-            while (true) {
-                val outputIndex = mediaCodec.dequeueOutputBuffer(info, 0)
-                if (outputIndex < 0) break
-                mediaCodec.releaseOutputBuffer(outputIndex, true)
-            }
+            input.clear()
+            input.put(payload)
+            // The sender's steady_clock epoch is from another machine. Give MediaCodec
+            // timestamps in this Android process's monotonic clock domain instead.
+            val pts = maxOf(System.nanoTime() / 1_000L, nextPresentationTimeUs)
+            mediaCodec.queueInputBuffer(inputIndex, 0, payload.size, pts, 0)
+            nextPresentationTimeUs = pts + 1L
+
+            drainOutput(mediaCodec)
         } catch (e: Exception) {
             Log.e(TAG, "Video decode failed", e)
             release()
+            throw e
+        }
+    }
+
+    private fun drainOutput(mediaCodec: MediaCodec) {
+        val info = MediaCodec.BufferInfo()
+        while (true) {
+            val outputIndex = mediaCodec.dequeueOutputBuffer(info, 0)
+            if (outputIndex < 0) return
+            mediaCodec.releaseOutputBuffer(outputIndex, true)
         }
     }
 
@@ -79,9 +93,7 @@ class VideoDecoder(private val surface: Surface) {
             currentCodec = frame.codec
             currentWidth = frame.width
             currentHeight = frame.height
-            currentFrameRate = 0
-            requestSurfaceFrameRate(frame.frameRate)
-            nextPresentationTimeUs = frame.timestampUs
+            nextPresentationTimeUs = System.nanoTime() / 1_000L
             Log.i(TAG, "Hardware decoder ready: $mimeType ${frame.width}x${frame.height}")
             true
         } catch (e: Exception) {
@@ -107,32 +119,11 @@ class VideoDecoder(private val surface: Surface) {
         currentWidth = 0
         currentHeight = 0
 
-        try {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && currentFrameRate > 0) {
-                surface.setFrameRate(0f, Surface.FRAME_RATE_COMPATIBILITY_FIXED_SOURCE)
-            }
-        } catch (_: Throwable) {
-            // SurfaceTexture-backed surfaces can ignore frame-rate hints; that's fine.
-        }
-
-        currentFrameRate = 0
-    }
-
-    private fun requestSurfaceFrameRate(frameRate: Int) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R || frameRate !in 15..240 || frameRate == currentFrameRate)
-            return
-        try {
-            surface.setFrameRate(frameRate.toFloat(), Surface.FRAME_RATE_COMPATIBILITY_FIXED_SOURCE)
-            currentFrameRate = frameRate
-            Log.i(TAG, "Requested display rate for stream: ${frameRate}Hz")
-        } catch (_: Throwable) {
-            // SurfaceTexture-backed surfaces may reject or ignore this call. We keep the video pipeline working.
-            // This is not a protocol issue: it's a rendering optimization, not a correctness requirement.
-        }
     }
 
     companion object {
         private const val TAG = "VideoDecoder"
         private const val INPUT_TIMEOUT_US = 2_000L
+        private const val INPUT_DEADLINE_NS = 100_000_000L
     }
 }

@@ -21,19 +21,17 @@ namespace PixelVR
     public partial class MainWindow : Window
     {
         private PipeManager? pipeManager;
-        private USBCDCManager? usbcdcManager;
         private AdbManager? adbManager;
 
         private uint leftButtons = 0;
         private uint rightButtons = 0;
         private bool driverTestActive = false;
-        private bool usbcdcDrivingActive = false;
 
         private DriverSettingsManager? settingsManager;
         private DriverSettings? currentSettings;
 
         private bool uiReady = false;
-        private const string DriverSettingsPath = @"C:\Users\gabum\Desktop\Pixel VR\PixelVR Driver\pixelvr\resources\settings\default.vrsettings";
+        private const string DriverSettingsPath = @"C:\Users\gabum\Desktop\Pixel-VR\PixelVR Driver\pixelvr\resources\settings\default.vrsettings";
 
         private static readonly SolidColorBrush NavAccentColor = new SolidColorBrush(Color.FromRgb(0x7C, 0x6A, 0xF7));
         private static readonly SolidColorBrush NavDimColor = new SolidColorBrush(Color.FromRgb(0x5C, 0x62, 0x80));
@@ -67,6 +65,9 @@ namespace PixelVR
         {
             if (currentSettings == null)
                 currentSettings = new DriverSettings();
+
+            if (!string.IsNullOrWhiteSpace(currentSettings.ComPort))
+                usbcdcComboBox.Text = currentSettings.ComPort;
 
             sliderDisplayFreq.Value = currentSettings.DisplayFrequency;
             sliderIpd.Value = currentSettings.IpdMeters;
@@ -107,11 +108,12 @@ namespace PixelVR
             lblRightHaptic.Text = currentSettings.RightHapticAmplitude.ToString("F1");
 
             // Display Mode UI (Initialize after all XAML controls are loaded)
-            if (radioPcMonitor != null && radioAndroidUsb != null)
+            if (radioPcMonitor != null && radioAndroidUsb != null && radioAlvrBridge != null)
             {
                 radioPcMonitor.IsChecked = string.Equals(currentSettings.DisplayMode, "monitor", StringComparison.OrdinalIgnoreCase) ||
                                           string.IsNullOrWhiteSpace(currentSettings.DisplayMode);
                 radioAndroidUsb.IsChecked = string.Equals(currentSettings.DisplayMode, "android", StringComparison.OrdinalIgnoreCase);
+                radioAlvrBridge.IsChecked = string.Equals(currentSettings.DisplayMode, "alvr", StringComparison.OrdinalIgnoreCase);
 
                 if (txtAdbPath != null)
                     txtAdbPath.Text = string.IsNullOrWhiteSpace(currentSettings.AdbPath)
@@ -221,13 +223,15 @@ namespace PixelVR
                 currentSettings.EnableRightHaptics = chkRightHaptics.IsChecked == true;
 
                 currentSettings.DebugMode = chkDebugMode.IsChecked == true;
-                currentSettings.DirectMode = chkDirectMode.IsChecked == true;
+                currentSettings.DirectMode = radioAlvrBridge.IsChecked == true ? false : chkDirectMode.IsChecked == true;
                 currentSettings.VerboseLogging = chkVerboseLogging.IsChecked == true;
                 currentSettings.EnableAsyncReprojection = chkAsyncReprojection.IsChecked == true;
                 currentSettings.VsyncEnabled = chkVsyncEnabled.IsChecked == true;
 
                 // Android mode settings
-                currentSettings.DisplayMode = radioAndroidUsb.IsChecked == true ? "android" : "monitor";
+                currentSettings.DisplayMode = radioAlvrBridge.IsChecked == true ? "alvr" :
+                    radioAndroidUsb.IsChecked == true ? "android" : "monitor";
+                currentSettings.ComPort = usbcdcComboBox?.Text.Trim() ?? "";
                 currentSettings.StreamEnable = radioAndroidUsb.IsChecked == true;
                 currentSettings.StreamBindAll = false;
 
@@ -300,7 +304,7 @@ namespace PixelVR
         private void UpdateAndroidUiState()
         {
             // Safety check: ensure all controls exist
-            if (radioPcMonitor == null || radioAndroidUsb == null ||
+            if (radioPcMonitor == null || radioAndroidUsb == null || radioAlvrBridge == null ||
                 txtAdbPath == null || txtAndroidSerial == null ||
                 txtStreamingPort == null || txtStreamingBitrate == null ||
                 txtStreamWidth == null || txtStreamHeight == null ||
@@ -344,6 +348,15 @@ namespace PixelVR
             }
         }
 
+        private void radioAlvrBridge_Checked(object sender, RoutedEventArgs e)
+        {
+            if (!uiReady)
+                return;
+
+            UpdateAndroidUiState();
+            UpdateSettingsLabels();
+        }
+
         private void btnScanAndroidDevices_Click(object sender, RoutedEventArgs e)
         {
             if (adbManager == null || !adbManager.IsAvailable)
@@ -371,17 +384,11 @@ namespace PixelVR
 
         private void InitializeUSBCDC()
         {
-            usbcdcManager = new USBCDCManager();
-            usbcdcManager.DataReceived += UsbcdcManager_DataReceived;
-            usbcdcManager.ErrorOccurred += UsbcdcManager_ErrorOccurred;
-            usbcdcManager.ConnectionStatusChanged += UsbcdcManager_ConnectionStatusChanged;
-
             RefreshUSBCDCPorts();
             RefreshScreensForUSB();
 
             hmsScreenModeComboBox.SelectedIndex = 0;
             btnStartUSBCDC.IsEnabled = false;
-            btnStopUSBCDC.IsEnabled = false;
         }
 
         private void RefreshUSBCDCPorts()
@@ -466,16 +473,8 @@ namespace PixelVR
 
         private void UpdateStartButtonState()
         {
-            if (usbcdcManager?.IsConnected == true)
-            {
-                btnStartUSBCDC.IsEnabled = false;
-                return;
-            }
-
             bool hasValidPort = GetSelectedSerialPort() != null;
-            bool hasValidScreen = hmdScreenComboBox.SelectedItem != null;
-
-            btnStartUSBCDC.IsEnabled = hasValidPort && hasValidScreen;
+            btnStartUSBCDC.IsEnabled = hasValidPort;
         }
 
         private void btnRefreshUSBCDCPorts_Click(object sender, RoutedEventArgs e)
@@ -492,235 +491,20 @@ namespace PixelVR
                 return;
             }
 
-            if (!usbcdcManager!.Connect(selectedPort, 115200))
+            settingsManager ??= new DriverSettingsManager(DriverSettingsPath);
+            var settings = settingsManager.LoadSettings();
+            settings.ComPort = selectedPort;
+            settings.DriverMode = "driverNormal";
+            settingsManager.SaveSettings(settings);
+            if (currentSettings != null)
             {
-                MessageBox.Show($"Error al conectar al puerto {selectedPort}.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
+                currentSettings.ComPort = selectedPort;
+                currentSettings.DriverMode = "driverNormal";
             }
-
-            if (!StartSteamVRForUSBCDC())
-            {
-                usbcdcManager.Disconnect();
-                return;
-            }
-
-            pipeManager ??= new PipeManager();
-
-            btnStartUSBCDC.IsEnabled = false;
-            btnStopUSBCDC.IsEnabled = true;
-            usbcdcComboBox.IsEnabled = false;
-            hmdScreenComboBox.IsEnabled = false;
-            hmsScreenModeComboBox.IsEnabled = false;
-            txtStatusBar.Text = $"USB-CDC activo • SteamVR en pantalla seleccionada • Datos fluyendo...";
-            usbcdcDrivingActive = true;
-        }
-
-        private void btnStopUSBCDC_Click(object sender, RoutedEventArgs e)
-        {
-            StopSteamVRForUSBCDC();
-            usbcdcManager?.Disconnect();
-
-            pipeManager?.Dispose();
-            pipeManager = null;
-
-            btnStartUSBCDC.IsEnabled = true;
-            btnStopUSBCDC.IsEnabled = false;
-            usbcdcComboBox.IsEnabled = true;
-            hmdScreenComboBox.IsEnabled = true;
-            hmsScreenModeComboBox.IsEnabled = true;
-            txtStatusBar.Text = "USB-CDC desconectado";
-            usbcdcDrivingActive = false;
-        }
-
-        private bool StartSteamVRForUSBCDC()
-        {
-            try
-            {
-                if (hmdScreenComboBox.SelectedIndex < 0)
-                {
-                    MessageBox.Show(
-                        "Selecciona una pantalla válida para SteamVR.",
-                        "SteamVR",
-                        MessageBoxButton.OK,
-                        MessageBoxImage.Warning);
-
-                    return false;
-                }
-
-                var screens = System.Windows.Forms.Screen.AllScreens;
-
-                if (hmdScreenComboBox.SelectedIndex >= screens.Length)
-                {
-                    MessageBox.Show(
-                        "La pantalla seleccionada ya no está disponible.",
-                        "SteamVR",
-                        MessageBoxButton.OK,
-                        MessageBoxImage.Warning);
-
-                    return false;
-                }
-
-                var selectedScreen = screens[hmdScreenComboBox.SelectedIndex];
-
-                int modeIndex = hmsScreenModeComboBox.SelectedIndex;
-
-                bool requestedDirectMode = modeIndex == 1;
-                bool debugMode = modeIndex == 2;
-
-                if (!ConfigureDisplaySettingsForSteamVR(
-                        selectedScreen,
-                        requestedDirectMode,
-                        debugMode,
-                        out bool useDirectMode))
-                {
-                    return false;
-                }
-
-                System.Diagnostics.Process.Start(
-                    new System.Diagnostics.ProcessStartInfo
-                    {
-                        FileName = "steam://rungameid/250820",
-                        UseShellExecute = true
-                    });
-
-                pipeManager ??= new PipeManager();
-
-                usbcdcDrivingActive = true;
-
-                string modeText = useDirectMode
-                    ? "Direct Mode"
-                    : "Modo ventana";
-
-                MessageBox.Show(
-                    $"SteamVR iniciado en {modeText}.\n" +
-                    "Flujo USB-CDC → Pipe → SteamVR activo.",
-                    "USB-CDC + SteamVR",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Information);
-
-                return true;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(
-                    $"Error al iniciar SteamVR: {ex.Message}",
-                    "Error",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error);
-
-                return false;
-            }
-        }
-
-        private void StopSteamVRForUSBCDC()
-        {
-            usbcdcDrivingActive = false;
-
-            if (pipeManager != null)
-            {
-                pipeManager.Dispose();
-                pipeManager = null;
-            }
-
-            CloseSteamVR();
-            RemoveAndroidAdbReverse();
-            Debug.WriteLine("SteamVR detenido");
-        }
-
-        private void UsbcdcManager_DataReceived(object? sender, AllData data)
-        {
-            if (usbcdcDrivingActive && pipeManager != null)
-            {
-                var packet = new PipeManager.FullSystemPacket
-                {
-                    hmdPosX = 0.0f,
-                    hmdPosY = 1.70f,
-                    hmdPosZ = 0.0f,
-                    hmd_qw = data.hmd_qW,
-                    hmd_qx = data.hmd_qX,
-                    hmd_qy = data.hmd_qY,
-                    hmd_qz = data.hmd_qZ,
-                    hmd_error = data.hmd_error,
-
-                    lPosX = -0.2f,
-                    lPosY = 1.2f,
-                    lPosZ = -0.4f,
-                    left_qw = data.left_qW,
-                    left_qx = data.left_qX,
-                    left_qy = data.left_qY,
-                    left_qz = data.left_qZ,
-                    left_a = data.left_a,
-                    left_b = data.left_b,
-                    left_system = data.left_system,
-                    left_grip = data.left_grip,
-                    left_trigger = data.left_trigger,
-                    left_stick_click = data.left_stick_click,
-                    left_stick_x = data.left_stick_x,
-                    left_stick_y = data.left_stick_y,
-                    left_status = data.left_status,
-                    left_error = data.left_error,
-
-                    rPosX = 0.2f,
-                    rPosY = 1.2f,
-                    rPosZ = -0.4f,
-                    right_qw = data.right_qW,
-                    right_qx = data.right_qX,
-                    right_qy = data.right_qY,
-                    right_qz = data.right_qZ,
-                    right_a = data.right_a,
-                    right_b = data.right_b,
-                    right_system = data.right_system,
-                    right_grip = data.right_grip,
-                    right_trigger = data.right_trigger,
-                    right_stick_click = data.right_stick_click,
-                    right_stick_x = data.right_stick_x,
-                    right_stick_y = data.right_stick_y,
-                    right_status = data.right_status,
-                    right_error = data.right_error
-                };
-
-                pipeManager.WriteData(packet);
-            }
-
-            Dispatcher.BeginInvoke(() => UpdateUIFromAllData(data));
-        }
-
-        private void UpdateUIFromAllData(AllData data)
-        {
-            var hmdQuat = SensorDataProcessor.NormalizeQuaternion(
-                data.hmd_qW, data.hmd_qX, data.hmd_qY, data.hmd_qZ);
-            var hmdEuler = SensorDataProcessor.QuaternionToEuler(
-                hmdQuat.W, hmdQuat.X, hmdQuat.Y, hmdQuat.Z);
-
-            VRHeadset_connection.Content = "Online";
-            VRHeadsetCircle.Fill = new SolidColorBrush(Color.FromRgb(34, 201, 147));
-            VRRotationPitch.Content = hmdEuler.pitch.ToString("F2");
-            VRRotationYaw.Content = hmdEuler.yaw.ToString("F2");
-            VRRotationRoll.Content = hmdEuler.roll.ToString("F2");
-
-            var leftQuat = SensorDataProcessor.NormalizeQuaternion(
-                data.left_qW, data.left_qX, data.left_qY, data.left_qZ);
-            var leftEuler = SensorDataProcessor.QuaternionToEuler(
-                leftQuat.W, leftQuat.X, leftQuat.Y, leftQuat.Z);
-            leftRotationPitch.Content = leftEuler.pitch.ToString("F2");
-            leftRotationYaw.Content = leftEuler.yaw.ToString("F2");
-            leftRotationRoll.Content = leftEuler.roll.ToString("F2");
-            leftController_connection.Content = data.left_status ? "Online" : "Offline";
-            leftcontrollCircle.Fill = data.left_status
-                ? new SolidColorBrush(Color.FromRgb(34, 201, 147))
-                : new SolidColorBrush(Color.FromRgb(222, 46, 46));
-
-            var rightQuat = SensorDataProcessor.NormalizeQuaternion(
-                data.right_qW, data.right_qX, data.right_qY, data.right_qZ);
-            var rightEuler = SensorDataProcessor.QuaternionToEuler(
-                rightQuat.W, rightQuat.X, rightQuat.Y, rightQuat.Z);
-            rightRotationPitch.Content = rightEuler.pitch.ToString("F2");
-            rightRotationYaw.Content = rightEuler.yaw.ToString("F2");
-            rightRotationRoll.Content = rightEuler.roll.ToString("F2");
-            rightController_connection.Content = data.right_status ? "Online" : "Offline";
-            rightcontrollCircle.Fill = data.right_status
-                ? new SolidColorBrush(Color.FromRgb(34, 201, 147))
-                : new SolidColorBrush(Color.FromRgb(222, 46, 46));
+            txtStatusBar.Text = $"Puerto {selectedPort} guardado • El driver lo abrirá al iniciar SteamVR";
+            MessageBox.Show(
+                $"El driver PixelVR leerá el receptor en {selectedPort} a 460800 baudios cuando inicies SteamVR.",
+                "Configuración del driver", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
         private static (bool a, bool b, bool trigger, bool grip, bool stickClick, bool system) DecodeButtons(uint buttons)
@@ -733,35 +517,6 @@ namespace PixelVR
                 stickClick: (buttons & (1u << 4)) != 0,
                 system: (buttons & (1u << 5)) != 0
             );
-        }
-
-        private void UsbcdcManager_ErrorOccurred(object? sender, string errorMessage)
-        {
-            Dispatcher.Invoke(() =>
-            {
-                MessageBox.Show($"Error USB-CDC: {errorMessage}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                Debug.WriteLine($"Error USB-CDC: {errorMessage}");
-            });
-        }
-
-        private void UsbcdcManager_ConnectionStatusChanged(object? sender, EventArgs e)
-        {
-            Dispatcher.Invoke(() =>
-            {
-                bool connected = usbcdcManager?.IsConnected == true;
-
-                txtStatusBar.Text = connected
-                    ? "USB-CDC: Conectado"
-                    : "USB-CDC: Desconectado";
-
-                if (usbcdcStatusText != null)
-                {
-                    usbcdcStatusText.Text = connected ? "Conectado" : "Desconectado";
-                    usbcdcStatusText.Foreground = connected
-                        ? new SolidColorBrush(Color.FromRgb(34, 201, 147))
-                        : new SolidColorBrush(Color.FromRgb(222, 46, 46));
-                }
-            });
         }
 
         // ==================== NAVEGACIÓN PRINCIPAL ====================
@@ -874,6 +629,8 @@ namespace PixelVR
                     return;
                 }
 
+                SetDriverMode("driverTest");
+
                 System.Diagnostics.Process.Start(
                     new System.Diagnostics.ProcessStartInfo
                     {
@@ -911,6 +668,7 @@ namespace PixelVR
         private void StopDriverTest()
         {
             driverTestActive = false;
+            SetDriverMode("driverNormal");
 
             if (pipeManager != null)
             {
@@ -921,6 +679,16 @@ namespace PixelVR
             CloseSteamVR();
             RemoveAndroidAdbReverse();
             Debug.WriteLine("Named Pipe detenido y recursos liberados.");
+        }
+
+        private void SetDriverMode(string mode)
+        {
+            settingsManager ??= new DriverSettingsManager(DriverSettingsPath);
+            var settings = settingsManager.LoadSettings();
+            settings.DriverMode = mode;
+            settingsManager.SaveSettings(settings);
+            if (currentSettings != null)
+                currentSettings.DriverMode = mode;
         }
 
         private async void ResetDriverTest()
@@ -1157,11 +925,8 @@ namespace PixelVR
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             driverTestActive = false;
-            usbcdcDrivingActive = false;
-
             pipeManager?.Dispose();
             pipeManager = null;
-            usbcdcManager?.Disconnect();
 
             // Keep PixelVR's reverse mapping alive if the WPF window closes while SteamVR
             // and the Android receiver are still running. Stop buttons remove only our port.
@@ -1319,6 +1084,21 @@ namespace PixelVR
             out bool useDirectMode)
         {
             useDirectMode = false;
+
+            if (radioAlvrBridge?.IsChecked == true)
+            {
+                DriverSettings bridgeSettings = settingsManager?.LoadSettings() ?? new DriverSettings();
+                bridgeSettings.DisplayMode = "alvr";
+                bridgeSettings.DebugMode = debugMode;
+                bridgeSettings.DirectMode = false;
+                bridgeSettings.EdidVid = 0;
+                bridgeSettings.EdidPid = 0;
+                bridgeSettings.StreamEnable = false;
+                bridgeSettings.StreamBindAll = false;
+                settingsManager ??= new DriverSettingsManager(DriverSettingsPath);
+                settingsManager.SaveSettings(bridgeSettings);
+                return true;
+            }
 
             // Android mode
             if (radioAndroidUsb?.IsChecked == true)

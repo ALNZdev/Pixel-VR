@@ -63,7 +63,7 @@ class StreamReceiver(
         }
     }
 
-    /** Reconstructs the fixed 28-byte header despite arbitrary TCP read boundaries. */
+    /** Reconstructs the fixed 44-byte header despite arbitrary TCP read boundaries. */
     private fun readNextHeader(input: InputStream): ByteArray? {
         val header = ByteArray(PacketParser.HEADER_SIZE)
         if (!readFully(input, header, header.size)) return null

@@ -308,42 +308,19 @@
                                            Foreground="#3D4260" Margin="0,0,0,14"/>
 
                                 <Grid Margin="0,0,0,18">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="*"/>
-                                    </Grid.ColumnDefinitions>
-
                                     <Button x:Name="btnStartUSBCDC"
-                                            Grid.Column="0"
                                             Height="34"
                                             FontFamily="Segoe UI" FontSize="11" FontWeight="SemiBold"
                                             Background="#1522C993" Foreground="#22C993"
                                             BorderBrush="#3022C993" BorderThickness="1"
                                             materialDesign:ButtonAssist.CornerRadius="7"
                                             Style="{StaticResource MaterialDesignFlatButton}"
-                                            Margin="0,0,4,0"
+                                            Margin="0"
                                             Click="btnStartUSBCDC_Click">
                                         <StackPanel Orientation="Horizontal">
                                             <materialDesign:PackIcon Kind="Play" Width="13" Height="13"
                                                                     VerticalAlignment="Center" Margin="0,0,4,0"/>
-                                            <TextBlock Text="INICIAR" VerticalAlignment="Center"/>
-                                        </StackPanel>
-                                    </Button>
-
-                                    <Button x:Name="btnStopUSBCDC"
-                                            Grid.Column="1"
-                                            Height="34"
-                                            FontFamily="Segoe UI" FontSize="11" FontWeight="SemiBold"
-                                            Background="#15F05252" Foreground="#F05252"
-                                            BorderBrush="#2AF05252" BorderThickness="1"
-                                            materialDesign:ButtonAssist.CornerRadius="7"
-                                            Style="{StaticResource MaterialDesignFlatButton}"
-                                            Margin="4,0,0,0"
-                                            Click="btnStopUSBCDC_Click">
-                                        <StackPanel Orientation="Horizontal">
-                                            <materialDesign:PackIcon Kind="Stop" Width="13" Height="13"
-                                                                    VerticalAlignment="Center" Margin="0,0,4,0"/>
-                                            <TextBlock Text="DETENER" VerticalAlignment="Center"/>
+                                            <TextBlock Text="CONFIGURAR DRIVER" VerticalAlignment="Center"/>
                                         </StackPanel>
                                     </Button>
                                 </Grid>
@@ -361,10 +338,10 @@
                                 <Border Background="#12151F" BorderBrush="#1E2235" BorderThickness="1"
                                         CornerRadius="8" Padding="12,10">
                                     <StackPanel>
-                                        <TextBlock Text="Conexión USB-CDC"
+                                <TextBlock Text="Entrada serial del driver"
                                                    FontFamily="Segoe UI" FontSize="10"
                                                    Foreground="#3D4260" Margin="0,0,0,4"/>
-                                        <TextBlock x:Name="usbcdcStatusText" Text="Desconectado"
+                                        <TextBlock x:Name="usbcdcStatusText" Text="Administrado por PixelVR Driver"
                                                    FontFamily="Segoe UI" FontSize="12" FontWeight="SemiBold"
                                                    Foreground="#DE2E2E"/>
                                     </StackPanel>
@@ -1289,6 +1266,19 @@
                                         Foreground="#E8EAF6"
                                         Checked="radioAndroidUsb_Checked"
                                         Margin="0,0,0,12"/>
+
+                                    <RadioButton x:Name="radioAlvrBridge"
+                                        GroupName="DisplayMode"
+                                        Content="Meta Quest 2 (ALVR) + tracking PixelVR"
+                                        Foreground="#E8EAF6"
+                                        Checked="radioAlvrBridge_Checked"
+                                        Margin="0,0,0,12"/>
+                                    <TextBlock Text="SteamVR recibe el visor y los mandos DIY de PixelVR; ALVR envía la imagen al Quest. Activa también el seguimiento externo PixelVR en ALVR."
+                                        FontFamily="Segoe UI"
+                                        FontSize="10"
+                                        Foreground="#9EA3B8"
+                                        TextWrapping="Wrap"
+                                        Margin="0,-6,0,12"/>
 
                                     <Grid>
                                         <Grid.ColumnDefinitions>

@@ -451,6 +451,10 @@ bool VideoStreamPipeline::SendPacket(const std::vector<uint8_t>& payload, bool k
     header.flags = keyframe ? pixelvr::kPacketFlagKeyframe : 0;
     header.framerate = static_cast<uint16_t>(m_fps);
     header.payloadBytes = static_cast<uint32_t>(payload.size());
+    header.fovLeftDegrees = m_config.fovLeftDegrees;
+    header.fovRightDegrees = m_config.fovRightDegrees;
+    header.fovTopDegrees = m_config.fovTopDegrees;
+    header.fovBottomDegrees = m_config.fovBottomDegrees;
 
     // One send() for header+payload would need a copy; two sends with TCP_NODELAY off would
     // add Nagle delay, so TCP_NODELAY is on (see StreamingServer) and we send back to back.

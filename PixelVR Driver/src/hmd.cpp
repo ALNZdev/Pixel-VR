@@ -4,6 +4,8 @@
 #include "driverlog.h"
 #include "direct_mode.h"
 #include "main.h"
+#include "config_manager.h"
+#include "alvr_pose_bridge.h"
 
 #include <cmath>
 #include <cstdint>
@@ -55,7 +57,11 @@ namespace
         float qx,
         float qy,
         float qz,
-        bool tracked)
+        bool tracked,
+        double angularVelocityX = 0.0,
+        double angularVelocityY = 0.0,
+        double angularVelocityZ = 0.0,
+        double poseTimeOffset = 0.0)
     {
         vr::DriverPose_t pose{};
 
@@ -77,11 +83,11 @@ namespace
         pose.vecVelocity[1] = 0.0f;
         pose.vecVelocity[2] = 0.0f;
 
-        pose.vecAngularVelocity[0] = 0.0f;
-        pose.vecAngularVelocity[1] = 0.0f;
-        pose.vecAngularVelocity[2] = 0.0f;
+        pose.vecAngularVelocity[0] = angularVelocityX;
+        pose.vecAngularVelocity[1] = angularVelocityY;
+        pose.vecAngularVelocity[2] = angularVelocityZ;
 
-        pose.poseTimeOffset = 0.0;
+        pose.poseTimeOffset = poseTimeOffset;
 
         return pose;
     }
@@ -111,6 +117,17 @@ namespace
         qx /= length;
         qy /= length;
         qz /= length;
+    }
+
+    void RotateVectorByQuaternion(float qw, float qx, float qy, float qz,
+        double& x, double& y, double& z)
+    {
+        const double tx = 2.0 * (qy * z - qz * y);
+        const double ty = 2.0 * (qz * x - qx * z);
+        const double tz = 2.0 * (qx * y - qy * x);
+        x += qw * tx + (qy * tz - qz * ty);
+        y += qw * ty + (qz * tx - qx * tz);
+        z += qw * tz + (qx * ty - qy * tx);
     }
 }
 
@@ -594,6 +611,10 @@ vr::EVRInitError MyHMDDeviceDriver::Activate(uint32_t unObjectId)
         options.eyeHeight = m_renderHeight;
         options.displayHz = m_fDisplayFrequency;
         options.stream = ConfigManager::LoadStreamConfig();
+        options.stream.fovLeftDegrees = m_fFovLeft;
+        options.stream.fovRightDegrees = m_fFovRight;
+        options.stream.fovTopDegrees = m_fFovTop;
+        options.stream.fovBottomDegrees = m_fFovBottom;
         // Stream (SBS) size: streamWidth/streamHeight, or the "window" size (phone panel).
         options.sbsWidth = options.stream.width ? options.stream.width : m_windowWidth;
         options.sbsHeight = options.stream.height ? options.stream.height : m_windowHeight;
@@ -794,6 +815,14 @@ bool MyHMDDeviceDriver::ComputeInverseDistortion(
 
 vr::DriverPose_t MyHMDDeviceDriver::GetPose()
 {
+    AllData remote{};
+    std::chrono::steady_clock::time_point remoteReceiptTime{};
+    {
+        std::lock_guard<std::mutex> lock(g_DataMutex);
+        remote = g_RemoteData;
+        remoteReceiptTime = g_RemoteDataReceiptTime;
+    }
+
     float rawPosX = 0.0f;
     float rawPosY = 0.0f;
     float rawPosZ = 0.0f;
@@ -801,11 +830,9 @@ vr::DriverPose_t MyHMDDeviceDriver::GetPose()
 
     if (!m_bEnablePSMTracking)
     {
-        std::lock_guard<std::mutex> lock(g_DataMutex);
-
-        rawPosX = g_RemoteData.hmdPosX;
-        rawPosY = g_RemoteData.hmdPosY;
-        rawPosZ = g_RemoteData.hmdPosZ;
+        rawPosX = remote.hmdPosX;
+        rawPosY = remote.hmdPosY;
+        rawPosZ = remote.hmdPosZ;
 
         /*
          * El paquete del pipe no tiene un flag independiente
@@ -841,16 +868,18 @@ vr::DriverPose_t MyHMDDeviceDriver::GetPose()
     float qy = 0.0f;
     float qz = 0.0f;
 
-    {
-        std::lock_guard<std::mutex> lock(g_DataMutex);
-
-        qw = g_RemoteData.hmd_qw;
-        qx = g_RemoteData.hmd_qx;
-        qy = g_RemoteData.hmd_qy;
-        qz = g_RemoteData.hmd_qz;
-    }
+    qw = remote.hmd_qw;
+    qx = remote.hmd_qx;
+    qy = remote.hmd_qy;
+    qz = remote.hmd_qz;
 
     NormalizeQuaternion(qw, qx, qy, qz);
+
+    double angularVelocityX = remote.hmdAngularVelocityX;
+    double angularVelocityY = remote.hmdAngularVelocityY;
+    double angularVelocityZ = remote.hmdAngularVelocityZ;
+    RotateVectorByQuaternion(qw, qx, qy, qz,
+        angularVelocityX, angularVelocityY, angularVelocityZ);
 
     float posX = rawPosX;
     float posY = rawPosY;
@@ -869,11 +898,24 @@ vr::DriverPose_t MyHMDDeviceDriver::GetPose()
         qx = 0.0f;
         qy = 0.0f;
         qz = 0.0f;
+        angularVelocityX = angularVelocityY = angularVelocityZ = 0.0;
     }
 
     posX *= m_fTrackingScale;
     posY *= m_fTrackingScale;
     posZ *= m_fTrackingScale;
+
+    double poseTimeOffset = 0.0;
+    if (remoteReceiptTime != std::chrono::steady_clock::time_point{})
+    {
+        double age = std::chrono::duration<double>(
+            std::chrono::steady_clock::now() - remoteReceiptTime).count();
+        if (!std::isfinite(age) || age < 0.0)
+            age = 0.0;
+        if (age > 0.1)
+            age = 0.1;
+        poseTimeOffset = -age;
+    }
 
     return MakeHmdPose(
         posX,
@@ -883,17 +925,15 @@ vr::DriverPose_t MyHMDDeviceDriver::GetPose()
         qx,
         qy,
         qz,
-        rawTracked);
+        rawTracked,
+        angularVelocityX,
+        angularVelocityY,
+        angularVelocityZ,
+        poseTimeOffset);
 }
 
 void MyHMDDeviceDriver::MyRunFrame()
 {
-    if (m_unObjectId ==
-        vr::k_unTrackedDeviceIndexInvalid)
-    {
-        return;
-    }
-
     const auto now = std::chrono::steady_clock::now();
 
     const auto elapsedMs =
@@ -915,10 +955,20 @@ void MyHMDDeviceDriver::MyRunFrame()
         m_lastSettingsCheck = now;
     }
 
-    vr::VRServerDriverHost()->TrackedDevicePoseUpdated(
-        m_unObjectId,
-        GetPose(),
-        sizeof(vr::DriverPose_t));
+    const vr::DriverPose_t pose = GetPose();
+    if (ConfigManager::LoadDisplayMode() == DisplayModeSetting::AlvrBridge)
+    {
+        AlvrPoseBridge::Send(pose);
+        return;
+    }
+
+    if (m_unObjectId != vr::k_unTrackedDeviceIndexInvalid)
+    {
+        vr::VRServerDriverHost()->TrackedDevicePoseUpdated(
+            m_unObjectId,
+            pose,
+            sizeof(vr::DriverPose_t));
+    }
 }
 
 void* MyHMDDeviceDriver::GetComponent(

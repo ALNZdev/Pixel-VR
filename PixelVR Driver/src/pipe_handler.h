@@ -3,8 +3,10 @@
 #include <mutex>
 #include <atomic>
 #include <cstdint>
+#include <chrono>
 
-// AllData: paquete que viaja por el pipe entre la app C# y este driver.
+// AllData: estado unificado consumido por los dispositivos SteamVR. Lo puede
+// alimentar el receptor USB directamente o el pipe de pruebas de Connect.
 // Las rotaciones WXYZ vienen del pipe.
 // Las posiciones XYZ vienen de PSMoveServiceEx.
 // Los botones y touch también vienen del pipe.
@@ -14,6 +16,7 @@ struct AllData {
     float hmdPosX, hmdPosY, hmdPosZ;
     float hmd_qw, hmd_qx, hmd_qy, hmd_qz;
     float hmd_error;
+    float hmdAngularVelocityX, hmdAngularVelocityY, hmdAngularVelocityZ;
 
     // --- LEFT CONTROLLER ---
     float lPosX, lPosY, lPosZ;
@@ -22,6 +25,7 @@ struct AllData {
     float left_stick_x, left_stick_y;
     bool  left_status;
     float left_error;
+    float leftAngularVelocityX, leftAngularVelocityY, leftAngularVelocityZ;
 
     // --- RIGHT CONTROLLER ---
     float rPosX, rPosY, rPosZ;
@@ -30,6 +34,7 @@ struct AllData {
     float right_stick_x, right_stick_y;
     bool  right_status;
     float right_error;
+    float rightAngularVelocityX, rightAngularVelocityY, rightAngularVelocityZ;
 };
 #pragma pack(pop)
 
@@ -37,7 +42,8 @@ struct AllData {
 extern AllData g_RemoteData;
 extern std::mutex g_DataMutex;
 extern std::atomic<bool> g_bPipeRunning;
+extern std::chrono::steady_clock::time_point g_RemoteDataReceiptTime;
 
 // Funciones de control
-void StartPipeThread();
-void StopPipeThread();
+void StartTrackingInput();
+void StopTrackingInput();

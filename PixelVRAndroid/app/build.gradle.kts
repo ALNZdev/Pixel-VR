@@ -7,6 +7,10 @@ android {
     namespace = "com.pixelvr"
     compileSdk = 34
 
+    buildFeatures {
+        prefab = true
+    }
+
     defaultConfig {
         applicationId = "com.pixelvr"
         minSdk = 24
@@ -14,6 +18,14 @@ android {
         versionCode = 1
         versionName = "0.1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        ndk {
+            abiFilters += "arm64-v8a"
+        }
+        externalNativeBuild {
+            cmake {
+                cppFlags += "-std=c++17"
+            }
+        }
     }
 
     buildTypes {
@@ -34,4 +46,14 @@ android {
     kotlinOptions {
         jvmTarget = "17"
     }
+
+    externalNativeBuild {
+        cmake {
+            path = file("src/main/cpp/CMakeLists.txt")
+        }
+    }
+}
+
+dependencies {
+    implementation("org.khronos.openxr:openxr_loader_for_android:1.1.65")
 }

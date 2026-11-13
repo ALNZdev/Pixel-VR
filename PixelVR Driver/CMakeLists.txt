@@ -126,6 +126,8 @@ add_library(${DRIVER_NAME} SHARED
         # ─── NUEVOS: Gestor de Configuración ───
         src/config_manager.h
         src/config_manager.cpp
+        src/alvr_pose_bridge.h
+        src/alvr_pose_bridge.cpp
         src/display_mode.h
         src/display_mode.cpp
         src/stream_protocol.h
@@ -143,6 +145,15 @@ add_library(${DRIVER_NAME} SHARED
 # ============================================================================
 
 target_link_libraries(${DRIVER_NAME} PRIVATE ${OPENVR_LIBRARIES} ${PSMOVE_LIBRARIES})
+
+if (WIN32 AND EXISTS "${PSMOVE_LIB_DIR}/bin/PSMoveClient_CAPI.dll")
+    add_custom_command(TARGET ${DRIVER_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "${PSMOVE_LIB_DIR}/bin/PSMoveClient_CAPI.dll"
+            "$<TARGET_FILE_DIR:${DRIVER_NAME}>"
+        COMMENT "Copying PSMoveClient_CAPI runtime dependency"
+    )
+endif ()
 
 if (WIN32)
     target_compile_definitions(${DRIVER_NAME} PRIVATE NOMINMAX)

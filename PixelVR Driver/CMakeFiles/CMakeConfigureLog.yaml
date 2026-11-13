@@ -35,19 +35,6 @@ events:
     found: "C:/Program Files/CMake/share/cmake-4.5/Modules/CMakeCCompilerId.c.in"
     search_context:
       ENV{PATH}:
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\VC\\Tools\\MSVC\\14.51.36231\\bin\\HostX64\\x64"
-        - "E:\\Windows Kits\\10\\bin\\10.0.28000.0\\x64"
-        - "C:\\Program Files (x86)\\Microsoft SDKs\\Windows\\v10.0A\\bin\\NETFX 4.8 Tools\\x64"
-        - "E:\\Windows Kits\\10\\bin\\10.0.28000.0\\x86"
-        - "C:\\Program Files (x86)\\Microsoft SDKs\\Windows\\v10.0A\\bin\\NETFX 4.8 Tools"
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\Common7\\tools"
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\Common7\\ide"
-        - "C:\\Program Files (x86)\\HTML Help Workshop"
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\MSBuild\\Current\\Bin\\amd64"
-        - "C:\\WINDOWS\\Microsoft.NET\\Framework64\\v4.0.30319\\"
-        - "C:\\WINDOWS\\Microsoft.NET\\Framework\\v4.0.30319\\"
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\MSBuild\\Current\\Bin"
-        - "C:\\WINDOWS\\Microsoft.NET\\Framework\\v4.0.30319\\"
         - "C:\\Program Files\\Eclipse Adoptium\\jdk-21.0.12.101-hotspot\\bin"
         - "C:\\Program Files\\Eclipse Adoptium\\jdk-11.0.32.101-hotspot\\bin"
         - "C:\\Program Files\\Eclipse Adoptium\\jdk-17.0.20.101-hotspot\\bin"
@@ -63,32 +50,22 @@ events:
         - "C:\\WINDOWS\\system32"
         - "C:\\WINDOWS"
         - "C:\\WINDOWS\\System32\\Wbem"
-        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\"
-        - "C:\\WINDOWS\\System32\\OpenSSH\\"
-        - "C:\\Program Files\\PuTTY\\"
+        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0"
+        - "C:\\WINDOWS\\System32\\OpenSSH"
+        - "C:\\Program Files\\PuTTY"
         - "C:\\Program Files\\cursor\\resources\\app\\bin"
         - "C:\\Program Files\\Microsoft VS Code\\bin"
         - "C:\\Program Files\\Microsoft VS Code\\bin\\copilot-shim"
         - "C:\\Program Files\\Docker\\Docker\\resources\\bin"
-        - "C:\\Program Files\\dotnet\\"
+        - "C:\\Program Files\\dotnet"
         - "C:\\Program Files\\Git\\cmd"
         - "C:\\Program Files\\CMake\\bin"
-        - "E:\\Windows Kits\\10\\Windows Performance Toolkit\\"
-        - "C:\\Program Files\\WSL\\"
+        - "E:\\Windows Kits\\10\\Windows Performance Toolkit"
+        - "C:\\Program Files\\WSL"
+        - "C:\\Program Files (x86)\\AOMEI Partition Assistant"
         - "C:\\Users\\gabum\\AppData\\Local\\Microsoft\\WindowsApps"
         - "C:\\Users\\gabum\\AppData\\Local\\GitHubDesktop\\bin"
         - "C:\\Users\\gabum\\.dotnet\\tools"
-      ENV{INCLUDE}:
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\VC\\Tools\\MSVC\\14.51.36231\\include"
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\VC\\Tools\\MSVC\\14.51.36231\\atlmfc\\include"
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\VC\\Auxiliary\\VS\\include"
-        - "E:\\Windows Kits\\10\\Include\\10.0.28000.0\\ucrt"
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\VC\\Auxiliary\\VS\\UnitTest\\include"
-        - "E:\\Windows Kits\\10\\Include\\10.0.28000.0\\um"
-        - "E:\\Windows Kits\\10\\Include\\10.0.28000.0\\shared"
-        - "E:\\Windows Kits\\10\\Include\\10.0.28000.0\\winrt"
-        - "E:\\Windows Kits\\10\\Include\\10.0.28000.0\\cppwinrt"
-        - "C:\\Program Files (x86)\\Windows Kits\\NETFXSDK\\4.8\\Include\\um"
   -
     kind: "message-v1"
     backtrace:
@@ -105,9 +82,9 @@ events:
       The output was:
       0
       MSBuild version 18.11.1-1.26513.3+940033be3 for .NET Framework
-      Build started 28/10/2026 12:30:24.
+      Build started 9/11/2026 18:35:40.
       
-      Project "C:\\Users\\gabum\\Desktop\\Pixel VR\\PixelVR Driver\\CMakeFiles\\4.5.0-rc1\\CompilerIdC\\CompilerIdC.vcxproj" on node 1 (default targets).
+      Project "C:\\Users\\gabum\\Desktop\\Pixel-VR\\PixelVR Driver\\CMakeFiles\\4.5.0-rc1\\CompilerIdC\\CompilerIdC.vcxproj" on node 1 (default targets).
       PrepareForBuild:
         Creating directory "Debug\\".
         Structured output is enabled. The formatting of compiler diagnostics will reflect the error hierarchy. See https://aka.ms/cpp/structured-output for more details.
@@ -120,7 +97,7 @@ events:
         CMakeCCompilerId.c
       Link:
         E:\\Visual Studio Community 2026\\Visual Studio\\VC\\Tools\\MSVC\\14.51.36231\\bin\\HostX64\\x64\\link.exe /ERRORREPORT:QUEUE /OUT:".\\CompilerIdC.exe" /INCREMENTAL:NO /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /PDB:".\\CompilerIdC.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:".\\CompilerIdC.lib" /MACHINE:X64 Debug\\CMakeCCompilerId.obj
-        CompilerIdC.vcxproj -> C:\\Users\\gabum\\Desktop\\Pixel VR\\PixelVR Driver\\CMakeFiles\\4.5.0-rc1\\CompilerIdC\\CompilerIdC.exe
+        CompilerIdC.vcxproj -> C:\\Users\\gabum\\Desktop\\Pixel-VR\\PixelVR Driver\\CMakeFiles\\4.5.0-rc1\\CompilerIdC\\CompilerIdC.exe
       PostBuildEvent:
         for %%i in (cl.exe) do @echo CMAKE_C_COMPILER=%%~$PATH:i
         :VCEnd
@@ -128,13 +105,13 @@ events:
       FinalizeBuildStatus:
         Deleting file "Debug\\CompilerIdC.tlog\\unsuccessfulbuild".
         Touching "Debug\\CompilerIdC.tlog\\CompilerIdC.lastbuildstate".
-      Done Building Project "C:\\Users\\gabum\\Desktop\\Pixel VR\\PixelVR Driver\\CMakeFiles\\4.5.0-rc1\\CompilerIdC\\CompilerIdC.vcxproj" (default targets).
+      Done Building Project "C:\\Users\\gabum\\Desktop\\Pixel-VR\\PixelVR Driver\\CMakeFiles\\4.5.0-rc1\\CompilerIdC\\CompilerIdC.vcxproj" (default targets).
       
       Build succeeded.
           0 Warning(s)
           0 Error(s)
       
-      Time Elapsed 00:00:06.71
+      Time Elapsed 00:00:04.36
       
       
       Compilation of the C compiler identification source "CMakeCCompilerId.c" produced "CompilerIdC.exe"
@@ -142,7 +119,7 @@ events:
       Compilation of the C compiler identification source "CMakeCCompilerId.c" produced "CompilerIdC.vcxproj"
       
       The C compiler identification is MSVC, found in:
-        C:/Users/gabum/Desktop/Pixel VR/PixelVR Driver/CMakeFiles/4.5.0-rc1/CompilerIdC/CompilerIdC.exe
+        C:/Users/gabum/Desktop/Pixel-VR/PixelVR Driver/CMakeFiles/4.5.0-rc1/CompilerIdC/CompilerIdC.exe
       
   -
     kind: "find-v1"
@@ -167,17 +144,6 @@ events:
       - "link"
     candidate_directories:
       - "E:/Visual Studio Community 2026/Visual Studio/VC/Tools/MSVC/14.51.36231/bin/Hostx64/x64/"
-      - "E:/Windows Kits/10/bin/10.0.28000.0/x64/"
-      - "C:/Program Files (x86)/Microsoft SDKs/Windows/v10.0A/bin/NETFX 4.8 Tools/x64/"
-      - "E:/Windows Kits/10/bin/10.0.28000.0/x86/"
-      - "C:/Program Files (x86)/Microsoft SDKs/Windows/v10.0A/bin/NETFX 4.8 Tools/"
-      - "E:/Visual Studio Community 2026/Visual Studio/Common7/Tools/"
-      - "E:/Visual Studio Community 2026/Visual Studio/Common7/IDE/"
-      - "C:/Program Files (x86)/HTML Help Workshop/"
-      - "E:/Visual Studio Community 2026/Visual Studio/MSBuild/Current/Bin/amd64/"
-      - "C:/Windows/Microsoft.NET/Framework64/v4.0.30319/"
-      - "C:/Windows/Microsoft.NET/Framework/v4.0.30319/"
-      - "E:/Visual Studio Community 2026/Visual Studio/MSBuild/Current/Bin/"
       - "C:/Program Files/Eclipse Adoptium/jdk-21.0.12.101-hotspot/bin/"
       - "C:/Program Files/Eclipse Adoptium/jdk-11.0.32.101-hotspot/bin/"
       - "C:/Program Files/Eclipse Adoptium/jdk-17.0.20.101-hotspot/bin/"
@@ -205,6 +171,7 @@ events:
       - "C:/Program Files/CMake/bin/"
       - "E:/Windows Kits/10/Windows Performance Toolkit/"
       - "C:/Program Files/WSL/"
+      - "C:/Program Files (x86)/AOMEI Partition Assistant/"
       - "C:/Users/gabum/AppData/Local/Microsoft/WindowsApps/"
       - "C:/Users/gabum/AppData/Local/GitHubDesktop/bin/"
       - "C:/Users/gabum/.dotnet/tools/"
@@ -213,19 +180,6 @@ events:
     found: "E:/Visual Studio Community 2026/Visual Studio/VC/Tools/MSVC/14.51.36231/bin/Hostx64/x64/link.exe"
     search_context:
       ENV{PATH}:
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\VC\\Tools\\MSVC\\14.51.36231\\bin\\HostX64\\x64"
-        - "E:\\Windows Kits\\10\\bin\\10.0.28000.0\\x64"
-        - "C:\\Program Files (x86)\\Microsoft SDKs\\Windows\\v10.0A\\bin\\NETFX 4.8 Tools\\x64"
-        - "E:\\Windows Kits\\10\\bin\\10.0.28000.0\\x86"
-        - "C:\\Program Files (x86)\\Microsoft SDKs\\Windows\\v10.0A\\bin\\NETFX 4.8 Tools"
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\Common7\\tools"
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\Common7\\ide"
-        - "C:\\Program Files (x86)\\HTML Help Workshop"
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\MSBuild\\Current\\Bin\\amd64"
-        - "C:\\WINDOWS\\Microsoft.NET\\Framework64\\v4.0.30319\\"
-        - "C:\\WINDOWS\\Microsoft.NET\\Framework\\v4.0.30319\\"
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\MSBuild\\Current\\Bin"
-        - "C:\\WINDOWS\\Microsoft.NET\\Framework\\v4.0.30319\\"
         - "C:\\Program Files\\Eclipse Adoptium\\jdk-21.0.12.101-hotspot\\bin"
         - "C:\\Program Files\\Eclipse Adoptium\\jdk-11.0.32.101-hotspot\\bin"
         - "C:\\Program Files\\Eclipse Adoptium\\jdk-17.0.20.101-hotspot\\bin"
@@ -241,18 +195,19 @@ events:
         - "C:\\WINDOWS\\system32"
         - "C:\\WINDOWS"
         - "C:\\WINDOWS\\System32\\Wbem"
-        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\"
-        - "C:\\WINDOWS\\System32\\OpenSSH\\"
-        - "C:\\Program Files\\PuTTY\\"
+        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0"
+        - "C:\\WINDOWS\\System32\\OpenSSH"
+        - "C:\\Program Files\\PuTTY"
         - "C:\\Program Files\\cursor\\resources\\app\\bin"
         - "C:\\Program Files\\Microsoft VS Code\\bin"
         - "C:\\Program Files\\Microsoft VS Code\\bin\\copilot-shim"
         - "C:\\Program Files\\Docker\\Docker\\resources\\bin"
-        - "C:\\Program Files\\dotnet\\"
+        - "C:\\Program Files\\dotnet"
         - "C:\\Program Files\\Git\\cmd"
         - "C:\\Program Files\\CMake\\bin"
-        - "E:\\Windows Kits\\10\\Windows Performance Toolkit\\"
-        - "C:\\Program Files\\WSL\\"
+        - "E:\\Windows Kits\\10\\Windows Performance Toolkit"
+        - "C:\\Program Files\\WSL"
+        - "C:\\Program Files (x86)\\AOMEI Partition Assistant"
         - "C:\\Users\\gabum\\AppData\\Local\\Microsoft\\WindowsApps"
         - "C:\\Users\\gabum\\AppData\\Local\\GitHubDesktop\\bin"
         - "C:\\Users\\gabum\\.dotnet\\tools"
@@ -279,17 +234,6 @@ events:
       - "lld-link"
     candidate_directories:
       - "E:/Visual Studio Community 2026/Visual Studio/VC/Tools/MSVC/14.51.36231/bin/Hostx64/x64/"
-      - "E:/Windows Kits/10/bin/10.0.28000.0/x64/"
-      - "C:/Program Files (x86)/Microsoft SDKs/Windows/v10.0A/bin/NETFX 4.8 Tools/x64/"
-      - "E:/Windows Kits/10/bin/10.0.28000.0/x86/"
-      - "C:/Program Files (x86)/Microsoft SDKs/Windows/v10.0A/bin/NETFX 4.8 Tools/"
-      - "E:/Visual Studio Community 2026/Visual Studio/Common7/Tools/"
-      - "E:/Visual Studio Community 2026/Visual Studio/Common7/IDE/"
-      - "C:/Program Files (x86)/HTML Help Workshop/"
-      - "E:/Visual Studio Community 2026/Visual Studio/MSBuild/Current/Bin/amd64/"
-      - "C:/Windows/Microsoft.NET/Framework64/v4.0.30319/"
-      - "C:/Windows/Microsoft.NET/Framework/v4.0.30319/"
-      - "E:/Visual Studio Community 2026/Visual Studio/MSBuild/Current/Bin/"
       - "C:/Program Files/Eclipse Adoptium/jdk-21.0.12.101-hotspot/bin/"
       - "C:/Program Files/Eclipse Adoptium/jdk-11.0.32.101-hotspot/bin/"
       - "C:/Program Files/Eclipse Adoptium/jdk-17.0.20.101-hotspot/bin/"
@@ -317,6 +261,7 @@ events:
       - "C:/Program Files/CMake/bin/"
       - "E:/Windows Kits/10/Windows Performance Toolkit/"
       - "C:/Program Files/WSL/"
+      - "C:/Program Files (x86)/AOMEI Partition Assistant/"
       - "C:/Users/gabum/AppData/Local/Microsoft/WindowsApps/"
       - "C:/Users/gabum/AppData/Local/GitHubDesktop/bin/"
       - "C:/Users/gabum/.dotnet/tools/"
@@ -324,39 +269,6 @@ events:
       - "E:/Visual Studio Community 2026/Visual Studio/VC/Tools/MSVC/14.51.36231/bin/Hostx64/x64/lld-link.com"
       - "E:/Visual Studio Community 2026/Visual Studio/VC/Tools/MSVC/14.51.36231/bin/Hostx64/x64/lld-link.exe"
       - "E:/Visual Studio Community 2026/Visual Studio/VC/Tools/MSVC/14.51.36231/bin/Hostx64/x64/lld-link"
-      - "E:/Windows Kits/10/bin/10.0.28000.0/x64/lld-link.com"
-      - "E:/Windows Kits/10/bin/10.0.28000.0/x64/lld-link.exe"
-      - "E:/Windows Kits/10/bin/10.0.28000.0/x64/lld-link"
-      - "C:/Program Files (x86)/Microsoft SDKs/Windows/v10.0A/bin/NETFX 4.8 Tools/x64/lld-link.com"
-      - "C:/Program Files (x86)/Microsoft SDKs/Windows/v10.0A/bin/NETFX 4.8 Tools/x64/lld-link.exe"
-      - "C:/Program Files (x86)/Microsoft SDKs/Windows/v10.0A/bin/NETFX 4.8 Tools/x64/lld-link"
-      - "E:/Windows Kits/10/bin/10.0.28000.0/x86/lld-link.com"
-      - "E:/Windows Kits/10/bin/10.0.28000.0/x86/lld-link.exe"
-      - "E:/Windows Kits/10/bin/10.0.28000.0/x86/lld-link"
-      - "C:/Program Files (x86)/Microsoft SDKs/Windows/v10.0A/bin/NETFX 4.8 Tools/lld-link.com"
-      - "C:/Program Files (x86)/Microsoft SDKs/Windows/v10.0A/bin/NETFX 4.8 Tools/lld-link.exe"
-      - "C:/Program Files (x86)/Microsoft SDKs/Windows/v10.0A/bin/NETFX 4.8 Tools/lld-link"
-      - "E:/Visual Studio Community 2026/Visual Studio/Common7/Tools/lld-link.com"
-      - "E:/Visual Studio Community 2026/Visual Studio/Common7/Tools/lld-link.exe"
-      - "E:/Visual Studio Community 2026/Visual Studio/Common7/Tools/lld-link"
-      - "E:/Visual Studio Community 2026/Visual Studio/Common7/IDE/lld-link.com"
-      - "E:/Visual Studio Community 2026/Visual Studio/Common7/IDE/lld-link.exe"
-      - "E:/Visual Studio Community 2026/Visual Studio/Common7/IDE/lld-link"
-      - "C:/Program Files (x86)/HTML Help Workshop/lld-link.com"
-      - "C:/Program Files (x86)/HTML Help Workshop/lld-link.exe"
-      - "C:/Program Files (x86)/HTML Help Workshop/lld-link"
-      - "E:/Visual Studio Community 2026/Visual Studio/MSBuild/Current/Bin/amd64/lld-link.com"
-      - "E:/Visual Studio Community 2026/Visual Studio/MSBuild/Current/Bin/amd64/lld-link.exe"
-      - "E:/Visual Studio Community 2026/Visual Studio/MSBuild/Current/Bin/amd64/lld-link"
-      - "C:/Windows/Microsoft.NET/Framework64/v4.0.30319/lld-link.com"
-      - "C:/Windows/Microsoft.NET/Framework64/v4.0.30319/lld-link.exe"
-      - "C:/Windows/Microsoft.NET/Framework64/v4.0.30319/lld-link"
-      - "C:/Windows/Microsoft.NET/Framework/v4.0.30319/lld-link.com"
-      - "C:/Windows/Microsoft.NET/Framework/v4.0.30319/lld-link.exe"
-      - "C:/Windows/Microsoft.NET/Framework/v4.0.30319/lld-link"
-      - "E:/Visual Studio Community 2026/Visual Studio/MSBuild/Current/Bin/lld-link.com"
-      - "E:/Visual Studio Community 2026/Visual Studio/MSBuild/Current/Bin/lld-link.exe"
-      - "E:/Visual Studio Community 2026/Visual Studio/MSBuild/Current/Bin/lld-link"
       - "C:/Program Files/Eclipse Adoptium/jdk-21.0.12.101-hotspot/bin/lld-link.com"
       - "C:/Program Files/Eclipse Adoptium/jdk-21.0.12.101-hotspot/bin/lld-link.exe"
       - "C:/Program Files/Eclipse Adoptium/jdk-21.0.12.101-hotspot/bin/lld-link"
@@ -438,6 +350,9 @@ events:
       - "C:/Program Files/WSL/lld-link.com"
       - "C:/Program Files/WSL/lld-link.exe"
       - "C:/Program Files/WSL/lld-link"
+      - "C:/Program Files (x86)/AOMEI Partition Assistant/lld-link.com"
+      - "C:/Program Files (x86)/AOMEI Partition Assistant/lld-link.exe"
+      - "C:/Program Files (x86)/AOMEI Partition Assistant/lld-link"
       - "C:/Users/gabum/AppData/Local/Microsoft/WindowsApps/lld-link.com"
       - "C:/Users/gabum/AppData/Local/Microsoft/WindowsApps/lld-link.exe"
       - "C:/Users/gabum/AppData/Local/Microsoft/WindowsApps/lld-link"
@@ -450,19 +365,6 @@ events:
     found: false
     search_context:
       ENV{PATH}:
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\VC\\Tools\\MSVC\\14.51.36231\\bin\\HostX64\\x64"
-        - "E:\\Windows Kits\\10\\bin\\10.0.28000.0\\x64"
-        - "C:\\Program Files (x86)\\Microsoft SDKs\\Windows\\v10.0A\\bin\\NETFX 4.8 Tools\\x64"
-        - "E:\\Windows Kits\\10\\bin\\10.0.28000.0\\x86"
-        - "C:\\Program Files (x86)\\Microsoft SDKs\\Windows\\v10.0A\\bin\\NETFX 4.8 Tools"
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\Common7\\tools"
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\Common7\\ide"
-        - "C:\\Program Files (x86)\\HTML Help Workshop"
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\MSBuild\\Current\\Bin\\amd64"
-        - "C:\\WINDOWS\\Microsoft.NET\\Framework64\\v4.0.30319\\"
-        - "C:\\WINDOWS\\Microsoft.NET\\Framework\\v4.0.30319\\"
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\MSBuild\\Current\\Bin"
-        - "C:\\WINDOWS\\Microsoft.NET\\Framework\\v4.0.30319\\"
         - "C:\\Program Files\\Eclipse Adoptium\\jdk-21.0.12.101-hotspot\\bin"
         - "C:\\Program Files\\Eclipse Adoptium\\jdk-11.0.32.101-hotspot\\bin"
         - "C:\\Program Files\\Eclipse Adoptium\\jdk-17.0.20.101-hotspot\\bin"
@@ -478,18 +380,19 @@ events:
         - "C:\\WINDOWS\\system32"
         - "C:\\WINDOWS"
         - "C:\\WINDOWS\\System32\\Wbem"
-        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\"
-        - "C:\\WINDOWS\\System32\\OpenSSH\\"
-        - "C:\\Program Files\\PuTTY\\"
+        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0"
+        - "C:\\WINDOWS\\System32\\OpenSSH"
+        - "C:\\Program Files\\PuTTY"
         - "C:\\Program Files\\cursor\\resources\\app\\bin"
         - "C:\\Program Files\\Microsoft VS Code\\bin"
         - "C:\\Program Files\\Microsoft VS Code\\bin\\copilot-shim"
         - "C:\\Program Files\\Docker\\Docker\\resources\\bin"
-        - "C:\\Program Files\\dotnet\\"
+        - "C:\\Program Files\\dotnet"
         - "C:\\Program Files\\Git\\cmd"
         - "C:\\Program Files\\CMake\\bin"
-        - "E:\\Windows Kits\\10\\Windows Performance Toolkit\\"
-        - "C:\\Program Files\\WSL\\"
+        - "E:\\Windows Kits\\10\\Windows Performance Toolkit"
+        - "C:\\Program Files\\WSL"
+        - "C:\\Program Files (x86)\\AOMEI Partition Assistant"
         - "C:\\Users\\gabum\\AppData\\Local\\Microsoft\\WindowsApps"
         - "C:\\Users\\gabum\\AppData\\Local\\GitHubDesktop\\bin"
         - "C:\\Users\\gabum\\.dotnet\\tools"
@@ -514,17 +417,6 @@ events:
       - "link"
     candidate_directories:
       - "E:/Visual Studio Community 2026/Visual Studio/VC/Tools/MSVC/14.51.36231/bin/Hostx64/x64/"
-      - "E:/Windows Kits/10/bin/10.0.28000.0/x64/"
-      - "C:/Program Files (x86)/Microsoft SDKs/Windows/v10.0A/bin/NETFX 4.8 Tools/x64/"
-      - "E:/Windows Kits/10/bin/10.0.28000.0/x86/"
-      - "C:/Program Files (x86)/Microsoft SDKs/Windows/v10.0A/bin/NETFX 4.8 Tools/"
-      - "E:/Visual Studio Community 2026/Visual Studio/Common7/Tools/"
-      - "E:/Visual Studio Community 2026/Visual Studio/Common7/IDE/"
-      - "C:/Program Files (x86)/HTML Help Workshop/"
-      - "E:/Visual Studio Community 2026/Visual Studio/MSBuild/Current/Bin/amd64/"
-      - "C:/Windows/Microsoft.NET/Framework64/v4.0.30319/"
-      - "C:/Windows/Microsoft.NET/Framework/v4.0.30319/"
-      - "E:/Visual Studio Community 2026/Visual Studio/MSBuild/Current/Bin/"
       - "C:/Program Files/Eclipse Adoptium/jdk-21.0.12.101-hotspot/bin/"
       - "C:/Program Files/Eclipse Adoptium/jdk-11.0.32.101-hotspot/bin/"
       - "C:/Program Files/Eclipse Adoptium/jdk-17.0.20.101-hotspot/bin/"
@@ -552,6 +444,7 @@ events:
       - "C:/Program Files/CMake/bin/"
       - "E:/Windows Kits/10/Windows Performance Toolkit/"
       - "C:/Program Files/WSL/"
+      - "C:/Program Files (x86)/AOMEI Partition Assistant/"
       - "C:/Users/gabum/AppData/Local/Microsoft/WindowsApps/"
       - "C:/Users/gabum/AppData/Local/GitHubDesktop/bin/"
       - "C:/Users/gabum/.dotnet/tools/"
@@ -560,19 +453,6 @@ events:
     found: "E:/Visual Studio Community 2026/Visual Studio/VC/Tools/MSVC/14.51.36231/bin/Hostx64/x64/link.exe"
     search_context:
       ENV{PATH}:
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\VC\\Tools\\MSVC\\14.51.36231\\bin\\HostX64\\x64"
-        - "E:\\Windows Kits\\10\\bin\\10.0.28000.0\\x64"
-        - "C:\\Program Files (x86)\\Microsoft SDKs\\Windows\\v10.0A\\bin\\NETFX 4.8 Tools\\x64"
-        - "E:\\Windows Kits\\10\\bin\\10.0.28000.0\\x86"
-        - "C:\\Program Files (x86)\\Microsoft SDKs\\Windows\\v10.0A\\bin\\NETFX 4.8 Tools"
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\Common7\\tools"
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\Common7\\ide"
-        - "C:\\Program Files (x86)\\HTML Help Workshop"
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\MSBuild\\Current\\Bin\\amd64"
-        - "C:\\WINDOWS\\Microsoft.NET\\Framework64\\v4.0.30319\\"
-        - "C:\\WINDOWS\\Microsoft.NET\\Framework\\v4.0.30319\\"
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\MSBuild\\Current\\Bin"
-        - "C:\\WINDOWS\\Microsoft.NET\\Framework\\v4.0.30319\\"
         - "C:\\Program Files\\Eclipse Adoptium\\jdk-21.0.12.101-hotspot\\bin"
         - "C:\\Program Files\\Eclipse Adoptium\\jdk-11.0.32.101-hotspot\\bin"
         - "C:\\Program Files\\Eclipse Adoptium\\jdk-17.0.20.101-hotspot\\bin"
@@ -588,18 +468,19 @@ events:
         - "C:\\WINDOWS\\system32"
         - "C:\\WINDOWS"
         - "C:\\WINDOWS\\System32\\Wbem"
-        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\"
-        - "C:\\WINDOWS\\System32\\OpenSSH\\"
-        - "C:\\Program Files\\PuTTY\\"
+        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0"
+        - "C:\\WINDOWS\\System32\\OpenSSH"
+        - "C:\\Program Files\\PuTTY"
         - "C:\\Program Files\\cursor\\resources\\app\\bin"
         - "C:\\Program Files\\Microsoft VS Code\\bin"
         - "C:\\Program Files\\Microsoft VS Code\\bin\\copilot-shim"
         - "C:\\Program Files\\Docker\\Docker\\resources\\bin"
-        - "C:\\Program Files\\dotnet\\"
+        - "C:\\Program Files\\dotnet"
         - "C:\\Program Files\\Git\\cmd"
         - "C:\\Program Files\\CMake\\bin"
-        - "E:\\Windows Kits\\10\\Windows Performance Toolkit\\"
-        - "C:\\Program Files\\WSL\\"
+        - "E:\\Windows Kits\\10\\Windows Performance Toolkit"
+        - "C:\\Program Files\\WSL"
+        - "C:\\Program Files (x86)\\AOMEI Partition Assistant"
         - "C:\\Users\\gabum\\AppData\\Local\\Microsoft\\WindowsApps"
         - "C:\\Users\\gabum\\AppData\\Local\\GitHubDesktop\\bin"
         - "C:\\Users\\gabum\\.dotnet\\tools"
@@ -624,17 +505,6 @@ events:
       - "mt"
     candidate_directories:
       - "E:/Visual Studio Community 2026/Visual Studio/VC/Tools/MSVC/14.51.36231/bin/Hostx64/x64/"
-      - "E:/Windows Kits/10/bin/10.0.28000.0/x64/"
-      - "C:/Program Files (x86)/Microsoft SDKs/Windows/v10.0A/bin/NETFX 4.8 Tools/x64/"
-      - "E:/Windows Kits/10/bin/10.0.28000.0/x86/"
-      - "C:/Program Files (x86)/Microsoft SDKs/Windows/v10.0A/bin/NETFX 4.8 Tools/"
-      - "E:/Visual Studio Community 2026/Visual Studio/Common7/Tools/"
-      - "E:/Visual Studio Community 2026/Visual Studio/Common7/IDE/"
-      - "C:/Program Files (x86)/HTML Help Workshop/"
-      - "E:/Visual Studio Community 2026/Visual Studio/MSBuild/Current/Bin/amd64/"
-      - "C:/Windows/Microsoft.NET/Framework64/v4.0.30319/"
-      - "C:/Windows/Microsoft.NET/Framework/v4.0.30319/"
-      - "E:/Visual Studio Community 2026/Visual Studio/MSBuild/Current/Bin/"
       - "C:/Program Files/Eclipse Adoptium/jdk-21.0.12.101-hotspot/bin/"
       - "C:/Program Files/Eclipse Adoptium/jdk-11.0.32.101-hotspot/bin/"
       - "C:/Program Files/Eclipse Adoptium/jdk-17.0.20.101-hotspot/bin/"
@@ -662,6 +532,7 @@ events:
       - "C:/Program Files/CMake/bin/"
       - "E:/Windows Kits/10/Windows Performance Toolkit/"
       - "C:/Program Files/WSL/"
+      - "C:/Program Files (x86)/AOMEI Partition Assistant/"
       - "C:/Users/gabum/AppData/Local/Microsoft/WindowsApps/"
       - "C:/Users/gabum/AppData/Local/GitHubDesktop/bin/"
       - "C:/Users/gabum/.dotnet/tools/"
@@ -669,23 +540,102 @@ events:
       - "E:/Visual Studio Community 2026/Visual Studio/VC/Tools/MSVC/14.51.36231/bin/Hostx64/x64/mt.com"
       - "E:/Visual Studio Community 2026/Visual Studio/VC/Tools/MSVC/14.51.36231/bin/Hostx64/x64/mt.exe"
       - "E:/Visual Studio Community 2026/Visual Studio/VC/Tools/MSVC/14.51.36231/bin/Hostx64/x64/mt"
-      - "E:/Windows Kits/10/bin/10.0.28000.0/x64/mt.com"
-    found: "E:/Windows Kits/10/bin/10.0.28000.0/x64/mt.exe"
+      - "C:/Program Files/Eclipse Adoptium/jdk-21.0.12.101-hotspot/bin/mt.com"
+      - "C:/Program Files/Eclipse Adoptium/jdk-21.0.12.101-hotspot/bin/mt.exe"
+      - "C:/Program Files/Eclipse Adoptium/jdk-21.0.12.101-hotspot/bin/mt"
+      - "C:/Program Files/Eclipse Adoptium/jdk-11.0.32.101-hotspot/bin/mt.com"
+      - "C:/Program Files/Eclipse Adoptium/jdk-11.0.32.101-hotspot/bin/mt.exe"
+      - "C:/Program Files/Eclipse Adoptium/jdk-11.0.32.101-hotspot/bin/mt"
+      - "C:/Program Files/Eclipse Adoptium/jdk-17.0.20.101-hotspot/bin/mt.com"
+      - "C:/Program Files/Eclipse Adoptium/jdk-17.0.20.101-hotspot/bin/mt.exe"
+      - "C:/Program Files/Eclipse Adoptium/jdk-17.0.20.101-hotspot/bin/mt"
+      - "C:/Program Files/Eclipse Adoptium/jdk-25.0.4.101-hotspot/bin/mt.com"
+      - "C:/Program Files/Eclipse Adoptium/jdk-25.0.4.101-hotspot/bin/mt.exe"
+      - "C:/Program Files/Eclipse Adoptium/jdk-25.0.4.101-hotspot/bin/mt"
+      - "C:/Program Files (x86)/Eclipse Adoptium/jdk-8.0.472.8-hotspot/bin/mt.com"
+      - "C:/Program Files (x86)/Eclipse Adoptium/jdk-8.0.472.8-hotspot/bin/mt.exe"
+      - "C:/Program Files (x86)/Eclipse Adoptium/jdk-8.0.472.8-hotspot/bin/mt"
+      - "C:/Program Files/Eclipse Adoptium/jdk-8.0.504.1-hotspot/bin/mt.com"
+      - "C:/Program Files/Eclipse Adoptium/jdk-8.0.504.1-hotspot/bin/mt.exe"
+      - "C:/Program Files/Eclipse Adoptium/jdk-8.0.504.1-hotspot/bin/mt"
+      - "C:/Program Files/Eclipse Adoptium/jre-25.0.4.101-hotspot/bin/mt.com"
+      - "C:/Program Files/Eclipse Adoptium/jre-25.0.4.101-hotspot/bin/mt.exe"
+      - "C:/Program Files/Eclipse Adoptium/jre-25.0.4.101-hotspot/bin/mt"
+      - "C:/Program Files/Eclipse Adoptium/jre-21.0.12.101-hotspot/bin/mt.com"
+      - "C:/Program Files/Eclipse Adoptium/jre-21.0.12.101-hotspot/bin/mt.exe"
+      - "C:/Program Files/Eclipse Adoptium/jre-21.0.12.101-hotspot/bin/mt"
+      - "C:/Program Files/Eclipse Adoptium/jre-8.0.504.1-hotspot/bin/mt.com"
+      - "C:/Program Files/Eclipse Adoptium/jre-8.0.504.1-hotspot/bin/mt.exe"
+      - "C:/Program Files/Eclipse Adoptium/jre-8.0.504.1-hotspot/bin/mt"
+      - "C:/Program Files/Eclipse Adoptium/jre-17.0.20.101-hotspot/bin/mt.com"
+      - "C:/Program Files/Eclipse Adoptium/jre-17.0.20.101-hotspot/bin/mt.exe"
+      - "C:/Program Files/Eclipse Adoptium/jre-17.0.20.101-hotspot/bin/mt"
+      - "C:/Program Files/Eclipse Adoptium/jre-11.0.32.101-hotspot/bin/mt.com"
+      - "C:/Program Files/Eclipse Adoptium/jre-11.0.32.101-hotspot/bin/mt.exe"
+      - "C:/Program Files/Eclipse Adoptium/jre-11.0.32.101-hotspot/bin/mt"
+      - "C:/Program Files (x86)/Eclipse Adoptium/jre-8.0.472.8-hotspot/bin/mt.com"
+      - "C:/Program Files (x86)/Eclipse Adoptium/jre-8.0.472.8-hotspot/bin/mt.exe"
+      - "C:/Program Files (x86)/Eclipse Adoptium/jre-8.0.472.8-hotspot/bin/mt"
+      - "C:/Windows/System32/mt.com"
+      - "C:/Windows/System32/mt.exe"
+      - "C:/Windows/System32/mt"
+      - "C:/Windows/mt.com"
+      - "C:/Windows/mt.exe"
+      - "C:/Windows/mt"
+      - "C:/Windows/System32/wbem/mt.com"
+      - "C:/Windows/System32/wbem/mt.exe"
+      - "C:/Windows/System32/wbem/mt"
+      - "C:/Windows/System32/WindowsPowerShell/v1.0/mt.com"
+      - "C:/Windows/System32/WindowsPowerShell/v1.0/mt.exe"
+      - "C:/Windows/System32/WindowsPowerShell/v1.0/mt"
+      - "C:/Windows/System32/OpenSSH/mt.com"
+      - "C:/Windows/System32/OpenSSH/mt.exe"
+      - "C:/Windows/System32/OpenSSH/mt"
+      - "C:/Program Files/PuTTY/mt.com"
+      - "C:/Program Files/PuTTY/mt.exe"
+      - "C:/Program Files/PuTTY/mt"
+      - "C:/Program Files/cursor/resources/app/bin/mt.com"
+      - "C:/Program Files/cursor/resources/app/bin/mt.exe"
+      - "C:/Program Files/cursor/resources/app/bin/mt"
+      - "C:/Program Files/Microsoft VS Code/bin/mt.com"
+      - "C:/Program Files/Microsoft VS Code/bin/mt.exe"
+      - "C:/Program Files/Microsoft VS Code/bin/mt"
+      - "C:/Program Files/Microsoft VS Code/bin/copilot-shim/mt.com"
+      - "C:/Program Files/Microsoft VS Code/bin/copilot-shim/mt.exe"
+      - "C:/Program Files/Microsoft VS Code/bin/copilot-shim/mt"
+      - "C:/Program Files/Docker/Docker/resources/bin/mt.com"
+      - "C:/Program Files/Docker/Docker/resources/bin/mt.exe"
+      - "C:/Program Files/Docker/Docker/resources/bin/mt"
+      - "C:/Program Files/dotnet/mt.com"
+      - "C:/Program Files/dotnet/mt.exe"
+      - "C:/Program Files/dotnet/mt"
+      - "C:/Program Files/Git/cmd/mt.com"
+      - "C:/Program Files/Git/cmd/mt.exe"
+      - "C:/Program Files/Git/cmd/mt"
+      - "C:/Program Files/CMake/bin/mt.com"
+      - "C:/Program Files/CMake/bin/mt.exe"
+      - "C:/Program Files/CMake/bin/mt"
+      - "E:/Windows Kits/10/Windows Performance Toolkit/mt.com"
+      - "E:/Windows Kits/10/Windows Performance Toolkit/mt.exe"
+      - "E:/Windows Kits/10/Windows Performance Toolkit/mt"
+      - "C:/Program Files/WSL/mt.com"
+      - "C:/Program Files/WSL/mt.exe"
+      - "C:/Program Files/WSL/mt"
+      - "C:/Program Files (x86)/AOMEI Partition Assistant/mt.com"
+      - "C:/Program Files (x86)/AOMEI Partition Assistant/mt.exe"
+      - "C:/Program Files (x86)/AOMEI Partition Assistant/mt"
+      - "C:/Users/gabum/AppData/Local/Microsoft/WindowsApps/mt.com"
+      - "C:/Users/gabum/AppData/Local/Microsoft/WindowsApps/mt.exe"
+      - "C:/Users/gabum/AppData/Local/Microsoft/WindowsApps/mt"
+      - "C:/Users/gabum/AppData/Local/GitHubDesktop/bin/mt.com"
+      - "C:/Users/gabum/AppData/Local/GitHubDesktop/bin/mt.exe"
+      - "C:/Users/gabum/AppData/Local/GitHubDesktop/bin/mt"
+      - "C:/Users/gabum/.dotnet/tools/mt.com"
+      - "C:/Users/gabum/.dotnet/tools/mt.exe"
+      - "C:/Users/gabum/.dotnet/tools/mt"
+    found: false
     search_context:
       ENV{PATH}:
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\VC\\Tools\\MSVC\\14.51.36231\\bin\\HostX64\\x64"
-        - "E:\\Windows Kits\\10\\bin\\10.0.28000.0\\x64"
-        - "C:\\Program Files (x86)\\Microsoft SDKs\\Windows\\v10.0A\\bin\\NETFX 4.8 Tools\\x64"
-        - "E:\\Windows Kits\\10\\bin\\10.0.28000.0\\x86"
-        - "C:\\Program Files (x86)\\Microsoft SDKs\\Windows\\v10.0A\\bin\\NETFX 4.8 Tools"
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\Common7\\tools"
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\Common7\\ide"
-        - "C:\\Program Files (x86)\\HTML Help Workshop"
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\MSBuild\\Current\\Bin\\amd64"
-        - "C:\\WINDOWS\\Microsoft.NET\\Framework64\\v4.0.30319\\"
-        - "C:\\WINDOWS\\Microsoft.NET\\Framework\\v4.0.30319\\"
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\MSBuild\\Current\\Bin"
-        - "C:\\WINDOWS\\Microsoft.NET\\Framework\\v4.0.30319\\"
         - "C:\\Program Files\\Eclipse Adoptium\\jdk-21.0.12.101-hotspot\\bin"
         - "C:\\Program Files\\Eclipse Adoptium\\jdk-11.0.32.101-hotspot\\bin"
         - "C:\\Program Files\\Eclipse Adoptium\\jdk-17.0.20.101-hotspot\\bin"
@@ -701,18 +651,19 @@ events:
         - "C:\\WINDOWS\\system32"
         - "C:\\WINDOWS"
         - "C:\\WINDOWS\\System32\\Wbem"
-        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\"
-        - "C:\\WINDOWS\\System32\\OpenSSH\\"
-        - "C:\\Program Files\\PuTTY\\"
+        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0"
+        - "C:\\WINDOWS\\System32\\OpenSSH"
+        - "C:\\Program Files\\PuTTY"
         - "C:\\Program Files\\cursor\\resources\\app\\bin"
         - "C:\\Program Files\\Microsoft VS Code\\bin"
         - "C:\\Program Files\\Microsoft VS Code\\bin\\copilot-shim"
         - "C:\\Program Files\\Docker\\Docker\\resources\\bin"
-        - "C:\\Program Files\\dotnet\\"
+        - "C:\\Program Files\\dotnet"
         - "C:\\Program Files\\Git\\cmd"
         - "C:\\Program Files\\CMake\\bin"
-        - "E:\\Windows Kits\\10\\Windows Performance Toolkit\\"
-        - "C:\\Program Files\\WSL\\"
+        - "E:\\Windows Kits\\10\\Windows Performance Toolkit"
+        - "C:\\Program Files\\WSL"
+        - "C:\\Program Files (x86)\\AOMEI Partition Assistant"
         - "C:\\Users\\gabum\\AppData\\Local\\Microsoft\\WindowsApps"
         - "C:\\Users\\gabum\\AppData\\Local\\GitHubDesktop\\bin"
         - "C:\\Users\\gabum\\.dotnet\\tools"
@@ -737,17 +688,6 @@ events:
       - "lib"
     candidate_directories:
       - "E:/Visual Studio Community 2026/Visual Studio/VC/Tools/MSVC/14.51.36231/bin/Hostx64/x64/"
-      - "E:/Windows Kits/10/bin/10.0.28000.0/x64/"
-      - "C:/Program Files (x86)/Microsoft SDKs/Windows/v10.0A/bin/NETFX 4.8 Tools/x64/"
-      - "E:/Windows Kits/10/bin/10.0.28000.0/x86/"
-      - "C:/Program Files (x86)/Microsoft SDKs/Windows/v10.0A/bin/NETFX 4.8 Tools/"
-      - "E:/Visual Studio Community 2026/Visual Studio/Common7/Tools/"
-      - "E:/Visual Studio Community 2026/Visual Studio/Common7/IDE/"
-      - "C:/Program Files (x86)/HTML Help Workshop/"
-      - "E:/Visual Studio Community 2026/Visual Studio/MSBuild/Current/Bin/amd64/"
-      - "C:/Windows/Microsoft.NET/Framework64/v4.0.30319/"
-      - "C:/Windows/Microsoft.NET/Framework/v4.0.30319/"
-      - "E:/Visual Studio Community 2026/Visual Studio/MSBuild/Current/Bin/"
       - "C:/Program Files/Eclipse Adoptium/jdk-21.0.12.101-hotspot/bin/"
       - "C:/Program Files/Eclipse Adoptium/jdk-11.0.32.101-hotspot/bin/"
       - "C:/Program Files/Eclipse Adoptium/jdk-17.0.20.101-hotspot/bin/"
@@ -775,6 +715,7 @@ events:
       - "C:/Program Files/CMake/bin/"
       - "E:/Windows Kits/10/Windows Performance Toolkit/"
       - "C:/Program Files/WSL/"
+      - "C:/Program Files (x86)/AOMEI Partition Assistant/"
       - "C:/Users/gabum/AppData/Local/Microsoft/WindowsApps/"
       - "C:/Users/gabum/AppData/Local/GitHubDesktop/bin/"
       - "C:/Users/gabum/.dotnet/tools/"
@@ -783,19 +724,6 @@ events:
     found: "E:/Visual Studio Community 2026/Visual Studio/VC/Tools/MSVC/14.51.36231/bin/Hostx64/x64/lib.exe"
     search_context:
       ENV{PATH}:
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\VC\\Tools\\MSVC\\14.51.36231\\bin\\HostX64\\x64"
-        - "E:\\Windows Kits\\10\\bin\\10.0.28000.0\\x64"
-        - "C:\\Program Files (x86)\\Microsoft SDKs\\Windows\\v10.0A\\bin\\NETFX 4.8 Tools\\x64"
-        - "E:\\Windows Kits\\10\\bin\\10.0.28000.0\\x86"
-        - "C:\\Program Files (x86)\\Microsoft SDKs\\Windows\\v10.0A\\bin\\NETFX 4.8 Tools"
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\Common7\\tools"
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\Common7\\ide"
-        - "C:\\Program Files (x86)\\HTML Help Workshop"
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\MSBuild\\Current\\Bin\\amd64"
-        - "C:\\WINDOWS\\Microsoft.NET\\Framework64\\v4.0.30319\\"
-        - "C:\\WINDOWS\\Microsoft.NET\\Framework\\v4.0.30319\\"
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\MSBuild\\Current\\Bin"
-        - "C:\\WINDOWS\\Microsoft.NET\\Framework\\v4.0.30319\\"
         - "C:\\Program Files\\Eclipse Adoptium\\jdk-21.0.12.101-hotspot\\bin"
         - "C:\\Program Files\\Eclipse Adoptium\\jdk-11.0.32.101-hotspot\\bin"
         - "C:\\Program Files\\Eclipse Adoptium\\jdk-17.0.20.101-hotspot\\bin"
@@ -811,18 +739,19 @@ events:
         - "C:\\WINDOWS\\system32"
         - "C:\\WINDOWS"
         - "C:\\WINDOWS\\System32\\Wbem"
-        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\"
-        - "C:\\WINDOWS\\System32\\OpenSSH\\"
-        - "C:\\Program Files\\PuTTY\\"
+        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0"
+        - "C:\\WINDOWS\\System32\\OpenSSH"
+        - "C:\\Program Files\\PuTTY"
         - "C:\\Program Files\\cursor\\resources\\app\\bin"
         - "C:\\Program Files\\Microsoft VS Code\\bin"
         - "C:\\Program Files\\Microsoft VS Code\\bin\\copilot-shim"
         - "C:\\Program Files\\Docker\\Docker\\resources\\bin"
-        - "C:\\Program Files\\dotnet\\"
+        - "C:\\Program Files\\dotnet"
         - "C:\\Program Files\\Git\\cmd"
         - "C:\\Program Files\\CMake\\bin"
-        - "E:\\Windows Kits\\10\\Windows Performance Toolkit\\"
-        - "C:\\Program Files\\WSL\\"
+        - "E:\\Windows Kits\\10\\Windows Performance Toolkit"
+        - "C:\\Program Files\\WSL"
+        - "C:\\Program Files (x86)\\AOMEI Partition Assistant"
         - "C:\\Users\\gabum\\AppData\\Local\\Microsoft\\WindowsApps"
         - "C:\\Users\\gabum\\AppData\\Local\\GitHubDesktop\\bin"
         - "C:\\Users\\gabum\\.dotnet\\tools"
@@ -853,19 +782,6 @@ events:
     found: "C:/Program Files/CMake/share/cmake-4.5/Modules/CMakeCXXCompilerId.cpp.in"
     search_context:
       ENV{PATH}:
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\VC\\Tools\\MSVC\\14.51.36231\\bin\\HostX64\\x64"
-        - "E:\\Windows Kits\\10\\bin\\10.0.28000.0\\x64"
-        - "C:\\Program Files (x86)\\Microsoft SDKs\\Windows\\v10.0A\\bin\\NETFX 4.8 Tools\\x64"
-        - "E:\\Windows Kits\\10\\bin\\10.0.28000.0\\x86"
-        - "C:\\Program Files (x86)\\Microsoft SDKs\\Windows\\v10.0A\\bin\\NETFX 4.8 Tools"
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\Common7\\tools"
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\Common7\\ide"
-        - "C:\\Program Files (x86)\\HTML Help Workshop"
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\MSBuild\\Current\\Bin\\amd64"
-        - "C:\\WINDOWS\\Microsoft.NET\\Framework64\\v4.0.30319\\"
-        - "C:\\WINDOWS\\Microsoft.NET\\Framework\\v4.0.30319\\"
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\MSBuild\\Current\\Bin"
-        - "C:\\WINDOWS\\Microsoft.NET\\Framework\\v4.0.30319\\"
         - "C:\\Program Files\\Eclipse Adoptium\\jdk-21.0.12.101-hotspot\\bin"
         - "C:\\Program Files\\Eclipse Adoptium\\jdk-11.0.32.101-hotspot\\bin"
         - "C:\\Program Files\\Eclipse Adoptium\\jdk-17.0.20.101-hotspot\\bin"
@@ -881,32 +797,22 @@ events:
         - "C:\\WINDOWS\\system32"
         - "C:\\WINDOWS"
         - "C:\\WINDOWS\\System32\\Wbem"
-        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\"
-        - "C:\\WINDOWS\\System32\\OpenSSH\\"
-        - "C:\\Program Files\\PuTTY\\"
+        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0"
+        - "C:\\WINDOWS\\System32\\OpenSSH"
+        - "C:\\Program Files\\PuTTY"
         - "C:\\Program Files\\cursor\\resources\\app\\bin"
         - "C:\\Program Files\\Microsoft VS Code\\bin"
         - "C:\\Program Files\\Microsoft VS Code\\bin\\copilot-shim"
         - "C:\\Program Files\\Docker\\Docker\\resources\\bin"
-        - "C:\\Program Files\\dotnet\\"
+        - "C:\\Program Files\\dotnet"
         - "C:\\Program Files\\Git\\cmd"
         - "C:\\Program Files\\CMake\\bin"
-        - "E:\\Windows Kits\\10\\Windows Performance Toolkit\\"
-        - "C:\\Program Files\\WSL\\"
+        - "E:\\Windows Kits\\10\\Windows Performance Toolkit"
+        - "C:\\Program Files\\WSL"
+        - "C:\\Program Files (x86)\\AOMEI Partition Assistant"
         - "C:\\Users\\gabum\\AppData\\Local\\Microsoft\\WindowsApps"
         - "C:\\Users\\gabum\\AppData\\Local\\GitHubDesktop\\bin"
         - "C:\\Users\\gabum\\.dotnet\\tools"
-      ENV{INCLUDE}:
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\VC\\Tools\\MSVC\\14.51.36231\\include"
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\VC\\Tools\\MSVC\\14.51.36231\\atlmfc\\include"
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\VC\\Auxiliary\\VS\\include"
-        - "E:\\Windows Kits\\10\\Include\\10.0.28000.0\\ucrt"
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\VC\\Auxiliary\\VS\\UnitTest\\include"
-        - "E:\\Windows Kits\\10\\Include\\10.0.28000.0\\um"
-        - "E:\\Windows Kits\\10\\Include\\10.0.28000.0\\shared"
-        - "E:\\Windows Kits\\10\\Include\\10.0.28000.0\\winrt"
-        - "E:\\Windows Kits\\10\\Include\\10.0.28000.0\\cppwinrt"
-        - "C:\\Program Files (x86)\\Windows Kits\\NETFXSDK\\4.8\\Include\\um"
   -
     kind: "message-v1"
     backtrace:
@@ -923,9 +829,9 @@ events:
       The output was:
       0
       MSBuild version 18.11.1-1.26513.3+940033be3 for .NET Framework
-      Build started 28/10/2026 12:30:31.
+      Build started 9/11/2026 18:35:45.
       
-      Project "C:\\Users\\gabum\\Desktop\\Pixel VR\\PixelVR Driver\\CMakeFiles\\4.5.0-rc1\\CompilerIdCXX\\CompilerIdCXX.vcxproj" on node 1 (default targets).
+      Project "C:\\Users\\gabum\\Desktop\\Pixel-VR\\PixelVR Driver\\CMakeFiles\\4.5.0-rc1\\CompilerIdCXX\\CompilerIdCXX.vcxproj" on node 1 (default targets).
       PrepareForBuild:
         Creating directory "Debug\\".
         Structured output is enabled. The formatting of compiler diagnostics will reflect the error hierarchy. See https://aka.ms/cpp/structured-output for more details.
@@ -938,7 +844,7 @@ events:
         CMakeCXXCompilerId.cpp
       Link:
         E:\\Visual Studio Community 2026\\Visual Studio\\VC\\Tools\\MSVC\\14.51.36231\\bin\\HostX64\\x64\\link.exe /ERRORREPORT:QUEUE /OUT:".\\CompilerIdCXX.exe" /INCREMENTAL:NO /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /PDB:".\\CompilerIdCXX.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:".\\CompilerIdCXX.lib" /MACHINE:X64 Debug\\CMakeCXXCompilerId.obj
-        CompilerIdCXX.vcxproj -> C:\\Users\\gabum\\Desktop\\Pixel VR\\PixelVR Driver\\CMakeFiles\\4.5.0-rc1\\CompilerIdCXX\\CompilerIdCXX.exe
+        CompilerIdCXX.vcxproj -> C:\\Users\\gabum\\Desktop\\Pixel-VR\\PixelVR Driver\\CMakeFiles\\4.5.0-rc1\\CompilerIdCXX\\CompilerIdCXX.exe
       PostBuildEvent:
         for %%i in (cl.exe) do @echo CMAKE_CXX_COMPILER=%%~$PATH:i
         :VCEnd
@@ -946,13 +852,13 @@ events:
       FinalizeBuildStatus:
         Deleting file "Debug\\CompilerIdCXX.tlog\\unsuccessfulbuild".
         Touching "Debug\\CompilerIdCXX.tlog\\CompilerIdCXX.lastbuildstate".
-      Done Building Project "C:\\Users\\gabum\\Desktop\\Pixel VR\\PixelVR Driver\\CMakeFiles\\4.5.0-rc1\\CompilerIdCXX\\CompilerIdCXX.vcxproj" (default targets).
+      Done Building Project "C:\\Users\\gabum\\Desktop\\Pixel-VR\\PixelVR Driver\\CMakeFiles\\4.5.0-rc1\\CompilerIdCXX\\CompilerIdCXX.vcxproj" (default targets).
       
       Build succeeded.
           0 Warning(s)
           0 Error(s)
       
-      Time Elapsed 00:00:01.74
+      Time Elapsed 00:00:03.20
       
       
       Compilation of the CXX compiler identification source "CMakeCXXCompilerId.cpp" produced "CompilerIdCXX.exe"
@@ -960,7 +866,7 @@ events:
       Compilation of the CXX compiler identification source "CMakeCXXCompilerId.cpp" produced "CompilerIdCXX.vcxproj"
       
       The CXX compiler identification is MSVC, found in:
-        C:/Users/gabum/Desktop/Pixel VR/PixelVR Driver/CMakeFiles/4.5.0-rc1/CompilerIdCXX/CompilerIdCXX.exe
+        C:/Users/gabum/Desktop/Pixel-VR/PixelVR Driver/CMakeFiles/4.5.0-rc1/CompilerIdCXX/CompilerIdCXX.exe
       
   -
     kind: "find-v1"
@@ -985,17 +891,6 @@ events:
       - "lld-link"
     candidate_directories:
       - "E:/Visual Studio Community 2026/Visual Studio/VC/Tools/MSVC/14.51.36231/bin/Hostx64/x64/"
-      - "E:/Windows Kits/10/bin/10.0.28000.0/x64/"
-      - "C:/Program Files (x86)/Microsoft SDKs/Windows/v10.0A/bin/NETFX 4.8 Tools/x64/"
-      - "E:/Windows Kits/10/bin/10.0.28000.0/x86/"
-      - "C:/Program Files (x86)/Microsoft SDKs/Windows/v10.0A/bin/NETFX 4.8 Tools/"
-      - "E:/Visual Studio Community 2026/Visual Studio/Common7/Tools/"
-      - "E:/Visual Studio Community 2026/Visual Studio/Common7/IDE/"
-      - "C:/Program Files (x86)/HTML Help Workshop/"
-      - "E:/Visual Studio Community 2026/Visual Studio/MSBuild/Current/Bin/amd64/"
-      - "C:/Windows/Microsoft.NET/Framework64/v4.0.30319/"
-      - "C:/Windows/Microsoft.NET/Framework/v4.0.30319/"
-      - "E:/Visual Studio Community 2026/Visual Studio/MSBuild/Current/Bin/"
       - "C:/Program Files/Eclipse Adoptium/jdk-21.0.12.101-hotspot/bin/"
       - "C:/Program Files/Eclipse Adoptium/jdk-11.0.32.101-hotspot/bin/"
       - "C:/Program Files/Eclipse Adoptium/jdk-17.0.20.101-hotspot/bin/"
@@ -1023,6 +918,7 @@ events:
       - "C:/Program Files/CMake/bin/"
       - "E:/Windows Kits/10/Windows Performance Toolkit/"
       - "C:/Program Files/WSL/"
+      - "C:/Program Files (x86)/AOMEI Partition Assistant/"
       - "C:/Users/gabum/AppData/Local/Microsoft/WindowsApps/"
       - "C:/Users/gabum/AppData/Local/GitHubDesktop/bin/"
       - "C:/Users/gabum/.dotnet/tools/"
@@ -1030,39 +926,6 @@ events:
       - "E:/Visual Studio Community 2026/Visual Studio/VC/Tools/MSVC/14.51.36231/bin/Hostx64/x64/lld-link.com"
       - "E:/Visual Studio Community 2026/Visual Studio/VC/Tools/MSVC/14.51.36231/bin/Hostx64/x64/lld-link.exe"
       - "E:/Visual Studio Community 2026/Visual Studio/VC/Tools/MSVC/14.51.36231/bin/Hostx64/x64/lld-link"
-      - "E:/Windows Kits/10/bin/10.0.28000.0/x64/lld-link.com"
-      - "E:/Windows Kits/10/bin/10.0.28000.0/x64/lld-link.exe"
-      - "E:/Windows Kits/10/bin/10.0.28000.0/x64/lld-link"
-      - "C:/Program Files (x86)/Microsoft SDKs/Windows/v10.0A/bin/NETFX 4.8 Tools/x64/lld-link.com"
-      - "C:/Program Files (x86)/Microsoft SDKs/Windows/v10.0A/bin/NETFX 4.8 Tools/x64/lld-link.exe"
-      - "C:/Program Files (x86)/Microsoft SDKs/Windows/v10.0A/bin/NETFX 4.8 Tools/x64/lld-link"
-      - "E:/Windows Kits/10/bin/10.0.28000.0/x86/lld-link.com"
-      - "E:/Windows Kits/10/bin/10.0.28000.0/x86/lld-link.exe"
-      - "E:/Windows Kits/10/bin/10.0.28000.0/x86/lld-link"
-      - "C:/Program Files (x86)/Microsoft SDKs/Windows/v10.0A/bin/NETFX 4.8 Tools/lld-link.com"
-      - "C:/Program Files (x86)/Microsoft SDKs/Windows/v10.0A/bin/NETFX 4.8 Tools/lld-link.exe"
-      - "C:/Program Files (x86)/Microsoft SDKs/Windows/v10.0A/bin/NETFX 4.8 Tools/lld-link"
-      - "E:/Visual Studio Community 2026/Visual Studio/Common7/Tools/lld-link.com"
-      - "E:/Visual Studio Community 2026/Visual Studio/Common7/Tools/lld-link.exe"
-      - "E:/Visual Studio Community 2026/Visual Studio/Common7/Tools/lld-link"
-      - "E:/Visual Studio Community 2026/Visual Studio/Common7/IDE/lld-link.com"
-      - "E:/Visual Studio Community 2026/Visual Studio/Common7/IDE/lld-link.exe"
-      - "E:/Visual Studio Community 2026/Visual Studio/Common7/IDE/lld-link"
-      - "C:/Program Files (x86)/HTML Help Workshop/lld-link.com"
-      - "C:/Program Files (x86)/HTML Help Workshop/lld-link.exe"
-      - "C:/Program Files (x86)/HTML Help Workshop/lld-link"
-      - "E:/Visual Studio Community 2026/Visual Studio/MSBuild/Current/Bin/amd64/lld-link.com"
-      - "E:/Visual Studio Community 2026/Visual Studio/MSBuild/Current/Bin/amd64/lld-link.exe"
-      - "E:/Visual Studio Community 2026/Visual Studio/MSBuild/Current/Bin/amd64/lld-link"
-      - "C:/Windows/Microsoft.NET/Framework64/v4.0.30319/lld-link.com"
-      - "C:/Windows/Microsoft.NET/Framework64/v4.0.30319/lld-link.exe"
-      - "C:/Windows/Microsoft.NET/Framework64/v4.0.30319/lld-link"
-      - "C:/Windows/Microsoft.NET/Framework/v4.0.30319/lld-link.com"
-      - "C:/Windows/Microsoft.NET/Framework/v4.0.30319/lld-link.exe"
-      - "C:/Windows/Microsoft.NET/Framework/v4.0.30319/lld-link"
-      - "E:/Visual Studio Community 2026/Visual Studio/MSBuild/Current/Bin/lld-link.com"
-      - "E:/Visual Studio Community 2026/Visual Studio/MSBuild/Current/Bin/lld-link.exe"
-      - "E:/Visual Studio Community 2026/Visual Studio/MSBuild/Current/Bin/lld-link"
       - "C:/Program Files/Eclipse Adoptium/jdk-21.0.12.101-hotspot/bin/lld-link.com"
       - "C:/Program Files/Eclipse Adoptium/jdk-21.0.12.101-hotspot/bin/lld-link.exe"
       - "C:/Program Files/Eclipse Adoptium/jdk-21.0.12.101-hotspot/bin/lld-link"
@@ -1144,6 +1007,9 @@ events:
       - "C:/Program Files/WSL/lld-link.com"
       - "C:/Program Files/WSL/lld-link.exe"
       - "C:/Program Files/WSL/lld-link"
+      - "C:/Program Files (x86)/AOMEI Partition Assistant/lld-link.com"
+      - "C:/Program Files (x86)/AOMEI Partition Assistant/lld-link.exe"
+      - "C:/Program Files (x86)/AOMEI Partition Assistant/lld-link"
       - "C:/Users/gabum/AppData/Local/Microsoft/WindowsApps/lld-link.com"
       - "C:/Users/gabum/AppData/Local/Microsoft/WindowsApps/lld-link.exe"
       - "C:/Users/gabum/AppData/Local/Microsoft/WindowsApps/lld-link"
@@ -1156,19 +1022,6 @@ events:
     found: false
     search_context:
       ENV{PATH}:
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\VC\\Tools\\MSVC\\14.51.36231\\bin\\HostX64\\x64"
-        - "E:\\Windows Kits\\10\\bin\\10.0.28000.0\\x64"
-        - "C:\\Program Files (x86)\\Microsoft SDKs\\Windows\\v10.0A\\bin\\NETFX 4.8 Tools\\x64"
-        - "E:\\Windows Kits\\10\\bin\\10.0.28000.0\\x86"
-        - "C:\\Program Files (x86)\\Microsoft SDKs\\Windows\\v10.0A\\bin\\NETFX 4.8 Tools"
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\Common7\\tools"
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\Common7\\ide"
-        - "C:\\Program Files (x86)\\HTML Help Workshop"
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\MSBuild\\Current\\Bin\\amd64"
-        - "C:\\WINDOWS\\Microsoft.NET\\Framework64\\v4.0.30319\\"
-        - "C:\\WINDOWS\\Microsoft.NET\\Framework\\v4.0.30319\\"
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\MSBuild\\Current\\Bin"
-        - "C:\\WINDOWS\\Microsoft.NET\\Framework\\v4.0.30319\\"
         - "C:\\Program Files\\Eclipse Adoptium\\jdk-21.0.12.101-hotspot\\bin"
         - "C:\\Program Files\\Eclipse Adoptium\\jdk-11.0.32.101-hotspot\\bin"
         - "C:\\Program Files\\Eclipse Adoptium\\jdk-17.0.20.101-hotspot\\bin"
@@ -1184,18 +1037,19 @@ events:
         - "C:\\WINDOWS\\system32"
         - "C:\\WINDOWS"
         - "C:\\WINDOWS\\System32\\Wbem"
-        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\"
-        - "C:\\WINDOWS\\System32\\OpenSSH\\"
-        - "C:\\Program Files\\PuTTY\\"
+        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0"
+        - "C:\\WINDOWS\\System32\\OpenSSH"
+        - "C:\\Program Files\\PuTTY"
         - "C:\\Program Files\\cursor\\resources\\app\\bin"
         - "C:\\Program Files\\Microsoft VS Code\\bin"
         - "C:\\Program Files\\Microsoft VS Code\\bin\\copilot-shim"
         - "C:\\Program Files\\Docker\\Docker\\resources\\bin"
-        - "C:\\Program Files\\dotnet\\"
+        - "C:\\Program Files\\dotnet"
         - "C:\\Program Files\\Git\\cmd"
         - "C:\\Program Files\\CMake\\bin"
-        - "E:\\Windows Kits\\10\\Windows Performance Toolkit\\"
-        - "C:\\Program Files\\WSL\\"
+        - "E:\\Windows Kits\\10\\Windows Performance Toolkit"
+        - "C:\\Program Files\\WSL"
+        - "C:\\Program Files (x86)\\AOMEI Partition Assistant"
         - "C:\\Users\\gabum\\AppData\\Local\\Microsoft\\WindowsApps"
         - "C:\\Users\\gabum\\AppData\\Local\\GitHubDesktop\\bin"
         - "C:\\Users\\gabum\\.dotnet\\tools"
@@ -1222,18 +1076,6 @@ events:
     names:
       - "rc"
     candidate_directories:
-      - "E:/Visual Studio Community 2026/Visual Studio/VC/Tools/MSVC/14.51.36231/bin/Hostx64/x64/"
-      - "E:/Windows Kits/10/bin/10.0.28000.0/x64/"
-      - "C:/Program Files (x86)/Microsoft SDKs/Windows/v10.0A/bin/NETFX 4.8 Tools/x64/"
-      - "E:/Windows Kits/10/bin/10.0.28000.0/x86/"
-      - "C:/Program Files (x86)/Microsoft SDKs/Windows/v10.0A/bin/NETFX 4.8 Tools/"
-      - "E:/Visual Studio Community 2026/Visual Studio/Common7/Tools/"
-      - "E:/Visual Studio Community 2026/Visual Studio/Common7/IDE/"
-      - "C:/Program Files (x86)/HTML Help Workshop/"
-      - "E:/Visual Studio Community 2026/Visual Studio/MSBuild/Current/Bin/amd64/"
-      - "C:/Windows/Microsoft.NET/Framework64/v4.0.30319/"
-      - "C:/Windows/Microsoft.NET/Framework/v4.0.30319/"
-      - "E:/Visual Studio Community 2026/Visual Studio/MSBuild/Current/Bin/"
       - "C:/Program Files/Eclipse Adoptium/jdk-21.0.12.101-hotspot/bin/"
       - "C:/Program Files/Eclipse Adoptium/jdk-11.0.32.101-hotspot/bin/"
       - "C:/Program Files/Eclipse Adoptium/jdk-17.0.20.101-hotspot/bin/"
@@ -1261,6 +1103,7 @@ events:
       - "C:/Program Files/CMake/bin/"
       - "E:/Windows Kits/10/Windows Performance Toolkit/"
       - "C:/Program Files/WSL/"
+      - "C:/Program Files (x86)/AOMEI Partition Assistant/"
       - "C:/Users/gabum/AppData/Local/Microsoft/WindowsApps/"
       - "C:/Users/gabum/AppData/Local/GitHubDesktop/bin/"
       - "C:/Users/gabum/.dotnet/tools/"
@@ -1277,26 +1120,138 @@ events:
       - "C:/Program Files (x86)/pixelvr/sbin/"
       - "C:/Program Files (x86)/pixelvr/"
     searched_directories:
-      - "E:/Visual Studio Community 2026/Visual Studio/VC/Tools/MSVC/14.51.36231/bin/Hostx64/x64/rc.com"
-      - "E:/Visual Studio Community 2026/Visual Studio/VC/Tools/MSVC/14.51.36231/bin/Hostx64/x64/rc.exe"
-      - "E:/Visual Studio Community 2026/Visual Studio/VC/Tools/MSVC/14.51.36231/bin/Hostx64/x64/rc"
-      - "E:/Windows Kits/10/bin/10.0.28000.0/x64/rc.com"
-    found: "E:/Windows Kits/10/bin/10.0.28000.0/x64/rc.exe"
+      - "C:/Program Files/Eclipse Adoptium/jdk-21.0.12.101-hotspot/bin/rc.com"
+      - "C:/Program Files/Eclipse Adoptium/jdk-21.0.12.101-hotspot/bin/rc.exe"
+      - "C:/Program Files/Eclipse Adoptium/jdk-21.0.12.101-hotspot/bin/rc"
+      - "C:/Program Files/Eclipse Adoptium/jdk-11.0.32.101-hotspot/bin/rc.com"
+      - "C:/Program Files/Eclipse Adoptium/jdk-11.0.32.101-hotspot/bin/rc.exe"
+      - "C:/Program Files/Eclipse Adoptium/jdk-11.0.32.101-hotspot/bin/rc"
+      - "C:/Program Files/Eclipse Adoptium/jdk-17.0.20.101-hotspot/bin/rc.com"
+      - "C:/Program Files/Eclipse Adoptium/jdk-17.0.20.101-hotspot/bin/rc.exe"
+      - "C:/Program Files/Eclipse Adoptium/jdk-17.0.20.101-hotspot/bin/rc"
+      - "C:/Program Files/Eclipse Adoptium/jdk-25.0.4.101-hotspot/bin/rc.com"
+      - "C:/Program Files/Eclipse Adoptium/jdk-25.0.4.101-hotspot/bin/rc.exe"
+      - "C:/Program Files/Eclipse Adoptium/jdk-25.0.4.101-hotspot/bin/rc"
+      - "C:/Program Files (x86)/Eclipse Adoptium/jdk-8.0.472.8-hotspot/bin/rc.com"
+      - "C:/Program Files (x86)/Eclipse Adoptium/jdk-8.0.472.8-hotspot/bin/rc.exe"
+      - "C:/Program Files (x86)/Eclipse Adoptium/jdk-8.0.472.8-hotspot/bin/rc"
+      - "C:/Program Files/Eclipse Adoptium/jdk-8.0.504.1-hotspot/bin/rc.com"
+      - "C:/Program Files/Eclipse Adoptium/jdk-8.0.504.1-hotspot/bin/rc.exe"
+      - "C:/Program Files/Eclipse Adoptium/jdk-8.0.504.1-hotspot/bin/rc"
+      - "C:/Program Files/Eclipse Adoptium/jre-25.0.4.101-hotspot/bin/rc.com"
+      - "C:/Program Files/Eclipse Adoptium/jre-25.0.4.101-hotspot/bin/rc.exe"
+      - "C:/Program Files/Eclipse Adoptium/jre-25.0.4.101-hotspot/bin/rc"
+      - "C:/Program Files/Eclipse Adoptium/jre-21.0.12.101-hotspot/bin/rc.com"
+      - "C:/Program Files/Eclipse Adoptium/jre-21.0.12.101-hotspot/bin/rc.exe"
+      - "C:/Program Files/Eclipse Adoptium/jre-21.0.12.101-hotspot/bin/rc"
+      - "C:/Program Files/Eclipse Adoptium/jre-8.0.504.1-hotspot/bin/rc.com"
+      - "C:/Program Files/Eclipse Adoptium/jre-8.0.504.1-hotspot/bin/rc.exe"
+      - "C:/Program Files/Eclipse Adoptium/jre-8.0.504.1-hotspot/bin/rc"
+      - "C:/Program Files/Eclipse Adoptium/jre-17.0.20.101-hotspot/bin/rc.com"
+      - "C:/Program Files/Eclipse Adoptium/jre-17.0.20.101-hotspot/bin/rc.exe"
+      - "C:/Program Files/Eclipse Adoptium/jre-17.0.20.101-hotspot/bin/rc"
+      - "C:/Program Files/Eclipse Adoptium/jre-11.0.32.101-hotspot/bin/rc.com"
+      - "C:/Program Files/Eclipse Adoptium/jre-11.0.32.101-hotspot/bin/rc.exe"
+      - "C:/Program Files/Eclipse Adoptium/jre-11.0.32.101-hotspot/bin/rc"
+      - "C:/Program Files (x86)/Eclipse Adoptium/jre-8.0.472.8-hotspot/bin/rc.com"
+      - "C:/Program Files (x86)/Eclipse Adoptium/jre-8.0.472.8-hotspot/bin/rc.exe"
+      - "C:/Program Files (x86)/Eclipse Adoptium/jre-8.0.472.8-hotspot/bin/rc"
+      - "C:/Windows/System32/rc.com"
+      - "C:/Windows/System32/rc.exe"
+      - "C:/Windows/System32/rc"
+      - "C:/Windows/rc.com"
+      - "C:/Windows/rc.exe"
+      - "C:/Windows/rc"
+      - "C:/Windows/System32/wbem/rc.com"
+      - "C:/Windows/System32/wbem/rc.exe"
+      - "C:/Windows/System32/wbem/rc"
+      - "C:/Windows/System32/WindowsPowerShell/v1.0/rc.com"
+      - "C:/Windows/System32/WindowsPowerShell/v1.0/rc.exe"
+      - "C:/Windows/System32/WindowsPowerShell/v1.0/rc"
+      - "C:/Windows/System32/OpenSSH/rc.com"
+      - "C:/Windows/System32/OpenSSH/rc.exe"
+      - "C:/Windows/System32/OpenSSH/rc"
+      - "C:/Program Files/PuTTY/rc.com"
+      - "C:/Program Files/PuTTY/rc.exe"
+      - "C:/Program Files/PuTTY/rc"
+      - "C:/Program Files/cursor/resources/app/bin/rc.com"
+      - "C:/Program Files/cursor/resources/app/bin/rc.exe"
+      - "C:/Program Files/cursor/resources/app/bin/rc"
+      - "C:/Program Files/Microsoft VS Code/bin/rc.com"
+      - "C:/Program Files/Microsoft VS Code/bin/rc.exe"
+      - "C:/Program Files/Microsoft VS Code/bin/rc"
+      - "C:/Program Files/Microsoft VS Code/bin/copilot-shim/rc.com"
+      - "C:/Program Files/Microsoft VS Code/bin/copilot-shim/rc.exe"
+      - "C:/Program Files/Microsoft VS Code/bin/copilot-shim/rc"
+      - "C:/Program Files/Docker/Docker/resources/bin/rc.com"
+      - "C:/Program Files/Docker/Docker/resources/bin/rc.exe"
+      - "C:/Program Files/Docker/Docker/resources/bin/rc"
+      - "C:/Program Files/dotnet/rc.com"
+      - "C:/Program Files/dotnet/rc.exe"
+      - "C:/Program Files/dotnet/rc"
+      - "C:/Program Files/Git/cmd/rc.com"
+      - "C:/Program Files/Git/cmd/rc.exe"
+      - "C:/Program Files/Git/cmd/rc"
+      - "C:/Program Files/CMake/bin/rc.com"
+      - "C:/Program Files/CMake/bin/rc.exe"
+      - "C:/Program Files/CMake/bin/rc"
+      - "E:/Windows Kits/10/Windows Performance Toolkit/rc.com"
+      - "E:/Windows Kits/10/Windows Performance Toolkit/rc.exe"
+      - "E:/Windows Kits/10/Windows Performance Toolkit/rc"
+      - "C:/Program Files/WSL/rc.com"
+      - "C:/Program Files/WSL/rc.exe"
+      - "C:/Program Files/WSL/rc"
+      - "C:/Program Files (x86)/AOMEI Partition Assistant/rc.com"
+      - "C:/Program Files (x86)/AOMEI Partition Assistant/rc.exe"
+      - "C:/Program Files (x86)/AOMEI Partition Assistant/rc"
+      - "C:/Users/gabum/AppData/Local/Microsoft/WindowsApps/rc.com"
+      - "C:/Users/gabum/AppData/Local/Microsoft/WindowsApps/rc.exe"
+      - "C:/Users/gabum/AppData/Local/Microsoft/WindowsApps/rc"
+      - "C:/Users/gabum/AppData/Local/GitHubDesktop/bin/rc.com"
+      - "C:/Users/gabum/AppData/Local/GitHubDesktop/bin/rc.exe"
+      - "C:/Users/gabum/AppData/Local/GitHubDesktop/bin/rc"
+      - "C:/Users/gabum/.dotnet/tools/rc.com"
+      - "C:/Users/gabum/.dotnet/tools/rc.exe"
+      - "C:/Users/gabum/.dotnet/tools/rc"
+      - "C:/Program Files/bin/rc.com"
+      - "C:/Program Files/bin/rc.exe"
+      - "C:/Program Files/bin/rc"
+      - "C:/Program Files/sbin/rc.com"
+      - "C:/Program Files/sbin/rc.exe"
+      - "C:/Program Files/sbin/rc"
+      - "C:/Program Files/rc.com"
+      - "C:/Program Files/rc.exe"
+      - "C:/Program Files/rc"
+      - "C:/Program Files (x86)/bin/rc.com"
+      - "C:/Program Files (x86)/bin/rc.exe"
+      - "C:/Program Files (x86)/bin/rc"
+      - "C:/Program Files (x86)/sbin/rc.com"
+      - "C:/Program Files (x86)/sbin/rc.exe"
+      - "C:/Program Files (x86)/sbin/rc"
+      - "C:/Program Files (x86)/rc.com"
+      - "C:/Program Files (x86)/rc.exe"
+      - "C:/Program Files (x86)/rc"
+      - "C:/Program Files/CMake/bin/rc.com"
+      - "C:/Program Files/CMake/bin/rc.exe"
+      - "C:/Program Files/CMake/bin/rc"
+      - "C:/Program Files/CMake/sbin/rc.com"
+      - "C:/Program Files/CMake/sbin/rc.exe"
+      - "C:/Program Files/CMake/sbin/rc"
+      - "C:/Program Files/CMake/rc.com"
+      - "C:/Program Files/CMake/rc.exe"
+      - "C:/Program Files/CMake/rc"
+      - "C:/Program Files (x86)/pixelvr/bin/rc.com"
+      - "C:/Program Files (x86)/pixelvr/bin/rc.exe"
+      - "C:/Program Files (x86)/pixelvr/bin/rc"
+      - "C:/Program Files (x86)/pixelvr/sbin/rc.com"
+      - "C:/Program Files (x86)/pixelvr/sbin/rc.exe"
+      - "C:/Program Files (x86)/pixelvr/sbin/rc"
+      - "C:/Program Files (x86)/pixelvr/rc.com"
+      - "C:/Program Files (x86)/pixelvr/rc.exe"
+      - "C:/Program Files (x86)/pixelvr/rc"
+    found: false
     search_context:
       ENV{PATH}:
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\VC\\Tools\\MSVC\\14.51.36231\\bin\\HostX64\\x64"
-        - "E:\\Windows Kits\\10\\bin\\10.0.28000.0\\x64"
-        - "C:\\Program Files (x86)\\Microsoft SDKs\\Windows\\v10.0A\\bin\\NETFX 4.8 Tools\\x64"
-        - "E:\\Windows Kits\\10\\bin\\10.0.28000.0\\x86"
-        - "C:\\Program Files (x86)\\Microsoft SDKs\\Windows\\v10.0A\\bin\\NETFX 4.8 Tools"
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\Common7\\tools"
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\Common7\\ide"
-        - "C:\\Program Files (x86)\\HTML Help Workshop"
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\MSBuild\\Current\\Bin\\amd64"
-        - "C:\\WINDOWS\\Microsoft.NET\\Framework64\\v4.0.30319\\"
-        - "C:\\WINDOWS\\Microsoft.NET\\Framework\\v4.0.30319\\"
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\MSBuild\\Current\\Bin"
-        - "C:\\WINDOWS\\Microsoft.NET\\Framework\\v4.0.30319\\"
         - "C:\\Program Files\\Eclipse Adoptium\\jdk-21.0.12.101-hotspot\\bin"
         - "C:\\Program Files\\Eclipse Adoptium\\jdk-11.0.32.101-hotspot\\bin"
         - "C:\\Program Files\\Eclipse Adoptium\\jdk-17.0.20.101-hotspot\\bin"
@@ -1312,18 +1267,19 @@ events:
         - "C:\\WINDOWS\\system32"
         - "C:\\WINDOWS"
         - "C:\\WINDOWS\\System32\\Wbem"
-        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\"
-        - "C:\\WINDOWS\\System32\\OpenSSH\\"
-        - "C:\\Program Files\\PuTTY\\"
+        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0"
+        - "C:\\WINDOWS\\System32\\OpenSSH"
+        - "C:\\Program Files\\PuTTY"
         - "C:\\Program Files\\cursor\\resources\\app\\bin"
         - "C:\\Program Files\\Microsoft VS Code\\bin"
         - "C:\\Program Files\\Microsoft VS Code\\bin\\copilot-shim"
         - "C:\\Program Files\\Docker\\Docker\\resources\\bin"
-        - "C:\\Program Files\\dotnet\\"
+        - "C:\\Program Files\\dotnet"
         - "C:\\Program Files\\Git\\cmd"
         - "C:\\Program Files\\CMake\\bin"
-        - "E:\\Windows Kits\\10\\Windows Performance Toolkit\\"
-        - "C:\\Program Files\\WSL\\"
+        - "E:\\Windows Kits\\10\\Windows Performance Toolkit"
+        - "C:\\Program Files\\WSL"
+        - "C:\\Program Files (x86)\\AOMEI Partition Assistant"
         - "C:\\Users\\gabum\\AppData\\Local\\Microsoft\\WindowsApps"
         - "C:\\Users\\gabum\\AppData\\Local\\GitHubDesktop\\bin"
         - "C:\\Users\\gabum\\.dotnet\\tools"
@@ -1342,8 +1298,8 @@ events:
     checks:
       - "Detecting C compiler ABI info"
     directories:
-      source: "C:/Users/gabum/Desktop/Pixel VR/PixelVR Driver/CMakeFiles/CMakeScratch/TryCompile-itrld4"
-      binary: "C:/Users/gabum/Desktop/Pixel VR/PixelVR Driver/CMakeFiles/CMakeScratch/TryCompile-itrld4"
+      source: "C:/Users/gabum/Desktop/Pixel-VR/PixelVR Driver/CMakeFiles/CMakeScratch/TryCompile-51y647"
+      binary: "C:/Users/gabum/Desktop/Pixel-VR/PixelVR Driver/CMakeFiles/CMakeScratch/TryCompile-51y647"
     cmakeVariables:
       CMAKE_CXX_STDLIB_MODULES_JSON: ""
       CMAKE_C_FLAGS: "/DWIN32 /D_WINDOWS /W3"
@@ -1353,39 +1309,39 @@ events:
       variable: "CMAKE_C_ABI_COMPILED"
       cached: false
       stdout: |
-        Change Dir: 'C:/Users/gabum/Desktop/Pixel VR/PixelVR Driver/CMakeFiles/CMakeScratch/TryCompile-itrld4'
+        Change Dir: 'C:/Users/gabum/Desktop/Pixel-VR/PixelVR Driver/CMakeFiles/CMakeScratch/TryCompile-51y647'
         
-        Run Build Command(s): "E:/Visual Studio Community 2026/Visual Studio/MSBuild/Current/Bin/amd64/MSBuild.exe" cmTC_eb790.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=18.0 /v:n
+        Run Build Command(s): "E:/Visual Studio Community 2026/Visual Studio/MSBuild/Current/Bin/amd64/MSBuild.exe" cmTC_e5ac5.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=18.0 /v:n
         MSBuild version 18.11.1-1.26513.3+940033be3 for .NET Framework
-        Build started 28/10/2026 12:30:34.
+        Build started 9/11/2026 18:35:49.
         
-        Project "C:\\Users\\gabum\\Desktop\\Pixel VR\\PixelVR Driver\\CMakeFiles\\CMakeScratch\\TryCompile-itrld4\\cmTC_eb790.vcxproj" on node 1 (default targets).
+        Project "C:\\Users\\gabum\\Desktop\\Pixel-VR\\PixelVR Driver\\CMakeFiles\\CMakeScratch\\TryCompile-51y647\\cmTC_e5ac5.vcxproj" on node 1 (default targets).
         PrepareForBuild:
           Structured output is enabled. The formatting of compiler diagnostics will reflect the error hierarchy. See https://aka.ms/cpp/structured-output for more details.
-          Creating directory "C:\\Users\\gabum\\Desktop\\Pixel VR\\PixelVR Driver\\CMakeFiles\\CMakeScratch\\TryCompile-itrld4\\Debug\\".
-          Creating directory "cmTC_eb790.dir\\Debug\\cmTC_eb790.tlog\\".
+          Creating directory "C:\\Users\\gabum\\Desktop\\Pixel-VR\\PixelVR Driver\\CMakeFiles\\CMakeScratch\\TryCompile-51y647\\Debug\\".
+          Creating directory "cmTC_e5ac5.dir\\Debug\\cmTC_e5ac5.tlog\\".
         InitializeBuildStatus:
-          Creating "cmTC_eb790.dir\\Debug\\cmTC_eb790.tlog\\unsuccessfulbuild" because "AlwaysCreate" was specified.
-          Touching "cmTC_eb790.dir\\Debug\\cmTC_eb790.tlog\\unsuccessfulbuild".
+          Creating "cmTC_e5ac5.dir\\Debug\\cmTC_e5ac5.tlog\\unsuccessfulbuild" because "AlwaysCreate" was specified.
+          Touching "cmTC_e5ac5.dir\\Debug\\cmTC_e5ac5.tlog\\unsuccessfulbuild".
         ClCompile:
-          E:\\Visual Studio Community 2026\\Visual Studio\\VC\\Tools\\MSVC\\14.51.36231\\bin\\HostX64\\x64\\CL.exe /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D _MBCS /D "CMAKE_INTDIR=\\"Debug\\"" /RTC1 /MDd /Fo"cmTC_eb790.dir\\Debug\\\\" /Fd"cmTC_eb790.dir\\Debug\\vc145.pdb" /external:W3 /TC /errorReport:queue "C:\\Program Files\\CMake\\share\\cmake-4.5\\Modules\\CMakeCCompilerABI.c"
+          E:\\Visual Studio Community 2026\\Visual Studio\\VC\\Tools\\MSVC\\14.51.36231\\bin\\HostX64\\x64\\CL.exe /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D _MBCS /D "CMAKE_INTDIR=\\"Debug\\"" /RTC1 /MDd /Fo"cmTC_e5ac5.dir\\Debug\\\\" /Fd"cmTC_e5ac5.dir\\Debug\\vc145.pdb" /external:W3 /TC /errorReport:queue "C:\\Program Files\\CMake\\share\\cmake-4.5\\Modules\\CMakeCCompilerABI.c"
           Microsoft (R) C/C++ Optimizing Compiler Version 19.51.36260 for x64
           Copyright (C) Microsoft Corporation.  All rights reserved.
-          cl /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D _MBCS /D "CMAKE_INTDIR=\\"Debug\\"" /RTC1 /MDd /Fo"cmTC_eb790.dir\\Debug\\\\" /Fd"cmTC_eb790.dir\\Debug\\vc145.pdb" /external:W3 /TC /errorReport:queue "C:\\Program Files\\CMake\\share\\cmake-4.5\\Modules\\CMakeCCompilerABI.c"
+          cl /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D _MBCS /D "CMAKE_INTDIR=\\"Debug\\"" /RTC1 /MDd /Fo"cmTC_e5ac5.dir\\Debug\\\\" /Fd"cmTC_e5ac5.dir\\Debug\\vc145.pdb" /external:W3 /TC /errorReport:queue "C:\\Program Files\\CMake\\share\\cmake-4.5\\Modules\\CMakeCCompilerABI.c"
           CMakeCCompilerABI.c
         Link:
-          E:\\Visual Studio Community 2026\\Visual Studio\\VC\\Tools\\MSVC\\14.51.36231\\bin\\HostX64\\x64\\link.exe /OUT:"C:\\Users\\gabum\\Desktop\\Pixel VR\\PixelVR Driver\\CMakeFiles\\CMakeScratch\\TryCompile-itrld4\\Debug\\cmTC_eb790.exe" /INCREMENTAL /ILK:"cmTC_eb790.dir\\Debug\\cmTC_eb790.ilk" /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:/Users/gabum/Desktop/Pixel VR/PixelVR Driver/CMakeFiles/CMakeScratch/TryCompile-itrld4/Debug/cmTC_eb790.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /IMPLIB:"C:/Users/gabum/Desktop/Pixel VR/PixelVR Driver/CMakeFiles/CMakeScratch/TryCompile-itrld4/Debug/cmTC_eb790.lib" /MACHINE:X64  /machine:x64 cmTC_eb790.dir\\Debug\\CMakeCCompilerABI.obj
-          cmTC_eb790.vcxproj -> C:\\Users\\gabum\\Desktop\\Pixel VR\\PixelVR Driver\\CMakeFiles\\CMakeScratch\\TryCompile-itrld4\\Debug\\cmTC_eb790.exe
+          E:\\Visual Studio Community 2026\\Visual Studio\\VC\\Tools\\MSVC\\14.51.36231\\bin\\HostX64\\x64\\link.exe /OUT:"C:\\Users\\gabum\\Desktop\\Pixel-VR\\PixelVR Driver\\CMakeFiles\\CMakeScratch\\TryCompile-51y647\\Debug\\cmTC_e5ac5.exe" /INCREMENTAL /ILK:"cmTC_e5ac5.dir\\Debug\\cmTC_e5ac5.ilk" /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:/Users/gabum/Desktop/Pixel-VR/PixelVR Driver/CMakeFiles/CMakeScratch/TryCompile-51y647/Debug/cmTC_e5ac5.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /IMPLIB:"C:/Users/gabum/Desktop/Pixel-VR/PixelVR Driver/CMakeFiles/CMakeScratch/TryCompile-51y647/Debug/cmTC_e5ac5.lib" /MACHINE:X64  /machine:x64 cmTC_e5ac5.dir\\Debug\\CMakeCCompilerABI.obj
+          cmTC_e5ac5.vcxproj -> C:\\Users\\gabum\\Desktop\\Pixel-VR\\PixelVR Driver\\CMakeFiles\\CMakeScratch\\TryCompile-51y647\\Debug\\cmTC_e5ac5.exe
         FinalizeBuildStatus:
-          Deleting file "cmTC_eb790.dir\\Debug\\cmTC_eb790.tlog\\unsuccessfulbuild".
-          Touching "cmTC_eb790.dir\\Debug\\cmTC_eb790.tlog\\cmTC_eb790.lastbuildstate".
-        Done Building Project "C:\\Users\\gabum\\Desktop\\Pixel VR\\PixelVR Driver\\CMakeFiles\\CMakeScratch\\TryCompile-itrld4\\cmTC_eb790.vcxproj" (default targets).
+          Deleting file "cmTC_e5ac5.dir\\Debug\\cmTC_e5ac5.tlog\\unsuccessfulbuild".
+          Touching "cmTC_e5ac5.dir\\Debug\\cmTC_e5ac5.tlog\\cmTC_e5ac5.lastbuildstate".
+        Done Building Project "C:\\Users\\gabum\\Desktop\\Pixel-VR\\PixelVR Driver\\CMakeFiles\\CMakeScratch\\TryCompile-51y647\\cmTC_e5ac5.vcxproj" (default targets).
         
         Build succeeded.
             0 Warning(s)
             0 Error(s)
         
-        Time Elapsed 00:00:01.17
+        Time Elapsed 00:00:02.90
         
       exitCode: 0
   -
@@ -1398,7 +1354,7 @@ events:
       Parsed C implicit link information:
         link line regex: [^( *|.*[/\\])(ld[0-9]*(|\\.[a-rt-z][a-z]*|\\.s[a-np-z][a-z]*|\\.so[a-z]+)|link\\.exe|lld-link(\\.exe)?|CMAKE_LINK_STARTFILE-NOTFOUND|([^/\\]+-)?ld|collect2)(\\.exe)?"?( |$)]
         linker tool regex: [^[ 	]*(->|"|[0-9]+>[ 	-]*Build:[ 	0-9]+ ms[ 	]*)?[ 	]*(([^"]*[/\\])?(ld[0-9]*(|\\.[a-rt-z][a-z]*|\\.s[a-np-z][a-z]*|\\.so[a-z]+)|link\\.exe|lld-link(\\.exe)?))("|,| |$)]
-        link line: [  E:\\Visual Studio Community 2026\\Visual Studio\\VC\\Tools\\MSVC\\14.51.36231\\bin\\HostX64\\x64\\link.exe /OUT:"C:\\Users\\gabum\\Desktop\\Pixel VR\\PixelVR Driver\\CMakeFiles\\CMakeScratch\\TryCompile-itrld4\\Debug\\cmTC_eb790.exe" /INCREMENTAL /ILK:"cmTC_eb790.dir\\Debug\\cmTC_eb790.ilk" /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:/Users/gabum/Desktop/Pixel VR/PixelVR Driver/CMakeFiles/CMakeScratch/TryCompile-itrld4/Debug/cmTC_eb790.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /IMPLIB:"C:/Users/gabum/Desktop/Pixel VR/PixelVR Driver/CMakeFiles/CMakeScratch/TryCompile-itrld4/Debug/cmTC_eb790.lib" /MACHINE:X64  /machine:x64 cmTC_eb790.dir\\Debug\\CMakeCCompilerABI.obj] ==> linker [E:\\Visual Studio Community 2026\\Visual Studio\\VC\\Tools\\MSVC\\14.51.36231\\bin\\HostX64\\x64\\link.exe]
+        link line: [  E:\\Visual Studio Community 2026\\Visual Studio\\VC\\Tools\\MSVC\\14.51.36231\\bin\\HostX64\\x64\\link.exe /OUT:"C:\\Users\\gabum\\Desktop\\Pixel-VR\\PixelVR Driver\\CMakeFiles\\CMakeScratch\\TryCompile-51y647\\Debug\\cmTC_e5ac5.exe" /INCREMENTAL /ILK:"cmTC_e5ac5.dir\\Debug\\cmTC_e5ac5.ilk" /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:/Users/gabum/Desktop/Pixel-VR/PixelVR Driver/CMakeFiles/CMakeScratch/TryCompile-51y647/Debug/cmTC_e5ac5.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /IMPLIB:"C:/Users/gabum/Desktop/Pixel-VR/PixelVR Driver/CMakeFiles/CMakeScratch/TryCompile-51y647/Debug/cmTC_e5ac5.lib" /MACHINE:X64  /machine:x64 cmTC_e5ac5.dir\\Debug\\CMakeCCompilerABI.obj] ==> linker [E:\\Visual Studio Community 2026\\Visual Studio\\VC\\Tools\\MSVC\\14.51.36231\\bin\\HostX64\\x64\\link.exe]
         linker tool for 'C': E:/Visual Studio Community 2026/Visual Studio/VC/Tools/MSVC/14.51.36231/bin/HostX64/x64/link.exe 
         implicit libs: []
         implicit objs: []
@@ -1426,8 +1382,8 @@ events:
     checks:
       - "Detecting CXX compiler ABI info"
     directories:
-      source: "C:/Users/gabum/Desktop/Pixel VR/PixelVR Driver/CMakeFiles/CMakeScratch/TryCompile-zmjgys"
-      binary: "C:/Users/gabum/Desktop/Pixel VR/PixelVR Driver/CMakeFiles/CMakeScratch/TryCompile-zmjgys"
+      source: "C:/Users/gabum/Desktop/Pixel-VR/PixelVR Driver/CMakeFiles/CMakeScratch/TryCompile-1i2mp7"
+      binary: "C:/Users/gabum/Desktop/Pixel-VR/PixelVR Driver/CMakeFiles/CMakeScratch/TryCompile-1i2mp7"
     cmakeVariables:
       CMAKE_CXX_FLAGS: "/DWIN32 /D_WINDOWS /W3 /GR /EHsc"
       CMAKE_CXX_FLAGS_DEBUG: "/MDd /Zi /Ob0 /Od /RTC1"
@@ -1438,39 +1394,39 @@ events:
       variable: "CMAKE_CXX_ABI_COMPILED"
       cached: false
       stdout: |
-        Change Dir: 'C:/Users/gabum/Desktop/Pixel VR/PixelVR Driver/CMakeFiles/CMakeScratch/TryCompile-zmjgys'
+        Change Dir: 'C:/Users/gabum/Desktop/Pixel-VR/PixelVR Driver/CMakeFiles/CMakeScratch/TryCompile-1i2mp7'
         
-        Run Build Command(s): "E:/Visual Studio Community 2026/Visual Studio/MSBuild/Current/Bin/amd64/MSBuild.exe" cmTC_47cea.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=18.0 /v:n
+        Run Build Command(s): "E:/Visual Studio Community 2026/Visual Studio/MSBuild/Current/Bin/amd64/MSBuild.exe" cmTC_bc0a9.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=18.0 /v:n
         MSBuild version 18.11.1-1.26513.3+940033be3 for .NET Framework
-        Build started 28/10/2026 12:30:35.
+        Build started 9/11/2026 18:35:52.
         
-        Project "C:\\Users\\gabum\\Desktop\\Pixel VR\\PixelVR Driver\\CMakeFiles\\CMakeScratch\\TryCompile-zmjgys\\cmTC_47cea.vcxproj" on node 1 (default targets).
+        Project "C:\\Users\\gabum\\Desktop\\Pixel-VR\\PixelVR Driver\\CMakeFiles\\CMakeScratch\\TryCompile-1i2mp7\\cmTC_bc0a9.vcxproj" on node 1 (default targets).
         PrepareForBuild:
           Structured output is enabled. The formatting of compiler diagnostics will reflect the error hierarchy. See https://aka.ms/cpp/structured-output for more details.
-          Creating directory "C:\\Users\\gabum\\Desktop\\Pixel VR\\PixelVR Driver\\CMakeFiles\\CMakeScratch\\TryCompile-zmjgys\\Debug\\".
-          Creating directory "cmTC_47cea.dir\\Debug\\cmTC_47cea.tlog\\".
+          Creating directory "C:\\Users\\gabum\\Desktop\\Pixel-VR\\PixelVR Driver\\CMakeFiles\\CMakeScratch\\TryCompile-1i2mp7\\Debug\\".
+          Creating directory "cmTC_bc0a9.dir\\Debug\\cmTC_bc0a9.tlog\\".
         InitializeBuildStatus:
-          Creating "cmTC_47cea.dir\\Debug\\cmTC_47cea.tlog\\unsuccessfulbuild" because "AlwaysCreate" was specified.
-          Touching "cmTC_47cea.dir\\Debug\\cmTC_47cea.tlog\\unsuccessfulbuild".
+          Creating "cmTC_bc0a9.dir\\Debug\\cmTC_bc0a9.tlog\\unsuccessfulbuild" because "AlwaysCreate" was specified.
+          Touching "cmTC_bc0a9.dir\\Debug\\cmTC_bc0a9.tlog\\unsuccessfulbuild".
         ClCompile:
-          E:\\Visual Studio Community 2026\\Visual Studio\\VC\\Tools\\MSVC\\14.51.36231\\bin\\HostX64\\x64\\CL.exe /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D _MBCS /D "CMAKE_INTDIR=\\"Debug\\"" /EHsc /RTC1 /MDd /GR /Fo"cmTC_47cea.dir\\Debug\\\\" /Fd"cmTC_47cea.dir\\Debug\\vc145.pdb" /external:W3 /TP /errorReport:queue "C:\\Program Files\\CMake\\share\\cmake-4.5\\Modules\\CMakeCXXCompilerABI.cpp"
+          E:\\Visual Studio Community 2026\\Visual Studio\\VC\\Tools\\MSVC\\14.51.36231\\bin\\HostX64\\x64\\CL.exe /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D _MBCS /D "CMAKE_INTDIR=\\"Debug\\"" /EHsc /RTC1 /MDd /GR /Fo"cmTC_bc0a9.dir\\Debug\\\\" /Fd"cmTC_bc0a9.dir\\Debug\\vc145.pdb" /external:W3 /TP /errorReport:queue "C:\\Program Files\\CMake\\share\\cmake-4.5\\Modules\\CMakeCXXCompilerABI.cpp"
           Microsoft (R) C/C++ Optimizing Compiler Version 19.51.36260 for x64
           Copyright (C) Microsoft Corporation.  All rights reserved.
-          cl /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D _MBCS /D "CMAKE_INTDIR=\\"Debug\\"" /EHsc /RTC1 /MDd /GR /Fo"cmTC_47cea.dir\\Debug\\\\" /Fd"cmTC_47cea.dir\\Debug\\vc145.pdb" /external:W3 /TP /errorReport:queue "C:\\Program Files\\CMake\\share\\cmake-4.5\\Modules\\CMakeCXXCompilerABI.cpp"
+          cl /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D _MBCS /D "CMAKE_INTDIR=\\"Debug\\"" /EHsc /RTC1 /MDd /GR /Fo"cmTC_bc0a9.dir\\Debug\\\\" /Fd"cmTC_bc0a9.dir\\Debug\\vc145.pdb" /external:W3 /TP /errorReport:queue "C:\\Program Files\\CMake\\share\\cmake-4.5\\Modules\\CMakeCXXCompilerABI.cpp"
           CMakeCXXCompilerABI.cpp
         Link:
-          E:\\Visual Studio Community 2026\\Visual Studio\\VC\\Tools\\MSVC\\14.51.36231\\bin\\HostX64\\x64\\link.exe /OUT:"C:\\Users\\gabum\\Desktop\\Pixel VR\\PixelVR Driver\\CMakeFiles\\CMakeScratch\\TryCompile-zmjgys\\Debug\\cmTC_47cea.exe" /INCREMENTAL /ILK:"cmTC_47cea.dir\\Debug\\cmTC_47cea.ilk" /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:/Users/gabum/Desktop/Pixel VR/PixelVR Driver/CMakeFiles/CMakeScratch/TryCompile-zmjgys/Debug/cmTC_47cea.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /IMPLIB:"C:/Users/gabum/Desktop/Pixel VR/PixelVR Driver/CMakeFiles/CMakeScratch/TryCompile-zmjgys/Debug/cmTC_47cea.lib" /MACHINE:X64  /machine:x64 cmTC_47cea.dir\\Debug\\CMakeCXXCompilerABI.obj
-          cmTC_47cea.vcxproj -> C:\\Users\\gabum\\Desktop\\Pixel VR\\PixelVR Driver\\CMakeFiles\\CMakeScratch\\TryCompile-zmjgys\\Debug\\cmTC_47cea.exe
+          E:\\Visual Studio Community 2026\\Visual Studio\\VC\\Tools\\MSVC\\14.51.36231\\bin\\HostX64\\x64\\link.exe /OUT:"C:\\Users\\gabum\\Desktop\\Pixel-VR\\PixelVR Driver\\CMakeFiles\\CMakeScratch\\TryCompile-1i2mp7\\Debug\\cmTC_bc0a9.exe" /INCREMENTAL /ILK:"cmTC_bc0a9.dir\\Debug\\cmTC_bc0a9.ilk" /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:/Users/gabum/Desktop/Pixel-VR/PixelVR Driver/CMakeFiles/CMakeScratch/TryCompile-1i2mp7/Debug/cmTC_bc0a9.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /IMPLIB:"C:/Users/gabum/Desktop/Pixel-VR/PixelVR Driver/CMakeFiles/CMakeScratch/TryCompile-1i2mp7/Debug/cmTC_bc0a9.lib" /MACHINE:X64  /machine:x64 cmTC_bc0a9.dir\\Debug\\CMakeCXXCompilerABI.obj
+          cmTC_bc0a9.vcxproj -> C:\\Users\\gabum\\Desktop\\Pixel-VR\\PixelVR Driver\\CMakeFiles\\CMakeScratch\\TryCompile-1i2mp7\\Debug\\cmTC_bc0a9.exe
         FinalizeBuildStatus:
-          Deleting file "cmTC_47cea.dir\\Debug\\cmTC_47cea.tlog\\unsuccessfulbuild".
-          Touching "cmTC_47cea.dir\\Debug\\cmTC_47cea.tlog\\cmTC_47cea.lastbuildstate".
-        Done Building Project "C:\\Users\\gabum\\Desktop\\Pixel VR\\PixelVR Driver\\CMakeFiles\\CMakeScratch\\TryCompile-zmjgys\\cmTC_47cea.vcxproj" (default targets).
+          Deleting file "cmTC_bc0a9.dir\\Debug\\cmTC_bc0a9.tlog\\unsuccessfulbuild".
+          Touching "cmTC_bc0a9.dir\\Debug\\cmTC_bc0a9.tlog\\cmTC_bc0a9.lastbuildstate".
+        Done Building Project "C:\\Users\\gabum\\Desktop\\Pixel-VR\\PixelVR Driver\\CMakeFiles\\CMakeScratch\\TryCompile-1i2mp7\\cmTC_bc0a9.vcxproj" (default targets).
         
         Build succeeded.
             0 Warning(s)
             0 Error(s)
         
-        Time Elapsed 00:00:01.00
+        Time Elapsed 00:00:01.28
         
       exitCode: 0
   -
@@ -1483,7 +1439,7 @@ events:
       Parsed CXX implicit link information:
         link line regex: [^( *|.*[/\\])(ld[0-9]*(|\\.[a-rt-z][a-z]*|\\.s[a-np-z][a-z]*|\\.so[a-z]+)|link\\.exe|lld-link(\\.exe)?|CMAKE_LINK_STARTFILE-NOTFOUND|([^/\\]+-)?ld|collect2)(\\.exe)?"?( |$)]
         linker tool regex: [^[ 	]*(->|"|[0-9]+>[ 	-]*Build:[ 	0-9]+ ms[ 	]*)?[ 	]*(([^"]*[/\\])?(ld[0-9]*(|\\.[a-rt-z][a-z]*|\\.s[a-np-z][a-z]*|\\.so[a-z]+)|link\\.exe|lld-link(\\.exe)?))("|,| |$)]
-        link line: [  E:\\Visual Studio Community 2026\\Visual Studio\\VC\\Tools\\MSVC\\14.51.36231\\bin\\HostX64\\x64\\link.exe /OUT:"C:\\Users\\gabum\\Desktop\\Pixel VR\\PixelVR Driver\\CMakeFiles\\CMakeScratch\\TryCompile-zmjgys\\Debug\\cmTC_47cea.exe" /INCREMENTAL /ILK:"cmTC_47cea.dir\\Debug\\cmTC_47cea.ilk" /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:/Users/gabum/Desktop/Pixel VR/PixelVR Driver/CMakeFiles/CMakeScratch/TryCompile-zmjgys/Debug/cmTC_47cea.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /IMPLIB:"C:/Users/gabum/Desktop/Pixel VR/PixelVR Driver/CMakeFiles/CMakeScratch/TryCompile-zmjgys/Debug/cmTC_47cea.lib" /MACHINE:X64  /machine:x64 cmTC_47cea.dir\\Debug\\CMakeCXXCompilerABI.obj] ==> linker [E:\\Visual Studio Community 2026\\Visual Studio\\VC\\Tools\\MSVC\\14.51.36231\\bin\\HostX64\\x64\\link.exe]
+        link line: [  E:\\Visual Studio Community 2026\\Visual Studio\\VC\\Tools\\MSVC\\14.51.36231\\bin\\HostX64\\x64\\link.exe /OUT:"C:\\Users\\gabum\\Desktop\\Pixel-VR\\PixelVR Driver\\CMakeFiles\\CMakeScratch\\TryCompile-1i2mp7\\Debug\\cmTC_bc0a9.exe" /INCREMENTAL /ILK:"cmTC_bc0a9.dir\\Debug\\cmTC_bc0a9.ilk" /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:/Users/gabum/Desktop/Pixel-VR/PixelVR Driver/CMakeFiles/CMakeScratch/TryCompile-1i2mp7/Debug/cmTC_bc0a9.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /IMPLIB:"C:/Users/gabum/Desktop/Pixel-VR/PixelVR Driver/CMakeFiles/CMakeScratch/TryCompile-1i2mp7/Debug/cmTC_bc0a9.lib" /MACHINE:X64  /machine:x64 cmTC_bc0a9.dir\\Debug\\CMakeCXXCompilerABI.obj] ==> linker [E:\\Visual Studio Community 2026\\Visual Studio\\VC\\Tools\\MSVC\\14.51.36231\\bin\\HostX64\\x64\\link.exe]
         linker tool for 'CXX': E:/Visual Studio Community 2026/Visual Studio/VC/Tools/MSVC/14.51.36231/bin/HostX64/x64/link.exe 
         implicit libs: []
         implicit objs: []
@@ -1520,37 +1476,24 @@ events:
     names:
       - "openvr_api"
     candidate_directories:
-      - "C:/Users/gabum/Desktop/Pixel VR/PixelVR Driver/lib/openvr/bin/osx64/"
-      - "C:/Users/gabum/Desktop/Pixel VR/PixelVR Driver/lib/openvr/bin/linux64/"
-      - "C:/Users/gabum/Desktop/Pixel VR/PixelVR Driver/lib/openvr/bin/win64/"
-      - "C:/Users/gabum/Desktop/Pixel VR/PixelVR Driver/lib/openvr/bin/"
-      - "C:/Users/gabum/Desktop/Pixel VR/PixelVR Driver/lib/openvr/lib/osx64/"
-      - "C:/Users/gabum/Desktop/Pixel VR/PixelVR Driver/lib/openvr/lib/linux64/"
-      - "C:/Users/gabum/Desktop/Pixel VR/PixelVR Driver/lib/openvr/lib/win64/"
-      - "C:/Users/gabum/Desktop/Pixel VR/PixelVR Driver/lib/openvr/lib/"
+      - "C:/Users/gabum/Desktop/Pixel-VR/PixelVR Driver/lib/openvr/bin/osx64/"
+      - "C:/Users/gabum/Desktop/Pixel-VR/PixelVR Driver/lib/openvr/bin/linux64/"
+      - "C:/Users/gabum/Desktop/Pixel-VR/PixelVR Driver/lib/openvr/bin/win64/"
+      - "C:/Users/gabum/Desktop/Pixel-VR/PixelVR Driver/lib/openvr/bin/"
+      - "C:/Users/gabum/Desktop/Pixel-VR/PixelVR Driver/lib/openvr/lib/osx64/"
+      - "C:/Users/gabum/Desktop/Pixel-VR/PixelVR Driver/lib/openvr/lib/linux64/"
+      - "C:/Users/gabum/Desktop/Pixel-VR/PixelVR Driver/lib/openvr/lib/win64/"
+      - "C:/Users/gabum/Desktop/Pixel-VR/PixelVR Driver/lib/openvr/lib/"
     searched_directories:
-      - "C:/Users/gabum/Desktop/Pixel VR/PixelVR Driver/lib/openvr/bin/osx64/"
-      - "C:/Users/gabum/Desktop/Pixel VR/PixelVR Driver/lib/openvr/bin/linux64/"
-      - "C:/Users/gabum/Desktop/Pixel VR/PixelVR Driver/lib/openvr/bin/win64/"
-      - "C:/Users/gabum/Desktop/Pixel VR/PixelVR Driver/lib/openvr/bin/"
-      - "C:/Users/gabum/Desktop/Pixel VR/PixelVR Driver/lib/openvr/lib/osx64/"
-      - "C:/Users/gabum/Desktop/Pixel VR/PixelVR Driver/lib/openvr/lib/linux64/"
-    found: "C:/Users/gabum/Desktop/Pixel VR/PixelVR Driver/lib/openvr/lib/win64/openvr_api.lib"
+      - "C:/Users/gabum/Desktop/Pixel-VR/PixelVR Driver/lib/openvr/bin/osx64/"
+      - "C:/Users/gabum/Desktop/Pixel-VR/PixelVR Driver/lib/openvr/bin/linux64/"
+      - "C:/Users/gabum/Desktop/Pixel-VR/PixelVR Driver/lib/openvr/bin/win64/"
+      - "C:/Users/gabum/Desktop/Pixel-VR/PixelVR Driver/lib/openvr/bin/"
+      - "C:/Users/gabum/Desktop/Pixel-VR/PixelVR Driver/lib/openvr/lib/osx64/"
+      - "C:/Users/gabum/Desktop/Pixel-VR/PixelVR Driver/lib/openvr/lib/linux64/"
+    found: "C:/Users/gabum/Desktop/Pixel-VR/PixelVR Driver/lib/openvr/lib/win64/openvr_api.lib"
     search_context:
       ENV{PATH}:
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\VC\\Tools\\MSVC\\14.51.36231\\bin\\HostX64\\x64"
-        - "E:\\Windows Kits\\10\\bin\\10.0.28000.0\\x64"
-        - "C:\\Program Files (x86)\\Microsoft SDKs\\Windows\\v10.0A\\bin\\NETFX 4.8 Tools\\x64"
-        - "E:\\Windows Kits\\10\\bin\\10.0.28000.0\\x86"
-        - "C:\\Program Files (x86)\\Microsoft SDKs\\Windows\\v10.0A\\bin\\NETFX 4.8 Tools"
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\Common7\\tools"
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\Common7\\ide"
-        - "C:\\Program Files (x86)\\HTML Help Workshop"
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\MSBuild\\Current\\Bin\\amd64"
-        - "C:\\WINDOWS\\Microsoft.NET\\Framework64\\v4.0.30319\\"
-        - "C:\\WINDOWS\\Microsoft.NET\\Framework\\v4.0.30319\\"
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\MSBuild\\Current\\Bin"
-        - "C:\\WINDOWS\\Microsoft.NET\\Framework\\v4.0.30319\\"
         - "C:\\Program Files\\Eclipse Adoptium\\jdk-21.0.12.101-hotspot\\bin"
         - "C:\\Program Files\\Eclipse Adoptium\\jdk-11.0.32.101-hotspot\\bin"
         - "C:\\Program Files\\Eclipse Adoptium\\jdk-17.0.20.101-hotspot\\bin"
@@ -1566,18 +1509,19 @@ events:
         - "C:\\WINDOWS\\system32"
         - "C:\\WINDOWS"
         - "C:\\WINDOWS\\System32\\Wbem"
-        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\"
-        - "C:\\WINDOWS\\System32\\OpenSSH\\"
-        - "C:\\Program Files\\PuTTY\\"
+        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0"
+        - "C:\\WINDOWS\\System32\\OpenSSH"
+        - "C:\\Program Files\\PuTTY"
         - "C:\\Program Files\\cursor\\resources\\app\\bin"
         - "C:\\Program Files\\Microsoft VS Code\\bin"
         - "C:\\Program Files\\Microsoft VS Code\\bin\\copilot-shim"
         - "C:\\Program Files\\Docker\\Docker\\resources\\bin"
-        - "C:\\Program Files\\dotnet\\"
+        - "C:\\Program Files\\dotnet"
         - "C:\\Program Files\\Git\\cmd"
         - "C:\\Program Files\\CMake\\bin"
-        - "E:\\Windows Kits\\10\\Windows Performance Toolkit\\"
-        - "C:\\Program Files\\WSL\\"
+        - "E:\\Windows Kits\\10\\Windows Performance Toolkit"
+        - "C:\\Program Files\\WSL"
+        - "C:\\Program Files (x86)\\AOMEI Partition Assistant"
         - "C:\\Users\\gabum\\AppData\\Local\\Microsoft\\WindowsApps"
         - "C:\\Users\\gabum\\AppData\\Local\\GitHubDesktop\\bin"
         - "C:\\Users\\gabum\\.dotnet\\tools"
@@ -1591,14 +1535,6 @@ events:
         - "C:/Program Files (x86)/pixelvr/bin"
         - "C:/Program Files/CMake/bin"
         - "/bin"
-      ENV{LIB}:
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\VC\\Tools\\MSVC\\14.51.36231\\lib\\x64"
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\VC\\Tools\\MSVC\\14.51.36231\\atlmfc\\lib\\x64"
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\VC\\Auxiliary\\VS\\lib\\x64"
-        - "E:\\Windows Kits\\10\\lib\\10.0.28000.0\\ucrt\\x64"
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\VC\\Auxiliary\\VS\\UnitTest\\lib"
-        - "E:\\Windows Kits\\10\\lib\\10.0.28000.0\\um\\x64"
-        - "C:\\Program Files (x86)\\Windows Kits\\NETFXSDK\\4.8\\lib\\um\\x64"
   -
     kind: "find-v1"
     backtrace:
@@ -1617,23 +1553,10 @@ events:
     names:
       - "PSMoveClient_CAPI"
     candidate_directories:
-      - "C:/Users/gabum/Desktop/Pixel VR/PixelVR Driver/lib/PSMoveClient_CAPI/lib/"
-    found: "C:/Users/gabum/Desktop/Pixel VR/PixelVR Driver/lib/PSMoveClient_CAPI/lib/PSMoveClient_CAPI.lib"
+      - "C:/Users/gabum/Desktop/Pixel-VR/PixelVR Driver/lib/PSMoveClient_CAPI/lib/"
+    found: "C:/Users/gabum/Desktop/Pixel-VR/PixelVR Driver/lib/PSMoveClient_CAPI/lib/PSMoveClient_CAPI.lib"
     search_context:
       ENV{PATH}:
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\VC\\Tools\\MSVC\\14.51.36231\\bin\\HostX64\\x64"
-        - "E:\\Windows Kits\\10\\bin\\10.0.28000.0\\x64"
-        - "C:\\Program Files (x86)\\Microsoft SDKs\\Windows\\v10.0A\\bin\\NETFX 4.8 Tools\\x64"
-        - "E:\\Windows Kits\\10\\bin\\10.0.28000.0\\x86"
-        - "C:\\Program Files (x86)\\Microsoft SDKs\\Windows\\v10.0A\\bin\\NETFX 4.8 Tools"
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\Common7\\tools"
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\Common7\\ide"
-        - "C:\\Program Files (x86)\\HTML Help Workshop"
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\MSBuild\\Current\\Bin\\amd64"
-        - "C:\\WINDOWS\\Microsoft.NET\\Framework64\\v4.0.30319\\"
-        - "C:\\WINDOWS\\Microsoft.NET\\Framework\\v4.0.30319\\"
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\MSBuild\\Current\\Bin"
-        - "C:\\WINDOWS\\Microsoft.NET\\Framework\\v4.0.30319\\"
         - "C:\\Program Files\\Eclipse Adoptium\\jdk-21.0.12.101-hotspot\\bin"
         - "C:\\Program Files\\Eclipse Adoptium\\jdk-11.0.32.101-hotspot\\bin"
         - "C:\\Program Files\\Eclipse Adoptium\\jdk-17.0.20.101-hotspot\\bin"
@@ -1649,18 +1572,19 @@ events:
         - "C:\\WINDOWS\\system32"
         - "C:\\WINDOWS"
         - "C:\\WINDOWS\\System32\\Wbem"
-        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\"
-        - "C:\\WINDOWS\\System32\\OpenSSH\\"
-        - "C:\\Program Files\\PuTTY\\"
+        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0"
+        - "C:\\WINDOWS\\System32\\OpenSSH"
+        - "C:\\Program Files\\PuTTY"
         - "C:\\Program Files\\cursor\\resources\\app\\bin"
         - "C:\\Program Files\\Microsoft VS Code\\bin"
         - "C:\\Program Files\\Microsoft VS Code\\bin\\copilot-shim"
         - "C:\\Program Files\\Docker\\Docker\\resources\\bin"
-        - "C:\\Program Files\\dotnet\\"
+        - "C:\\Program Files\\dotnet"
         - "C:\\Program Files\\Git\\cmd"
         - "C:\\Program Files\\CMake\\bin"
-        - "E:\\Windows Kits\\10\\Windows Performance Toolkit\\"
-        - "C:\\Program Files\\WSL\\"
+        - "E:\\Windows Kits\\10\\Windows Performance Toolkit"
+        - "C:\\Program Files\\WSL"
+        - "C:\\Program Files (x86)\\AOMEI Partition Assistant"
         - "C:\\Users\\gabum\\AppData\\Local\\Microsoft\\WindowsApps"
         - "C:\\Users\\gabum\\AppData\\Local\\GitHubDesktop\\bin"
         - "C:\\Users\\gabum\\.dotnet\\tools"
@@ -1674,18 +1598,10 @@ events:
         - "C:/Program Files (x86)/pixelvr/bin"
         - "C:/Program Files/CMake/bin"
         - "/bin"
-      ENV{LIB}:
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\VC\\Tools\\MSVC\\14.51.36231\\lib\\x64"
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\VC\\Tools\\MSVC\\14.51.36231\\atlmfc\\lib\\x64"
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\VC\\Auxiliary\\VS\\lib\\x64"
-        - "E:\\Windows Kits\\10\\lib\\10.0.28000.0\\ucrt\\x64"
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\VC\\Auxiliary\\VS\\UnitTest\\lib"
-        - "E:\\Windows Kits\\10\\lib\\10.0.28000.0\\um\\x64"
-        - "C:\\Program Files (x86)\\Windows Kits\\NETFXSDK\\4.8\\lib\\um\\x64"
   -
     kind: "find-v1"
     backtrace:
-      - "CMakeLists.txt:248 (find_path)"
+      - "CMakeLists.txt:259 (find_path)"
     mode: "path"
     variable: "FFMPEG_INCLUDE_DIR"
     description: "Path to a file."
@@ -1700,23 +1616,10 @@ events:
     names:
       - "libavcodec/avcodec.h"
     candidate_directories:
-      - "C:/Users/gabum/Desktop/Pixel VR/PixelVR Driver/lib/ffmpeg/include/"
-    found: "C:/Users/gabum/Desktop/Pixel VR/PixelVR Driver/lib/ffmpeg/include/"
+      - "C:/Users/gabum/Desktop/Pixel-VR/PixelVR Driver/lib/ffmpeg/include/"
+    found: "C:/Users/gabum/Desktop/Pixel-VR/PixelVR Driver/lib/ffmpeg/include/"
     search_context:
       ENV{PATH}:
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\VC\\Tools\\MSVC\\14.51.36231\\bin\\HostX64\\x64"
-        - "E:\\Windows Kits\\10\\bin\\10.0.28000.0\\x64"
-        - "C:\\Program Files (x86)\\Microsoft SDKs\\Windows\\v10.0A\\bin\\NETFX 4.8 Tools\\x64"
-        - "E:\\Windows Kits\\10\\bin\\10.0.28000.0\\x86"
-        - "C:\\Program Files (x86)\\Microsoft SDKs\\Windows\\v10.0A\\bin\\NETFX 4.8 Tools"
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\Common7\\tools"
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\Common7\\ide"
-        - "C:\\Program Files (x86)\\HTML Help Workshop"
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\MSBuild\\Current\\Bin\\amd64"
-        - "C:\\WINDOWS\\Microsoft.NET\\Framework64\\v4.0.30319\\"
-        - "C:\\WINDOWS\\Microsoft.NET\\Framework\\v4.0.30319\\"
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\MSBuild\\Current\\Bin"
-        - "C:\\WINDOWS\\Microsoft.NET\\Framework\\v4.0.30319\\"
         - "C:\\Program Files\\Eclipse Adoptium\\jdk-21.0.12.101-hotspot\\bin"
         - "C:\\Program Files\\Eclipse Adoptium\\jdk-11.0.32.101-hotspot\\bin"
         - "C:\\Program Files\\Eclipse Adoptium\\jdk-17.0.20.101-hotspot\\bin"
@@ -1732,18 +1635,19 @@ events:
         - "C:\\WINDOWS\\system32"
         - "C:\\WINDOWS"
         - "C:\\WINDOWS\\System32\\Wbem"
-        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\"
-        - "C:\\WINDOWS\\System32\\OpenSSH\\"
-        - "C:\\Program Files\\PuTTY\\"
+        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0"
+        - "C:\\WINDOWS\\System32\\OpenSSH"
+        - "C:\\Program Files\\PuTTY"
         - "C:\\Program Files\\cursor\\resources\\app\\bin"
         - "C:\\Program Files\\Microsoft VS Code\\bin"
         - "C:\\Program Files\\Microsoft VS Code\\bin\\copilot-shim"
         - "C:\\Program Files\\Docker\\Docker\\resources\\bin"
-        - "C:\\Program Files\\dotnet\\"
+        - "C:\\Program Files\\dotnet"
         - "C:\\Program Files\\Git\\cmd"
         - "C:\\Program Files\\CMake\\bin"
-        - "E:\\Windows Kits\\10\\Windows Performance Toolkit\\"
-        - "C:\\Program Files\\WSL\\"
+        - "E:\\Windows Kits\\10\\Windows Performance Toolkit"
+        - "C:\\Program Files\\WSL"
+        - "C:\\Program Files (x86)\\AOMEI Partition Assistant"
         - "C:\\Users\\gabum\\AppData\\Local\\Microsoft\\WindowsApps"
         - "C:\\Users\\gabum\\AppData\\Local\\GitHubDesktop\\bin"
         - "C:\\Users\\gabum\\.dotnet\\tools"
@@ -1753,21 +1657,10 @@ events:
         - "C:/Program Files (x86)"
         - "C:/Program Files/CMake"
         - "C:/Program Files (x86)/pixelvr"
-      ENV{INCLUDE}:
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\VC\\Tools\\MSVC\\14.51.36231\\include"
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\VC\\Tools\\MSVC\\14.51.36231\\atlmfc\\include"
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\VC\\Auxiliary\\VS\\include"
-        - "E:\\Windows Kits\\10\\Include\\10.0.28000.0\\ucrt"
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\VC\\Auxiliary\\VS\\UnitTest\\include"
-        - "E:\\Windows Kits\\10\\Include\\10.0.28000.0\\um"
-        - "E:\\Windows Kits\\10\\Include\\10.0.28000.0\\shared"
-        - "E:\\Windows Kits\\10\\Include\\10.0.28000.0\\winrt"
-        - "E:\\Windows Kits\\10\\Include\\10.0.28000.0\\cppwinrt"
-        - "C:\\Program Files (x86)\\Windows Kits\\NETFXSDK\\4.8\\Include\\um"
   -
     kind: "find-v1"
     backtrace:
-      - "CMakeLists.txt:249 (find_library)"
+      - "CMakeLists.txt:260 (find_library)"
     mode: "library"
     variable: "FFMPEG_AVCODEC_LIBRARY"
     description: "Path to a library."
@@ -1783,23 +1676,10 @@ events:
       - "avcodec"
       - "libavcodec"
     candidate_directories:
-      - "C:/Users/gabum/Desktop/Pixel VR/PixelVR Driver/lib/ffmpeg/lib/"
-    found: "C:/Users/gabum/Desktop/Pixel VR/PixelVR Driver/lib/ffmpeg/lib/avcodec.lib"
+      - "C:/Users/gabum/Desktop/Pixel-VR/PixelVR Driver/lib/ffmpeg/lib/"
+    found: "C:/Users/gabum/Desktop/Pixel-VR/PixelVR Driver/lib/ffmpeg/lib/avcodec.lib"
     search_context:
       ENV{PATH}:
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\VC\\Tools\\MSVC\\14.51.36231\\bin\\HostX64\\x64"
-        - "E:\\Windows Kits\\10\\bin\\10.0.28000.0\\x64"
-        - "C:\\Program Files (x86)\\Microsoft SDKs\\Windows\\v10.0A\\bin\\NETFX 4.8 Tools\\x64"
-        - "E:\\Windows Kits\\10\\bin\\10.0.28000.0\\x86"
-        - "C:\\Program Files (x86)\\Microsoft SDKs\\Windows\\v10.0A\\bin\\NETFX 4.8 Tools"
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\Common7\\tools"
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\Common7\\ide"
-        - "C:\\Program Files (x86)\\HTML Help Workshop"
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\MSBuild\\Current\\Bin\\amd64"
-        - "C:\\WINDOWS\\Microsoft.NET\\Framework64\\v4.0.30319\\"
-        - "C:\\WINDOWS\\Microsoft.NET\\Framework\\v4.0.30319\\"
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\MSBuild\\Current\\Bin"
-        - "C:\\WINDOWS\\Microsoft.NET\\Framework\\v4.0.30319\\"
         - "C:\\Program Files\\Eclipse Adoptium\\jdk-21.0.12.101-hotspot\\bin"
         - "C:\\Program Files\\Eclipse Adoptium\\jdk-11.0.32.101-hotspot\\bin"
         - "C:\\Program Files\\Eclipse Adoptium\\jdk-17.0.20.101-hotspot\\bin"
@@ -1815,18 +1695,19 @@ events:
         - "C:\\WINDOWS\\system32"
         - "C:\\WINDOWS"
         - "C:\\WINDOWS\\System32\\Wbem"
-        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\"
-        - "C:\\WINDOWS\\System32\\OpenSSH\\"
-        - "C:\\Program Files\\PuTTY\\"
+        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0"
+        - "C:\\WINDOWS\\System32\\OpenSSH"
+        - "C:\\Program Files\\PuTTY"
         - "C:\\Program Files\\cursor\\resources\\app\\bin"
         - "C:\\Program Files\\Microsoft VS Code\\bin"
         - "C:\\Program Files\\Microsoft VS Code\\bin\\copilot-shim"
         - "C:\\Program Files\\Docker\\Docker\\resources\\bin"
-        - "C:\\Program Files\\dotnet\\"
+        - "C:\\Program Files\\dotnet"
         - "C:\\Program Files\\Git\\cmd"
         - "C:\\Program Files\\CMake\\bin"
-        - "E:\\Windows Kits\\10\\Windows Performance Toolkit\\"
-        - "C:\\Program Files\\WSL\\"
+        - "E:\\Windows Kits\\10\\Windows Performance Toolkit"
+        - "C:\\Program Files\\WSL"
+        - "C:\\Program Files (x86)\\AOMEI Partition Assistant"
         - "C:\\Users\\gabum\\AppData\\Local\\Microsoft\\WindowsApps"
         - "C:\\Users\\gabum\\AppData\\Local\\GitHubDesktop\\bin"
         - "C:\\Users\\gabum\\.dotnet\\tools"
@@ -1840,18 +1721,10 @@ events:
         - "C:/Program Files (x86)/pixelvr/bin"
         - "C:/Program Files/CMake/bin"
         - "/bin"
-      ENV{LIB}:
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\VC\\Tools\\MSVC\\14.51.36231\\lib\\x64"
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\VC\\Tools\\MSVC\\14.51.36231\\atlmfc\\lib\\x64"
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\VC\\Auxiliary\\VS\\lib\\x64"
-        - "E:\\Windows Kits\\10\\lib\\10.0.28000.0\\ucrt\\x64"
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\VC\\Auxiliary\\VS\\UnitTest\\lib"
-        - "E:\\Windows Kits\\10\\lib\\10.0.28000.0\\um\\x64"
-        - "C:\\Program Files (x86)\\Windows Kits\\NETFXSDK\\4.8\\lib\\um\\x64"
   -
     kind: "find-v1"
     backtrace:
-      - "CMakeLists.txt:250 (find_library)"
+      - "CMakeLists.txt:261 (find_library)"
     mode: "library"
     variable: "FFMPEG_AVUTIL_LIBRARY"
     description: "Path to a library."
@@ -1867,23 +1740,10 @@ events:
       - "avutil"
       - "libavutil"
     candidate_directories:
-      - "C:/Users/gabum/Desktop/Pixel VR/PixelVR Driver/lib/ffmpeg/lib/"
-    found: "C:/Users/gabum/Desktop/Pixel VR/PixelVR Driver/lib/ffmpeg/lib/avutil.lib"
+      - "C:/Users/gabum/Desktop/Pixel-VR/PixelVR Driver/lib/ffmpeg/lib/"
+    found: "C:/Users/gabum/Desktop/Pixel-VR/PixelVR Driver/lib/ffmpeg/lib/avutil.lib"
     search_context:
       ENV{PATH}:
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\VC\\Tools\\MSVC\\14.51.36231\\bin\\HostX64\\x64"
-        - "E:\\Windows Kits\\10\\bin\\10.0.28000.0\\x64"
-        - "C:\\Program Files (x86)\\Microsoft SDKs\\Windows\\v10.0A\\bin\\NETFX 4.8 Tools\\x64"
-        - "E:\\Windows Kits\\10\\bin\\10.0.28000.0\\x86"
-        - "C:\\Program Files (x86)\\Microsoft SDKs\\Windows\\v10.0A\\bin\\NETFX 4.8 Tools"
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\Common7\\tools"
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\Common7\\ide"
-        - "C:\\Program Files (x86)\\HTML Help Workshop"
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\MSBuild\\Current\\Bin\\amd64"
-        - "C:\\WINDOWS\\Microsoft.NET\\Framework64\\v4.0.30319\\"
-        - "C:\\WINDOWS\\Microsoft.NET\\Framework\\v4.0.30319\\"
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\MSBuild\\Current\\Bin"
-        - "C:\\WINDOWS\\Microsoft.NET\\Framework\\v4.0.30319\\"
         - "C:\\Program Files\\Eclipse Adoptium\\jdk-21.0.12.101-hotspot\\bin"
         - "C:\\Program Files\\Eclipse Adoptium\\jdk-11.0.32.101-hotspot\\bin"
         - "C:\\Program Files\\Eclipse Adoptium\\jdk-17.0.20.101-hotspot\\bin"
@@ -1899,18 +1759,19 @@ events:
         - "C:\\WINDOWS\\system32"
         - "C:\\WINDOWS"
         - "C:\\WINDOWS\\System32\\Wbem"
-        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\"
-        - "C:\\WINDOWS\\System32\\OpenSSH\\"
-        - "C:\\Program Files\\PuTTY\\"
+        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0"
+        - "C:\\WINDOWS\\System32\\OpenSSH"
+        - "C:\\Program Files\\PuTTY"
         - "C:\\Program Files\\cursor\\resources\\app\\bin"
         - "C:\\Program Files\\Microsoft VS Code\\bin"
         - "C:\\Program Files\\Microsoft VS Code\\bin\\copilot-shim"
         - "C:\\Program Files\\Docker\\Docker\\resources\\bin"
-        - "C:\\Program Files\\dotnet\\"
+        - "C:\\Program Files\\dotnet"
         - "C:\\Program Files\\Git\\cmd"
         - "C:\\Program Files\\CMake\\bin"
-        - "E:\\Windows Kits\\10\\Windows Performance Toolkit\\"
-        - "C:\\Program Files\\WSL\\"
+        - "E:\\Windows Kits\\10\\Windows Performance Toolkit"
+        - "C:\\Program Files\\WSL"
+        - "C:\\Program Files (x86)\\AOMEI Partition Assistant"
         - "C:\\Users\\gabum\\AppData\\Local\\Microsoft\\WindowsApps"
         - "C:\\Users\\gabum\\AppData\\Local\\GitHubDesktop\\bin"
         - "C:\\Users\\gabum\\.dotnet\\tools"
@@ -1924,18 +1785,10 @@ events:
         - "C:/Program Files (x86)/pixelvr/bin"
         - "C:/Program Files/CMake/bin"
         - "/bin"
-      ENV{LIB}:
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\VC\\Tools\\MSVC\\14.51.36231\\lib\\x64"
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\VC\\Tools\\MSVC\\14.51.36231\\atlmfc\\lib\\x64"
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\VC\\Auxiliary\\VS\\lib\\x64"
-        - "E:\\Windows Kits\\10\\lib\\10.0.28000.0\\ucrt\\x64"
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\VC\\Auxiliary\\VS\\UnitTest\\lib"
-        - "E:\\Windows Kits\\10\\lib\\10.0.28000.0\\um\\x64"
-        - "C:\\Program Files (x86)\\Windows Kits\\NETFXSDK\\4.8\\lib\\um\\x64"
   -
     kind: "find-v1"
     backtrace:
-      - "CMakeLists.txt:251 (find_library)"
+      - "CMakeLists.txt:262 (find_library)"
     mode: "library"
     variable: "FFMPEG_SWSCALE_LIBRARY"
     description: "Path to a library."
@@ -1951,23 +1804,10 @@ events:
       - "swscale"
       - "libswscale"
     candidate_directories:
-      - "C:/Users/gabum/Desktop/Pixel VR/PixelVR Driver/lib/ffmpeg/lib/"
-    found: "C:/Users/gabum/Desktop/Pixel VR/PixelVR Driver/lib/ffmpeg/lib/swscale.lib"
+      - "C:/Users/gabum/Desktop/Pixel-VR/PixelVR Driver/lib/ffmpeg/lib/"
+    found: "C:/Users/gabum/Desktop/Pixel-VR/PixelVR Driver/lib/ffmpeg/lib/swscale.lib"
     search_context:
       ENV{PATH}:
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\VC\\Tools\\MSVC\\14.51.36231\\bin\\HostX64\\x64"
-        - "E:\\Windows Kits\\10\\bin\\10.0.28000.0\\x64"
-        - "C:\\Program Files (x86)\\Microsoft SDKs\\Windows\\v10.0A\\bin\\NETFX 4.8 Tools\\x64"
-        - "E:\\Windows Kits\\10\\bin\\10.0.28000.0\\x86"
-        - "C:\\Program Files (x86)\\Microsoft SDKs\\Windows\\v10.0A\\bin\\NETFX 4.8 Tools"
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\Common7\\tools"
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\Common7\\ide"
-        - "C:\\Program Files (x86)\\HTML Help Workshop"
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\MSBuild\\Current\\Bin\\amd64"
-        - "C:\\WINDOWS\\Microsoft.NET\\Framework64\\v4.0.30319\\"
-        - "C:\\WINDOWS\\Microsoft.NET\\Framework\\v4.0.30319\\"
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\MSBuild\\Current\\Bin"
-        - "C:\\WINDOWS\\Microsoft.NET\\Framework\\v4.0.30319\\"
         - "C:\\Program Files\\Eclipse Adoptium\\jdk-21.0.12.101-hotspot\\bin"
         - "C:\\Program Files\\Eclipse Adoptium\\jdk-11.0.32.101-hotspot\\bin"
         - "C:\\Program Files\\Eclipse Adoptium\\jdk-17.0.20.101-hotspot\\bin"
@@ -1983,18 +1823,19 @@ events:
         - "C:\\WINDOWS\\system32"
         - "C:\\WINDOWS"
         - "C:\\WINDOWS\\System32\\Wbem"
-        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\"
-        - "C:\\WINDOWS\\System32\\OpenSSH\\"
-        - "C:\\Program Files\\PuTTY\\"
+        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0"
+        - "C:\\WINDOWS\\System32\\OpenSSH"
+        - "C:\\Program Files\\PuTTY"
         - "C:\\Program Files\\cursor\\resources\\app\\bin"
         - "C:\\Program Files\\Microsoft VS Code\\bin"
         - "C:\\Program Files\\Microsoft VS Code\\bin\\copilot-shim"
         - "C:\\Program Files\\Docker\\Docker\\resources\\bin"
-        - "C:\\Program Files\\dotnet\\"
+        - "C:\\Program Files\\dotnet"
         - "C:\\Program Files\\Git\\cmd"
         - "C:\\Program Files\\CMake\\bin"
-        - "E:\\Windows Kits\\10\\Windows Performance Toolkit\\"
-        - "C:\\Program Files\\WSL\\"
+        - "E:\\Windows Kits\\10\\Windows Performance Toolkit"
+        - "C:\\Program Files\\WSL"
+        - "C:\\Program Files (x86)\\AOMEI Partition Assistant"
         - "C:\\Users\\gabum\\AppData\\Local\\Microsoft\\WindowsApps"
         - "C:\\Users\\gabum\\AppData\\Local\\GitHubDesktop\\bin"
         - "C:\\Users\\gabum\\.dotnet\\tools"
@@ -2008,12 +1849,4 @@ events:
         - "C:/Program Files (x86)/pixelvr/bin"
         - "C:/Program Files/CMake/bin"
         - "/bin"
-      ENV{LIB}:
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\VC\\Tools\\MSVC\\14.51.36231\\lib\\x64"
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\VC\\Tools\\MSVC\\14.51.36231\\atlmfc\\lib\\x64"
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\VC\\Auxiliary\\VS\\lib\\x64"
-        - "E:\\Windows Kits\\10\\lib\\10.0.28000.0\\ucrt\\x64"
-        - "E:\\Visual Studio Community 2026\\Visual Studio\\VC\\Auxiliary\\VS\\UnitTest\\lib"
-        - "E:\\Windows Kits\\10\\lib\\10.0.28000.0\\um\\x64"
-        - "C:\\Program Files (x86)\\Windows Kits\\NETFXSDK\\4.8\\lib\\um\\x64"
 ...

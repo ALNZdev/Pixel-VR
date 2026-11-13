@@ -2,7 +2,7 @@
 
 #include <cstdint>
 
-// PixelVR phone video protocol v2 (video only: no IMU, no sensors).
+// PixelVR phone video protocol v3 (video + source projection metadata; no IMU/sensors).
 //
 // Transport : TCP. The PC driver is the SERVER, the Android app is the CLIENT and
 //             connects to 127.0.0.1:<port> after `adb reverse tcp:<port> tcp:<port>`.
@@ -10,7 +10,7 @@
 // Framing   : TCP is a byte stream, so every frame is a fixed-size header followed by
 //             exactly `payloadBytes` bytes. Each header starts with a magic so the
 //             receiver can detect desynchronisation. There is no separate handshake:
-//             every packet is self-describing (width/height/codec).
+//             every packet is self-describing (width/height/codec/source FOV).
 // Payload   : H.264 or HEVC Annex-B (00 00 00 01 NAL units). Keyframes carry SPS/PPS(/VPS).
 //             The first packet after a connection is always a keyframe.
 
@@ -36,8 +36,12 @@ namespace pixelvr
         uint8_t  flags;          // kPacketFlagKeyframe
         uint16_t framerate;      // desired presentation rate (0 = unspecified)
         uint32_t payloadBytes;   // bytes that follow this header
+        float fovLeftDegrees;    // source projection settings from default.vrsettings
+        float fovRightDegrees;
+        float fovTopDegrees;
+        float fovBottomDegrees;
     };
 #pragma pack(pop)
 
-    static_assert(sizeof(StreamPacketHeader) == 28, "packet header must be 28 bytes");
+    static_assert(sizeof(StreamPacketHeader) == 44, "packet header must be 44 bytes");
 }
